@@ -122,7 +122,71 @@ a { color: inherit; }
   display: grid; place-items: center;
 }
 
-/* === Aside === */
+/* Cards */
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: calc(var(--radius) + 8px);
+  box-shadow: var(--shadow);
+}
+
+.card.shell { margin-top: 0; }
+
+/* === Rail (Sidebar Sections) === */
+.rail {
+  background: #fafafa;
+  border-right: 1px solid var(--border);
+  padding: 20px;
+  border-top-left-radius: calc(var(--radius) + 8px);
+  border-bottom-left-radius: calc(var(--radius) + 8px);
+}
+
+.rail h4 {
+  margin: 0 0 8px 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.rail ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 14px;
+  color: #374151;
+}
+
+.rail li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 6px 0;
+}
+
+.rail .num {
+  width: 22px;
+  height: 22px;
+  background: #111;
+  color: #fff;
+  border-radius: 8px;
+  display: grid;
+  place-items: center;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.rail .why {
+  margin-top: 20px;
+  background: #fff;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  font-size: 13px;
+  color: #4b5563;
+  line-height: 1.4;
+}
+
+/* === Aside (helper card under rail) === */
 .aside {
   background: #fff;
   padding: 24px;
@@ -160,7 +224,7 @@ a { color: inherit; }
 
 form { padding: 24px; }
 
-/* Add spacing between sections */
+/* spacing between sections */
 form > div { margin-bottom: 40px; }
 
 .section-title {
@@ -218,6 +282,7 @@ footer {
   padding: 24px 0 64px;
 }
 
+/* Dropzone */
 .drop {
   border: 2px dashed #d1d5db;
   background: #fafafa;
