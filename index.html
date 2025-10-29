@@ -232,5 +232,22 @@
       button.textContent = "Submitting...";
     });
   </script>
+<script>
+  const form = document.getElementById("leadForm");
+  form.addEventListener("submit", (e) => {
+    const button = form.querySelector("button[type='submit']");
+    button.disabled = true;
+    button.textContent = "Submitting...";
+  });
+
+  // Redirect to thank-you page after short delay
+  form.addEventListener("submit", () => {
+    setTimeout(() => {
+      window.location.href = "thank-you.html";
+    }, 800);
+  });
+</script>
+
 </body>
 </html>
+
