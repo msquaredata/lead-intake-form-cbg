@@ -20,7 +20,7 @@
 
       <!-- Simplified navigation -->
       <nav class="nav">
-        <a class="btn" type="submit" ref="#">Submit a Deal</a>
+        <a class="btn" href="#">Submit a Deal</a>
       </nav>
     </div>
   </div>
@@ -42,7 +42,7 @@
     </section>
 
     <!-- Main Form Card -->
-    <section class="card shell">Submit
+    <section class="card shell">
       <div class="formgrid">
         <aside class="rail">
           <h4>Sections</h4>
@@ -72,6 +72,7 @@
           </div>
         </aside>
 
+        <!-- Form Starts -->
         <form id="leadForm" action="https://msquaresolutions.app.n8n.cloud/webhook-test/lead-intake" method="POST">
 
           <!-- 1. Contact -->
@@ -81,15 +82,15 @@
               <span class="muted">Owner or advisor can submit</span>
             </div>
             <div class="row cols-2">
-              <label><span>Full Name</span><input type="text" placeholder="Jane Doe"></label>
+              <label><span>Full Name</span><input type="text" name="fullName" placeholder="Jane Doe" required></label>
               <label><span>Role / Relationship</span>
-                <select>
+                <select name="role" required>
                   <option>Owner</option><option>Advisor</option><option>Broker</option><option>Executive</option><option>Other</option>
                 </select>
               </label>
-              <label><span>Email</span><input type="email" placeholder="you@company.com"></label>
-              <label><span>Phone</span><input type="tel" placeholder="(555) 000-1234"></label>
-              <label class="full"><span>Company Represented (if not owner)</span><input type="text" placeholder="Acme Advisors, LLC"></label>
+              <label><span>Email</span><input type="email" name="email" placeholder="you@company.com" required></label>
+              <label><span>Phone</span><input type="tel" name="phone" placeholder="(555) 000-1234"></label>
+              <label class="full"><span>Company Represented (if not owner)</span><input type="text" name="companyRepresented" placeholder="Acme Advisors, LLC"></label>
             </div>
           </div>
 
@@ -97,16 +98,16 @@
           <div>
             <div class="section-title"><span>2 · Business Profile</span></div>
             <div class="row cols-2">
-              <label><span>Business Name</span><input type="text" placeholder="Acme Services, Inc."></label>
-              <label><span>Website</span><input type="url" placeholder="https://example.com"></label>
+              <label><span>Business Name</span><input type="text" name="businessName" placeholder="Acme Services, Inc."></label>
+              <label><span>Website</span><input type="url" name="website" placeholder="https://example.com"></label>
               <label><span>Industry / Sector</span>
-                <select>
+                <select name="industry">
                   <option>Business Services</option><option>Healthcare</option><option>Industrial / Trades</option>
                   <option>Consumer</option><option>Technology</option><option>Other</option>
                 </select>
               </label>
-              <label><span>Headquarters (City, State)</span><input type="text" placeholder="Fort Lauderdale, FL"></label>
-              <label><span>Year Founded</span><input type="number" placeholder="1998"></label>
+              <label><span>Headquarters (City, State)</span><input type="text" name="hq" placeholder="Fort Lauderdale, FL"></label>
+              <label><span>Year Founded</span><input type="number" name="yearFounded" placeholder="1998"></label>
             </div>
           </div>
 
@@ -115,17 +116,17 @@
             <div class="section-title"><span>3 · Ownership & Transition</span></div>
             <div class="row cols-2">
               <label><span>Current Ownership</span>
-                <select>
+                <select name="ownership">
                   <option>Founder / Family-Owned</option><option>Partnership</option><option>Private Company</option><option>PE-Backed</option><option>Other</option>
                 </select>
               </label>
               <label><span>Transition Goal</span>
-                <select>
+                <select name="transitionGoal">
                   <option>Full Exit</option><option>Growth Capital</option><option>Partial Sale / Recap</option><option>Strategic Partnership</option>
                 </select>
               </label>
               <label><span>Transition Timing</span>
-                <select>
+                <select name="transitionTiming">
                   <option>Immediate</option><option>< 12 months</option><option>1–3 years</option><option>3+ years</option>
                 </select>
               </label>
@@ -137,17 +138,17 @@
             <div class="section-title"><span>4 · Financial Snapshot (Estimates OK)</span></div>
             <div class="row cols-3">
               <label><span>Annual Revenue</span>
-                <select>
+                <select name="revenue">
                   <option>< $2M</option><option>$2–5M</option><option>$5–10M</option><option>$10–25M</option><option>$25M+</option>
                 </select>
               </label>
               <label><span>EBITDA Margin</span>
-                <select>
+                <select name="ebitdaMargin">
                   <option>< 5%</option><option>5–10%</option><option>10–20%</option><option>20%+</option>
                 </select>
               </label>
               <label><span>Debt / Leverage</span>
-                <select>
+                <select name="leverage">
                   <option>None</option><option>Manageable</option><option>Heavily Leveraged</option><option>Prefer not to say</option>
                 </select>
               </label>
@@ -155,16 +156,16 @@
             <div class="row cols-2">
               <label><span>Key Assets</span>
                 <div class="chips">
-                  <label class="chip"><input type="checkbox"> Real Estate</label>
-                  <label class="chip"><input type="checkbox"> Contracts</label>
-                  <label class="chip"><input type="checkbox"> Brand</label>
-                  <label class="chip"><input type="checkbox"> IP / Patents</label>
-                  <label class="chip"><input type="checkbox"> Equipment</label>
-                  <label class="chip"><input type="checkbox"> Other</label>
+                  <label class="chip"><input type="checkbox" name="assets" value="Real Estate"> Real Estate</label>
+                  <label class="chip"><input type="checkbox" name="assets" value="Contracts"> Contracts</label>
+                  <label class="chip"><input type="checkbox" name="assets" value="Brand"> Brand</label>
+                  <label class="chip"><input type="checkbox" name="assets" value="IP / Patents"> IP / Patents</label>
+                  <label class="chip"><input type="checkbox" name="assets" value="Equipment"> Equipment</label>
+                  <label class="chip"><input type="checkbox" name="assets" value="Other"> Other</label>
                 </div>
               </label>
               <label><span>Notable Customers or Contracts (optional)</span>
-                <textarea placeholder="e.g., multi-year maintenance contracts; preferred vendor to X"></textarea>
+                <textarea name="notableCustomers" placeholder="e.g., multi-year maintenance contracts; preferred vendor to X"></textarea>
               </label>
             </div>
           </div>
@@ -174,16 +175,16 @@
             <div class="section-title"><span>5 · Strategic Fit</span></div>
             <div class="row">
               <label><span>Why is this a strong fit for Charlton Bleecker?</span>
-                <textarea placeholder="Quick pitch: durable cash flows, succession opportunity, strong moat, growth vectors, etc."></textarea>
+                <textarea name="fitReason" placeholder="Quick pitch: durable cash flows, succession opportunity, strong moat, growth vectors, etc."></textarea>
               </label>
               <div class="row cols-2">
                 <label><span>Biggest Current Challenge</span>
-                  <select>
+                  <select name="challenge">
                     <option>Succession planning</option><option>Growth capital</option><option>Operational efficiency</option><option>Market pressure / competition</option><option>Other</option>
                   </select>
                 </label>
                 <label style="flex-direction:row; align-items:center; gap:10px; margin-top:6px;">
-                  <input type="checkbox"> <span>Experienced management team in place</span>
+                  <input type="checkbox" name="hasManagementTeam"> <span>Experienced management team in place</span>
                 </label>
               </div>
             </div>
@@ -197,26 +198,38 @@
                 <div class="drop">Drag & drop files here or <strong>browse</strong></div>
               </label>
               <label><span>How did you hear about us?</span>
-                <select>
+                <select name="referralSource">
                   <option>Referral</option><option>Website</option><option>Event</option><option>Other</option>
                 </select>
               </label>
             </div>
           </div>
 
+          <!-- Submit Section -->
           <div class="submitbar">
             <span class="muted">By submitting, you agree to our confidentiality & data use terms.</span>
             <div style="display:flex; gap:10px;">
-              <a class="btn secondary" href="#">Save Draft</a>
-              <a class="btn" type="submit" href="#">Submit Opportunity</a>
+              <button type="button" class="btn secondary">Save Draft</button>
+              <button type="submit" class="btn">Submit Opportunity</button>
             </div>
           </div>
 
         </form>
+        <!-- Form Ends -->
       </div>
     </section>
 
     <footer>© 2025 Charlton Bleecker Group LLC — All rights reserved.</footer>
   </main>
+
+  <!-- Move script here so it runs after DOM loads -->
+  <script>
+    const form = document.getElementById("leadForm");
+    form.addEventListener("submit", () => {
+      const button = form.querySelector("button[type='submit']");
+      button.disabled = true;
+      button.textContent = "Submitting...";
+    });
+  </script>
 </body>
 </html>
