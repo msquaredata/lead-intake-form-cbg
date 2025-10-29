@@ -115,6 +115,7 @@ a { color: inherit; }
   border-radius: calc(var(--radius) + 8px);
   padding: 32px;
   margin-top: 24px;
+  margin-bottom: 32px;
 }
 
 .hero h2 {
