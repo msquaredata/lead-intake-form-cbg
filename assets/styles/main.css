@@ -97,6 +97,7 @@ a { color: inherit; }
 
   .hero {
     grid-column: span 5;
+    margin-top: 24px;
   }
 }
 
