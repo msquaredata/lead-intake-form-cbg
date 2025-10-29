@@ -223,49 +223,49 @@
     <footer>© 2025 Charlton Bleecker Group LLC — All rights reserved.</footer>
   </main>
 
-<script>
-  const form = document.getElementById("leadForm");
+  <!-- Hybrid submission logic -->
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const form = document.getElementById("leadForm");
 
-  form.addEventListener("submit", async (e) => {
-    e.preventDefault();
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault(); // intercept native submit
 
-    const button = form.querySelector("button[type='submit']");
-    button.disabled = true;
-    button.textContent = "Submitting...";
+        const button = form.querySelector("button[type='submit']");
+        button.disabled = true;
+        button.textContent = "Submitting...";
 
-    const formData = new FormData(form);
-    const formObject = Object.fromEntries(formData.entries());
+        const formData = new FormData(form);
+        const formObject = Object.fromEntries(formData.entries());
 
-    try {
-      const response = await fetch(form.action, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formObject),
+        try {
+          const response = await fetch(form.action, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(formObject),
+          });
+
+          const data = await response.json();
+
+          if (response.ok && data.status === "received") {
+            const redirectURL = data.redirect || "thank-you.html";
+            setTimeout(() => {
+              window.location.href = redirectURL;
+            }, 800);
+          } else {
+            alert("Submission failed. Please try again.");
+            button.disabled = false;
+            button.textContent = "Submit Opportunity";
+          }
+        } catch (error) {
+          console.error("Error submitting form:", error);
+          alert("Unable to connect to the server. Please try again later.");
+          button.disabled = false;
+          button.textContent = "Submit Opportunity";
+        }
       });
-
-      const data = await response.json();
-
-      if (response.ok && data.status === "received") {
-        // Prefer redirect from n8n response if provided
-        const redirectURL = data.redirect || "thank-you.html";
-        setTimeout(() => {
-          window.location.href = redirectURL;
-        }, 800);
-      } else {
-        alert("Submission failed. Please try again.");
-        button.disabled = false;
-        button.textContent = "Submit Opportunity";
-      }
-    } catch (error) {
-      console.error("Error submitting form:", error);
-      alert("Unable to connect to server. Please try again later.");
-      button.disabled = false;
-      button.textContent = "Submit Opportunity";
-    }
-  });
-</script>
-
+    });
+  </script>
 
 </body>
 </html>
-
