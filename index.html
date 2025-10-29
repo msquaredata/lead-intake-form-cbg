@@ -223,30 +223,48 @@
     <footer>© 2025 Charlton Bleecker Group LLC — All rights reserved.</footer>
   </main>
 
-  <!-- Script runs after DOM loads -->
-  <script>
-    const form = document.getElementById("leadForm");
-    form.addEventListener("submit", () => {
-      const button = form.querySelector("button[type='submit']");
-      button.disabled = true;
-      button.textContent = "Submitting...";
-    });
-  </script>
 <script>
   const form = document.getElementById("leadForm");
-  form.addEventListener("submit", (e) => {
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
     const button = form.querySelector("button[type='submit']");
     button.disabled = true;
     button.textContent = "Submitting...";
-  });
 
-  // Redirect to thank-you page after short delay
-  form.addEventListener("submit", () => {
-    setTimeout(() => {
-      window.location.href = "thank-you.html";
-    }, 800);
+    const formData = new FormData(form);
+    const formObject = Object.fromEntries(formData.entries());
+
+    try {
+      const response = await fetch(form.action, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formObject),
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.status === "received") {
+        // Prefer redirect from n8n response if provided
+        const redirectURL = data.redirect || "thank-you.html";
+        setTimeout(() => {
+          window.location.href = redirectURL;
+        }, 800);
+      } else {
+        alert("Submission failed. Please try again.");
+        button.disabled = false;
+        button.textContent = "Submit Opportunity";
+      }
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      alert("Unable to connect to server. Please try again later.");
+      button.disabled = false;
+      button.textContent = "Submit Opportunity";
+    }
   });
 </script>
+
 
 </body>
 </html>
