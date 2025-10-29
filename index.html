@@ -82,7 +82,8 @@
               <span class="muted">Owner or advisor can submit</span>
             </div>
             <div class="row cols-2">
-              <label><span>Full Name</span><input type="text" name="fullName" placeholder="Jane Doe" required></label>
+              <label><span>First Name</span><input type="text" name="firstName" placeholder="Jane" required></label>
+              <label><span>Last Name</span><input type="text" name="lastName" placeholder="Doe" required></label>
               <label><span>Role / Relationship</span>
                 <select name="role" required>
                   <option>Owner</option><option>Advisor</option><option>Broker</option><option>Executive</option><option>Other</option>
@@ -222,7 +223,7 @@
     <footer>© 2025 Charlton Bleecker Group LLC — All rights reserved.</footer>
   </main>
 
-  <!-- Move script here so it runs after DOM loads -->
+  <!-- Script runs after DOM loads -->
   <script>
     const form = document.getElementById("leadForm");
     form.addEventListener("submit", () => {
