@@ -425,63 +425,34 @@ select[multiple]::-webkit-scrollbar-thumb:hover {
 .multiselect-dropdown {
   position: relative;
   width: 100%;
-  /* FIX: Ensure dropdown content does not get cut off by form overflow */
-  z-index: 10;
+  z-index: 10; /* Important for layering */
 }
 
-.dropdown-btn {
-  width: 100%;
-  text-align: left;
-  background: #fff;
-  border: 1px solid #ccd6e0;
-  border-radius: 8px;
-  padding: 10px 12px;
-  font-size: 15px;
-  cursor: pointer;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  color: #1a1a1a;
-  transition: border-color 0.2s, box-shadow 0.2s;
-}
-
-.dropdown-btn .button-text {
-  /* This ensures the text wrapper takes up all available space */
-  flex-grow: 1; 
-  text-overflow: ellipsis;
-  overflow: hidden;
-  white-space: nowrap;
-}
+/* ... other button styles ... */
 
 .dropdown-btn::after {
-  content: "▾";
+  content: "▾"; /* This creates the arrow */
   font-size: 14px;
   color: #0a2540;
 }
 
-.dropdown-btn.active {
-  border-color: #0a2540;
-  box-shadow: 0 0 0 3px rgba(10, 37, 64, 0.15);
-}
+/* ... other list styles ... */
 
 .dropdown-list {
   position: absolute;
   top: 110%;
   left: 0;
   width: 100%;
-  background: #fff;
-  border: 1px solid #ccd6e0;
-  border-radius: 8px;
-  padding: 8px;
-  /* Original: display: none; <-- This is the key to hide it initially */
-  display: none; 
-  flex-direction: column;
-  gap: 6px;
-  max-height: 220px;
-  overflow-y: auto;
+  /* ... other styles ... */
+  display: none; /* CRITICAL: Hides the list initially */
+  /* ... other styles ... */
   z-index: 1000;
 }
 
+/* FIX: This class is applied by JavaScript to make the dropdown visible */
+.multiselect-dropdown .dropdown-list.show {
+  display: flex; /* CRITICAL: Shows the list when JS is clicked */
+}
 .dropdown-list label {
   display: flex;
   align-items: center;

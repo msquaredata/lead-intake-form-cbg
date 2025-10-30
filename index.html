@@ -250,7 +250,7 @@
 <script>
 document.addEventListener("DOMContentLoaded", () => {
 
-  /* ======= Handle form submission (Small addition to include multiselect data) ======= */
+  /* ======= Handle form submission (Addition for multiselect data) ======= */
   const form = document.getElementById("leadForm");
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -293,7 +293,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  /* ======= Initialize custom multiselect dropdowns (FIXED) ======= */
+  /* ======= Initialize custom multiselect dropdowns (CLEANER FIX) ======= */
   document.querySelectorAll(".multiselect-dropdown").forEach(dropdown => {
     const button = dropdown.querySelector(".dropdown-btn");
     const list = dropdown.querySelector(".dropdown-list");
@@ -301,41 +301,30 @@ document.addEventListener("DOMContentLoaded", () => {
     hiddenInput.type = "hidden";
     hiddenInput.name = dropdown.dataset.name;
     dropdown.appendChild(hiddenInput);
-    
-    // Store the original text content (e.g., "Select industries")
+
+    // Get the original default text content
     const defaultText = button.textContent.trim();
 
-    // Function to update the button's text, preserving the arrow (via CSS)
-    const updateButtonText = () => {
+    // Function to update selected values and button text
+    const updateDropdown = () => {
         const selected = Array.from(list.querySelectorAll("input:checked")).map(cb => cb.value);
         hiddenInput.value = selected.join(", ");
         
-        let displayContent;
+        let newText;
         if (selected.length === 0) {
-            displayContent = defaultText;
+            newText = defaultText;
         } else if (selected.length === 1) {
-            displayContent = `<span class='selected'>${selected[0]}</span>`;
+            newText = selected[0];
         } else {
-            // Display a count for multiple selections
-            displayContent = `<span class='selected'>${selected.length} items selected</span>`;
+            newText = `${selected.length} items selected`;
         }
         
-        // Use a wrapper to hold the text content, leaving the arrow (::after) alone.
-        const textWrapper = button.querySelector('.button-text') || document.createElement('span');
-        textWrapper.className = 'button-text';
-        textWrapper.innerHTML = displayContent;
-        
-        // If the wrapper is new, insert it before the text node (which might be the arrow)
-        if (!button.contains(textWrapper)) {
-            // The button only contains the text, so we replace it.
-            button.textContent = ''; // Clear existing text content
-            button.appendChild(textWrapper);
-        }
+        // Use textContent to only update the text, leaving the ::after arrow intact
+        button.textContent = newText;
     };
-
-    // FIX: Set the initial button content with a new wrapper for the text
-    button.innerHTML = `<span class='button-text'>${defaultText}</span>`;
-
+    
+    // Initial update to set the default state and handle pre-checked items
+    updateDropdown();
 
     // prevent form submission on button click
     button.addEventListener("click", (e) => {
@@ -345,9 +334,9 @@ document.addEventListener("DOMContentLoaded", () => {
       button.classList.toggle("active");
     });
 
-    // update selected values and button text
+    // update selected values
     list.querySelectorAll("input[type='checkbox']").forEach(cb => {
-      cb.addEventListener("change", updateButtonText);
+      cb.addEventListener("change", updateDropdown);
     });
 
     // close dropdown on outside click
@@ -357,9 +346,6 @@ document.addEventListener("DOMContentLoaded", () => {
         button.classList.remove("active");
       }
     });
-
-    // Initial call to set the display based on any pre-checked boxes
-    updateButtonText();
   });
 
 });
