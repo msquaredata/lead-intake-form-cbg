@@ -86,7 +86,7 @@
               <label><span>Last Name</span><input type="text" name="lastName" placeholder="Doe" required></label>
               <label><span>Role / Relationship</span>
                 <select name="role" required>
-                  <option>Owner</option><option>Advisor</option><option>Broker</option><option>Executive</option><option>Other</option>
+                  <option>Owner</option><option>Accountant</option><option>Advisor</option><option>Attorney</option><option>Broker</option><option>Executive</option><option>Other</option>
                 </select>
               </label>
               <label><span>Email</span><input type="email" name="email" placeholder="you@company.com" required></label>
@@ -102,8 +102,8 @@
               <label><span>Business Name</span><input type="text" name="businessName" placeholder="Acme Services, Inc."></label>
               <label><span>Website</span><input type="url" name="website" placeholder="https://example.com"></label>
               <label><span>Industry / Sector</span>
-                <select name="industry">
-                  <option>Business Services</option><option>Healthcare</option><option>Industrial / Trades</option>
+                <select multiple name="industry">
+                  <option>Business Services</option><option>Defense</option><option>Energy</option><option>Financial Services</option><option>Healthcare</option><option>Industrial/Trades</option>
                   <option>Consumer</option><option>Technology</option><option>Other</option>
                 </select>
               </label>
@@ -123,7 +123,7 @@
               </label>
               <label><span>Transition Goal</span>
                 <select name="transitionGoal">
-                  <option>Full Exit</option><option>Growth Capital</option><option>Partial Sale / Recap</option><option>Strategic Partnership</option>
+                  <option>Exit</option><option>Growth Capital</option><option>Partial Sale / Recap</option><option>Strategic Partnership</option>
                 </select>
               </label>
               <label><span>Transition Timing</span>
@@ -159,9 +159,11 @@
                 <div class="chips">
                   <label class="chip"><input type="checkbox" name="assets" value="Real Estate"> Real Estate</label>
                   <label class="chip"><input type="checkbox" name="assets" value="Contracts"> Contracts</label>
-                  <label class="chip"><input type="checkbox" name="assets" value="Brand"> Brand</label>
-                  <label class="chip"><input type="checkbox" name="assets" value="IP / Patents"> IP / Patents</label>
+                  <label class="chip"><input type="checkbox" name="assets" value="Goodwill/Brand"> Goodwill/Brand</label>
+                  <label class="chip"><input type="checkbox" name="assets" value="IP/Patents"> IP/Patents</label>
                   <label class="chip"><input type="checkbox" name="assets" value="Equipment"> Equipment</label>
+                  <label class="chip"><input type="checkbox" name="assets" value="Team"> Team</label>
+                  <label class="chip"><input type="checkbox" name="assets" value="Technology"> Technology</label>
                   <label class="chip"><input type="checkbox" name="assets" value="Other"> Other</label>
                 </div>
               </label>
@@ -180,8 +182,8 @@
               </label>
               <div class="row cols-2">
                 <label><span>Biggest Current Challenge</span>
-                  <select name="challenge">
-                    <option>Succession planning</option><option>Growth capital</option><option>Operational efficiency</option><option>Market pressure / competition</option><option>Other</option>
+                  <select multiple name="challenge">
+                    <option>Succession planning</option><option>Debt</option><option>Growth capital</option><option>Capital structure</option><option>Operational efficiency</option><option>Market pressure/competition</option><option>Overdue bills</option><option>Other</option>
                   </select>
                 </label>
                 <label style="flex-direction:row; align-items:center; gap:10px; margin-top:6px;">
