@@ -4,6 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="assets/styles/main.css">
+  <link rel="icon" href="/assets/images/favicon.ico" type="image/x-icon">
   <title>Charlton Bleecker — Deal Prospect Intake</title>
  
 </head>
@@ -19,7 +20,7 @@
         </div>
       </div>
       <nav class="nav">
-        <a class="btn" href="#">Submit a Deal</a>
+        <!-- <a class="btn" href="#">Submit a Deal</a> -->
       </nav>
     </div>
   </div>
@@ -103,12 +104,12 @@
                   <button type="button" class="dropdown-btn" data-dropdown="industry">Select industries</button>
                   <div class="dropdown-list">
                     <label><input type="checkbox" value="Business Services"> Business Services</label>
+                    <label><input type="checkbox" value="Consumer"> Consumer</label>
                     <label><input type="checkbox" value="Defense"> Defense</label>
                     <label><input type="checkbox" value="Energy"> Energy</label>
                     <label><input type="checkbox" value="Financial Services"> Financial Services</label>
                     <label><input type="checkbox" value="Healthcare"> Healthcare</label>
                     <label><input type="checkbox" value="Industrial / Trades"> Industrial / Trades</label>
-                    <label><input type="checkbox" value="Consumer"> Consumer</label>
                     <label><input type="checkbox" value="Technology"> Technology</label>
                     <label><input type="checkbox" value="Other"> Other</label>
                   </div>
@@ -214,7 +215,7 @@
           <div class="submitbar">
             <span class="muted">By submitting, you agree to our confidentiality & data use terms.</span>
             <div style="display:flex; gap:10px;">
-              <button type="button" class="btn secondary">Save Draft</button>
+              <!--<button type="button" class="btn secondary">Save Draft</button> -->
               <button type="submit" class="btn">Submit Opportunity</button>
             </div>
           </div>
@@ -225,68 +226,6 @@
     <footer>© 2025 Charlton Bleecker Group LLC — All rights reserved.</footer>
   </main>
 
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-  document.querySelectorAll(".multiselect-dropdown").forEach(dropdown => {
-    const button = dropdown.querySelector(".dropdown-btn");
-    const list = dropdown.querySelector(".dropdown-list");
-
-    const hiddenInput = document.createElement("input");
-    hiddenInput.type = "hidden";
-    hiddenInput.name = dropdown.dataset.name;
-    dropdown.appendChild(hiddenInput);
-
-    const defaultText = button.textContent.trim();
-
-    const updateDropdown = () => {
-      const selected = Array.from(list.querySelectorAll("input:checked")).map(cb => cb.value);
-      hiddenInput.value = selected.join(", ");
-      button.textContent = selected.length === 0 ? defaultText : selected.length === 1 ? selected[0] : `${selected.length} selected`;
-    };
-
-    button.addEventListener("click", e => {
-      e.preventDefault();
-      e.stopPropagation();
-      dropdown.classList.toggle("open");
-    });
-
-    list.querySelectorAll("input[type='checkbox']").forEach(cb => cb.addEventListener("change", updateDropdown));
-    document.addEventListener("click", e => { if (!dropdown.contains(e.target)) dropdown.classList.remove("open"); });
-    updateDropdown();
-  });
-
-  const form = document.getElementById("leadForm");
-  if (!form) return;
-
-  form.addEventListener("submit", async e => {
-    e.preventDefault();
-    const btn = form.querySelector("button[type='submit']");
-    btn.disabled = true;
-    btn.textContent = "Submitting...";
-
-    const formData = new FormData(form);
-    const payload = Object.fromEntries(formData.entries());
-    document.querySelectorAll(".multiselect-dropdown input[type='hidden']").forEach(i => payload[i.name] = i.value);
-
-    try {
-      const res = await fetch(form.action, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
-      });
-      const data = await res.json();
-      if (res.ok && data.status === "received") {
-        const redirect = data.redirect || "thank-you.html";
-        setTimeout(() => window.location.href = redirect, 800);
-      } else throw new Error("Submission failed");
-    } catch (err) {
-      alert("Error submitting form. Please try again.");
-      console.error(err);
-      btn.disabled = false;
-      btn.textContent = "Submit Opportunity";
-    }
-  });
-});
-</script>
+<script src="assets/scripts/form.js" defer></script>
 </body>
 </html>
