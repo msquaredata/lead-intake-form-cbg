@@ -419,3 +419,79 @@ select[multiple]::-webkit-scrollbar-thumb:hover {
   background: #9ab8d5;
 }
 
+/* =============================
+   Multi-Select Dropdown (Checkbox)
+   ============================= */
+.multiselect-dropdown {
+  position: relative;
+  width: 100%;
+}
+
+.dropdown-btn {
+  width: 100%;
+  text-align: left;
+  background: #fff;
+  border: 1px solid #ccd6e0;
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 15px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #1a1a1a;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.dropdown-btn::after {
+  content: "▾";
+  font-size: 14px;
+  color: #0a2540;
+}
+
+.dropdown-btn.active {
+  border-color: #0a2540;
+  box-shadow: 0 0 0 3px rgba(10, 37, 64, 0.15);
+}
+
+.dropdown-list {
+  position: absolute;
+  top: 110%;
+  left: 0;
+  width: 100%;
+  background: #fff;
+  border: 1px solid #ccd6e0;
+  border-radius: 8px;
+  padding: 8px;
+  display: none;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 220px;
+  overflow-y: auto;
+  z-index: 1000;
+}
+
+.dropdown-list label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.dropdown-list input[type="checkbox"] {
+  accent-color: #0a2540;
+}
+
+.dropdown-list.show {
+  display: flex;
+}
+
+.dropdown-btn span.selected {
+  color: #0a2540;
+  font-weight: 500;
+  flex-wrap: wrap;
+  word-break: break-word;
+  white-space: normal;
+}
+

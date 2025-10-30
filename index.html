@@ -101,11 +101,23 @@
             <div class="row cols-2">
               <label><span>Business Name</span><input type="text" name="businessName" placeholder="Acme Services, Inc."></label>
               <label><span>Website</span><input type="url" name="website" placeholder="https://example.com"></label>
-              <label><span>Industry / Sector</span>
-                <select multiple name="industry">
-                  <option>Business Services</option><option>Defense</option><option>Energy</option><option>Financial Services</option><option>Healthcare</option><option>Industrial/Trades</option>
-                  <option>Consumer</option><option>Technology</option><option>Other</option>
-                </select>
+         <label><span>Industry / Sector</span>
+  <div class="multiselect-dropdown" data-name="industry">
+    <button type="button" class="dropdown-btn">Select industries</button>
+    <div class="dropdown-list">
+      <label><input type="checkbox" value="Business Services"> Business Services</label>
+      <label><input type="checkbox" value="Defense"> Defense</label>
+      <label><input type="checkbox" value="Energy"> Energy</label>
+      <label><input type="checkbox" value="Financial Services"> Financial Services</label>
+      <label><input type="checkbox" value="Healthcare"> Healthcare</label>
+      <label><input type="checkbox" value="Industrial / Trades"> Industrial / Trades</label>
+      <label><input type="checkbox" value="Consumer"> Consumer</label>
+      <label><input type="checkbox" value="Technology"> Technology</label>
+      <label><input type="checkbox" value="Other"> Other</label>
+    </div>
+  </div>
+</label>
+
               </label>
               <label><span>Headquarters (City, State)</span><input type="text" name="hq" placeholder="Fort Lauderdale, FL"></label>
               <label><span>Year Founded</span><input type="number" name="yearFounded" placeholder="1998"></label>
@@ -181,11 +193,22 @@
                 <textarea name="fitReason" placeholder="Quick pitch: durable cash flows, succession opportunity, strong moat, growth vectors, etc."></textarea>
               </label>
               <div class="row cols-2">
-                <label><span>Biggest Current Challenge</span>
-                  <select multiple name="challenge">
-                    <option>Succession planning</option><option>Debt</option><option>Growth capital</option><option>Capital structure</option><option>Operational efficiency</option><option>Market pressure/competition</option><option>Overdue bills</option><option>Other</option>
-                  </select>
-                </label>
+             <label><span>Biggest Current Challenge</span>
+  <div class="multiselect-dropdown" data-name="challenge">
+    <button type="button" class="dropdown-btn">Select challenges</button>
+    <div class="dropdown-list">
+      <label><input type="checkbox" value="Succession Planning"> Succession Planning</label>
+      <label><input type="checkbox" value="Debt"> Debt</label>
+      <label><input type="checkbox" value="Growth Capital"> Growth Capital</label>
+      <label><input type="checkbox" value="Capital Structure"> Capital Structure</label>
+      <label><input type="checkbox" value="Operational Efficiency"> Operational Efficiency</label>
+      <label><input type="checkbox" value="Market Pressure / Competition"> Market Pressure / Competition</label>
+      <label><input type="checkbox" value="Overdue Bills"> Overdue Bills</label>
+      <label><input type="checkbox" value="Other"> Other</label>
+    </div>
+  </div>
+</label>
+
                 <label style="flex-direction:row; align-items:center; gap:10px; margin-top:6px;">
                   <input type="checkbox" name="hasManagementTeam"> <span>Experienced management team in place</span>
                 </label>
@@ -268,6 +291,42 @@
       });
     });
   </script>
+
+  <script>
+document.addEventListener("DOMContentLoaded", () => {
+  document.querySelectorAll(".multiselect-dropdown").forEach(dropdown => {
+    const button = dropdown.querySelector(".dropdown-btn");
+    const list = dropdown.querySelector(".dropdown-list");
+    const hiddenInput = document.createElement("input");
+    hiddenInput.type = "hidden";
+    hiddenInput.name = dropdown.dataset.name;
+    dropdown.appendChild(hiddenInput);
+
+    button.addEventListener("click", () => {
+      list.classList.toggle("show");
+      button.classList.toggle("active");
+    });
+
+    list.querySelectorAll("input[type='checkbox']").forEach(cb => {
+      cb.addEventListener("change", () => {
+        const selected = Array.from(list.querySelectorAll("input:checked")).map(cb => cb.value);
+        hiddenInput.value = selected.join(", ");
+        button.innerHTML = selected.length
+          ? `<span class="selected">${selected.join(", ")}</span>`
+          : `Select ${dropdown.dataset.name}`;
+      });
+    });
+
+    document.addEventListener("click", e => {
+      if (!dropdown.contains(e.target)) {
+        list.classList.remove("show");
+        button.classList.remove("active");
+      }
+    });
+  });
+});
+</script>
+
 
 </body>
 </html>
