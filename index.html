@@ -25,7 +25,6 @@
 
   <main class="container">
 
-    <!-- Hero Section -->
     <section class="grid grid-5">
       <div class="hero">
         <h2>Deal Prospect Intake</h2>
@@ -39,7 +38,6 @@
       </div>
     </section>
 
-    <!-- Main Form Card -->
     <section class="card shell">
       <div class="formgrid">
         <aside class="rail">
@@ -70,10 +68,8 @@
           </div>
         </aside>
 
-        <!-- Form Starts -->
         <form id="leadForm" action="https://msquaresolutions.app.n8n.cloud/webhook-test/lead-intake" method="POST">
 
-          <!-- 1. Contact -->
           <div>
             <div class="section-title">
               <span>1 · Contact Information</span>
@@ -93,7 +89,6 @@
             </div>
           </div>
 
-          <!-- 2. Business -->
           <div>
             <div class="section-title"><span>2 · Business Profile</span></div>
             <div class="row cols-2">
@@ -123,7 +118,6 @@
             </div>
           </div>
 
-          <!-- 3. Ownership -->
           <div>
             <div class="section-title"><span>3 · Ownership & Transition</span></div>
             <div class="row cols-2">
@@ -145,7 +139,6 @@
             </div>
           </div>
 
-          <!-- 4. Financials -->
           <div>
             <div class="section-title"><span>4 · Financial Snapshot (Estimates OK)</span></div>
             <div class="row cols-3">
@@ -173,10 +166,10 @@
                   <label class="chip"><input type="checkbox" name="assets" value="Contracts"> Contracts</label>
                   <label class="chip"><input type="checkbox" name="assets" value="Goodwill/Brand"> Goodwill/Brand</label>
                   <label class="chip"><input type="checkbox" name="assets" value="IP/Patents"> IP/Patents</label>
-                  <label class="chip"><input type="checkbox" name="assets" value="Equipment"> Equipment</label>
-                  <label class="chip"><input type="checkbox" name="assets" value="Team"> Team</label>
-                  <label class="chip"><input type="checkbox" name="assets" value="Technology"> Technology</label>
-                  <label class="chip"><input type="checkbox" name="assets" value="Other"> Other</label>
+                  <label class="chip"><input type="checkbox" value="Equipment"> Equipment</label>
+                  <label class="chip"><input type="checkbox" value="Team"> Team</label>
+                  <label class="chip"><input type="checkbox" value="Technology"> Technology</label>
+                  <label class="chip"><input type="checkbox" value="Other"> Other</label>
                 </div>
               </label>
 
@@ -186,7 +179,6 @@
             </div>
           </div>
 
-          <!-- 5. Fit -->
           <div>
             <div class="section-title"><span>5 · Strategic Fit</span></div>
             <div class="row">
@@ -218,7 +210,6 @@
             </div>
           </div>
 
-          <!-- 6. Files -->
           <div>
             <div class="section-title"><span>6 · Files & Extras</span></div>
             <div class="row cols-2">
@@ -250,7 +241,7 @@
 <script>
 document.addEventListener("DOMContentLoaded", () => {
 
-  /* ======= Handle form submission (Addition for multiselect data) ======= */
+  /* ======= Handle form submission ======= */
   const form = document.getElementById("leadForm");
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -262,11 +253,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const formData = new FormData(form);
     const formObject = Object.fromEntries(formData.entries());
 
-    // ADDITION: Include multiselect values into the JSON payload
+    // Include multiselect values into the JSON payload
     document.querySelectorAll(".multiselect-dropdown input[type='hidden']").forEach(input => {
         formObject[input.name] = input.value;
     });
-    // END ADDITION
 
     try {
       const response = await fetch(form.action, {
@@ -293,7 +283,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  /* ======= Initialize custom multiselect dropdowns (CLEANER FIX) ======= */
+  /* ======= Initialize custom multiselect dropdowns (FINAL FIX) ======= */
   document.querySelectorAll(".multiselect-dropdown").forEach(dropdown => {
     const button = dropdown.querySelector(".dropdown-btn");
     const list = dropdown.querySelector(".dropdown-list");
@@ -302,7 +292,7 @@ document.addEventListener("DOMContentLoaded", () => {
     hiddenInput.name = dropdown.dataset.name;
     dropdown.appendChild(hiddenInput);
 
-    // Get the original default text content
+    // Get the original default text content from the button
     const defaultText = button.textContent.trim();
 
     // Function to update selected values and button text
@@ -313,25 +303,29 @@ document.addEventListener("DOMContentLoaded", () => {
         let newText;
         if (selected.length === 0) {
             newText = defaultText;
+            // Remove the 'selected' class on the button
+            button.classList.remove('has-selection');
         } else if (selected.length === 1) {
             newText = selected[0];
+            button.classList.add('has-selection');
         } else {
             newText = `${selected.length} items selected`;
+            button.classList.add('has-selection');
         }
         
-        // Use textContent to only update the text, leaving the ::after arrow intact
+        // Use textContent to only update the text, preserving the ::after arrow
         button.textContent = newText;
     };
     
-    // Initial update to set the default state and handle pre-checked items
+    // Initial update
     updateDropdown();
 
-    // prevent form submission on button click
+    // The primary click handler: Toggles the 'open' class on the parent dropdown
     button.addEventListener("click", (e) => {
       e.preventDefault();
       e.stopPropagation();
-      list.classList.toggle("show");
-      button.classList.toggle("active");
+      // FIX: Toggle the 'open' class on the parent div to control the list visibility via CSS
+      dropdown.classList.toggle("open");
     });
 
     // update selected values
@@ -342,8 +336,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // close dropdown on outside click
     document.addEventListener("click", (e) => {
       if (!dropdown.contains(e.target)) {
-        list.classList.remove("show");
-        button.classList.remove("active");
+        dropdown.classList.remove("open");
       }
     });
   });

@@ -425,34 +425,75 @@ select[multiple]::-webkit-scrollbar-thumb:hover {
 .multiselect-dropdown {
   position: relative;
   width: 100%;
-  z-index: 10; /* Important for layering */
+  /* CRITICAL: Ensure z-index is high for dropdown content */
+  z-index: 10;
 }
 
-/* ... other button styles ... */
+.dropdown-btn {
+  width: 100%;
+  text-align: left;
+  background: #fff;
+  border: 1px solid #ccd6e0;
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 15px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #1a1a1a;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
 
 .dropdown-btn::after {
-  content: "▾"; /* This creates the arrow */
+  content: "▾";
   font-size: 14px;
   color: #0a2540;
 }
 
-/* ... other list styles ... */
+/* NEW: Highlight button when it has a selection */
+.dropdown-btn.has-selection {
+  color: #0a2540;
+  font-weight: 500;
+}
+
+/* NEW: Highlight button border when open */
+.multiselect-dropdown.open .dropdown-btn {
+  border-color: #0a2540;
+  box-shadow: 0 0 0 3px rgba(10, 37, 64, 0.15);
+}
 
 .dropdown-list {
   position: absolute;
   top: 110%;
   left: 0;
   width: 100%;
-  /* ... other styles ... */
-  display: none; /* CRITICAL: Hides the list initially */
-  /* ... other styles ... */
+  background: #fff;
+  border: 1px solid #ccd6e0;
+  border-radius: 8px;
+  padding: 8px;
+  
+  /* CRITICAL FIX: Use opacity/visibility to show/hide to avoid display:none conflicts */
+  visibility: hidden; 
+  opacity: 0;
+  pointer-events: none; /* Disable interaction when hidden */
+  transition: opacity 0.2s, visibility 0.2s;
+
+  flex-direction: column;
+  gap: 6px;
+  max-height: 220px;
+  overflow-y: auto;
   z-index: 1000;
 }
 
-/* FIX: This class is applied by JavaScript to make the dropdown visible */
-.multiselect-dropdown .dropdown-list.show {
-  display: flex; /* CRITICAL: Shows the list when JS is clicked */
+/* NEW: Rule to show the dropdown list when the parent has the 'open' class */
+.multiselect-dropdown.open .dropdown-list {
+  visibility: visible;
+  opacity: 1;
+  pointer-events: auto; /* Enable interaction when visible */
+  display: flex; /* Ensure it lays out as a column */
 }
+
 .dropdown-list label {
   display: flex;
   align-items: center;
@@ -463,17 +504,4 @@ select[multiple]::-webkit-scrollbar-thumb:hover {
 
 .dropdown-list input[type="checkbox"] {
   accent-color: #0a2540;
-}
-
-/* FIX: This class is applied by JavaScript to make the dropdown visible */
-.multiselect-dropdown .dropdown-list.show {
-  display: flex;
-}
-
-.dropdown-btn span.selected {
-  color: #0a2540;
-  font-weight: 500;
-  flex-wrap: wrap;
-  word-break: break-word;
-  white-space: normal;
 }
