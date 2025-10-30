@@ -506,3 +506,76 @@ select[multiple]::-webkit-scrollbar-thumb:hover {
 .dropdown-list input[type="checkbox"] {
   accent-color: #0a2540;
 }
+
+/* =============================
+   Sidebar Layout & Bullet Style
+   ============================= */
+
+/* Adds breathing room between sidebar sections */
+.rail .why {
+  margin-bottom: 16px; /* space below the “Why we ask” card */
+}
+
+/* Reintroduce elegant bullets with proper spacing */
+.aside ul {
+  list-style: none;
+  padding: 0;
+  margin: 12px 0 0 0;
+}
+
+.aside ul li {
+  position: relative;
+  padding-left: 18px;
+  margin: 8px 0;
+  line-height: 1.55;
+  color: #111827;
+  font-size: 14px;
+}
+
+/* Subtle round bullet (consistent with mSquare theme) */
+.aside ul li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 8px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background-color: #0A2540; /* navy theme accent */
+  opacity: 0.85;
+}
+
+/* Small breathing room between “What we look for” card and note */
+.aside .note {
+  margin-top: 18px;
+}
+
+
+/* --- Multiselect Checkbox Alignment Fix --- */
+.multiselect-dropdown .dropdown-list label {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: flex-start;
+  gap: 8px;
+  padding: 6px 12px;
+  margin: 0;
+  text-align: left;
+  font-size: 14px;
+  line-height: 1.4;
+  color: #1a1a1a;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.multiselect-dropdown .dropdown-list label input[type="checkbox"] {
+  margin: 0;
+  flex-shrink: 0;
+  transform: scale(1.1);
+  accent-color: #0a2540;
+}
+
+.multiselect-dropdown .dropdown-list label:hover {
+  background-color: #f3f6fc;
+  border-radius: 6px;
+}
