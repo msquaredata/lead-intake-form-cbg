@@ -241,7 +241,64 @@
 <script>
 document.addEventListener("DOMContentLoaded", () => {
 
-  /* ======= Handle form submission ======= */
+  /* ======= Initialize custom multiselect dropdowns (CORRECT LOCATION) ======= */
+  document.querySelectorAll(".multiselect-dropdown").forEach(dropdown => {
+    const button = dropdown.querySelector(".dropdown-btn");
+    const list = dropdown.querySelector(".dropdown-list");
+    const hiddenInput = document.createElement("input");
+    hiddenInput.type = "hidden";
+    hiddenInput.name = dropdown.dataset.name;
+    dropdown.appendChild(hiddenInput);
+
+    // Get the original default text content from the button
+    const defaultText = button.textContent.trim();
+
+    // Function to update selected values and button text
+    const updateDropdown = () => {
+        const selected = Array.from(list.querySelectorAll("input:checked")).map(cb => cb.value);
+        hiddenInput.value = selected.join(", ");
+        
+        let newText;
+        if (selected.length === 0) {
+            newText = defaultText;
+            button.classList.remove('has-selection');
+        } else if (selected.length === 1) {
+            newText = selected[0];
+            button.classList.add('has-selection');
+        } else {
+            newText = `${selected.length} items selected`;
+            button.classList.add('has-selection');
+        }
+        
+        // Use textContent to only update the text, preserving the ::after arrow
+        button.textContent = newText;
+    };
+    
+    // Initial update
+    updateDropdown();
+
+    // The primary click handler: Toggles the 'open' class on the parent dropdown
+    button.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      // THIS IS THE CRITICAL LINE: TOGGLE 'open' on the parent div
+      dropdown.classList.toggle("open");
+    });
+
+    // update selected values
+    list.querySelectorAll("input[type='checkbox']").forEach(cb => {
+      cb.addEventListener("change", updateDropdown);
+    });
+
+    // close dropdown on outside click
+    document.addEventListener("click", (e) => {
+      if (!dropdown.contains(e.target)) {
+        dropdown.classList.remove("open");
+      }
+    });
+  });
+
+  /* ======= Handle form submission (Maintains submission logic) ======= */
   const form = document.getElementById("leadForm");
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -281,64 +338,6 @@ document.addEventListener("DOMContentLoaded", () => {
       button.disabled = false;
       button.textContent = "Submit Opportunity";
     }
-  });
-
-  /* ======= Initialize custom multiselect dropdowns (FINAL FIX) ======= */
-  document.querySelectorAll(".multiselect-dropdown").forEach(dropdown => {
-    const button = dropdown.querySelector(".dropdown-btn");
-    const list = dropdown.querySelector(".dropdown-list");
-    const hiddenInput = document.createElement("input");
-    hiddenInput.type = "hidden";
-    hiddenInput.name = dropdown.dataset.name;
-    dropdown.appendChild(hiddenInput);
-
-    // Get the original default text content from the button
-    const defaultText = button.textContent.trim();
-
-    // Function to update selected values and button text
-    const updateDropdown = () => {
-        const selected = Array.from(list.querySelectorAll("input:checked")).map(cb => cb.value);
-        hiddenInput.value = selected.join(", ");
-        
-        let newText;
-        if (selected.length === 0) {
-            newText = defaultText;
-            // Remove the 'selected' class on the button
-            button.classList.remove('has-selection');
-        } else if (selected.length === 1) {
-            newText = selected[0];
-            button.classList.add('has-selection');
-        } else {
-            newText = `${selected.length} items selected`;
-            button.classList.add('has-selection');
-        }
-        
-        // Use textContent to only update the text, preserving the ::after arrow
-        button.textContent = newText;
-    };
-    
-    // Initial update
-    updateDropdown();
-
-    // The primary click handler: Toggles the 'open' class on the parent dropdown
-    button.addEventListener("click", (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      // FIX: Toggle the 'open' class on the parent div to control the list visibility via CSS
-      dropdown.classList.toggle("open");
-    });
-
-    // update selected values
-    list.querySelectorAll("input[type='checkbox']").forEach(cb => {
-      cb.addEventListener("change", updateDropdown);
-    });
-
-    // close dropdown on outside click
-    document.addEventListener("click", (e) => {
-      if (!dropdown.contains(e.target)) {
-        dropdown.classList.remove("open");
-      }
-    });
   });
 
 });
