@@ -433,10 +433,11 @@ select[multiple]::-webkit-scrollbar-thumb:hover {
   width: 100%;
   text-align: left;
   background: #fff;
-  border: 1px solid #ccd6e0;
-  border-radius: 8px;
-  padding: 10px 12px;
-  font-size: 15px;
+  /* Use var(--border) for consistency, although #ccd6e0 is fine */
+  border: 1px solid var(--border); 
+  border-radius: 12px; /* Make it match other inputs (12px vs 8px) */
+  padding: 12px 14px; /* Matches input[type="text"] padding */
+  font-size: 14px;  /* Matches input[type="text"] font-size */
   cursor: pointer;
   display: flex;
   justify-content: space-between;
