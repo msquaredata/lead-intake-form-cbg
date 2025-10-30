@@ -579,3 +579,14 @@ select[multiple]::-webkit-scrollbar-thumb:hover {
   background-color: #f3f6fc;
   border-radius: 6px;
 }
+
+/* === Single checkbox row alignment === */
+.label-inline {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  margin-top: 6px;
+  font-size: 14px;
+  color: var(--txt);
+}
