@@ -243,9 +243,48 @@
     <footer>© 2025 Charlton Bleecker Group LLC — All rights reserved.</footer>
   </main>
 
-  <script>
+ <script>
 document.addEventListener("DOMContentLoaded", () => {
-  document.querySelectorAll(".multiselect-dropdown").forEach(dropdown => {
+
+  /* ======= Handle form submission ======= */
+  const form = document.getElementById("leadForm");
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const button = form.querySelector("button[type='submit']");
+    button.disabled = true;
+    button.textContent = "Submitting...";
+
+    const formData = new FormData(form);
+    const formObject = Object.fromEntries(formData.entries());
+
+    try {
+      const response = await fetch(form.action, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formObject),
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.status === "received") {
+        const redirectURL = data.redirect || "thank-you.html";
+        setTimeout(() => (window.location.href = redirectURL), 800);
+      } else {
+        alert("Submission failed. Please try again.");
+        button.disabled = false;
+        button.textContent = "Submit Opportunity";
+      }
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      alert("Unable to connect to the server. Please try again later.");
+      button.disabled = false;
+      button.textContent = "Submit Opportunity";
+    }
+  });
+
+  /* ======= Initialize custom multiselect dropdowns ======= */
+  document.querySelectorAll(".multiselect-dropdown").forEach((dropdown) => {
     const button = dropdown.querySelector(".dropdown-btn");
     const list = dropdown.querySelector(".dropdown-list");
     const hiddenInput = document.createElement("input");
@@ -259,9 +298,9 @@ document.addEventListener("DOMContentLoaded", () => {
       button.classList.toggle("active");
     });
 
-    list.querySelectorAll("input[type='checkbox']").forEach(cb => {
+    list.querySelectorAll("input[type='checkbox']").forEach((cb) => {
       cb.addEventListener("change", () => {
-        const selected = Array.from(list.querySelectorAll("input:checked")).map(cb => cb.value);
+        const selected = Array.from(list.querySelectorAll("input:checked")).map((cb) => cb.value);
         hiddenInput.value = selected.join(", ");
         button.innerHTML = selected.length
           ? `<span class='selected'>${selected.join(", ")}</span>`
@@ -269,14 +308,16 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     });
 
-    document.addEventListener("click", e => {
+    document.addEventListener("click", (e) => {
       if (!dropdown.contains(e.target)) {
         list.classList.remove("show");
         button.classList.remove("active");
       }
     });
   });
+
 });
-  </script>
+</script>
+
 </body>
 </html>
