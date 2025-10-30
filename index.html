@@ -18,7 +18,6 @@
         </div>
       </div>
 
-      <!-- Simplified navigation -->
       <nav class="nav">
         <a class="btn" href="#">Submit a Deal</a>
       </nav>
@@ -101,24 +100,23 @@
             <div class="row cols-2">
               <label><span>Business Name</span><input type="text" name="businessName" placeholder="Acme Services, Inc."></label>
               <label><span>Website</span><input type="url" name="website" placeholder="https://example.com"></label>
-         <label><span>Industry / Sector</span>
-  <div class="multiselect-dropdown" data-name="industry">
-    <button type="button" class="dropdown-btn">Select industries</button>
-    <div class="dropdown-list">
-      <label><input type="checkbox" value="Business Services"> Business Services</label>
-      <label><input type="checkbox" value="Defense"> Defense</label>
-      <label><input type="checkbox" value="Energy"> Energy</label>
-      <label><input type="checkbox" value="Financial Services"> Financial Services</label>
-      <label><input type="checkbox" value="Healthcare"> Healthcare</label>
-      <label><input type="checkbox" value="Industrial / Trades"> Industrial / Trades</label>
-      <label><input type="checkbox" value="Consumer"> Consumer</label>
-      <label><input type="checkbox" value="Technology"> Technology</label>
-      <label><input type="checkbox" value="Other"> Other</label>
-    </div>
-  </div>
-</label>
-
-              </label>
+              <div class="field-group">
+                <span>Industry / Sector</span>
+                <div class="multiselect-dropdown" data-name="industry">
+                  <button type="button" class="dropdown-btn">Select industries</button>
+                  <div class="dropdown-list">
+                    <label><input type="checkbox" value="Business Services"> Business Services</label>
+                    <label><input type="checkbox" value="Defense"> Defense</label>
+                    <label><input type="checkbox" value="Energy"> Energy</label>
+                    <label><input type="checkbox" value="Financial Services"> Financial Services</label>
+                    <label><input type="checkbox" value="Healthcare"> Healthcare</label>
+                    <label><input type="checkbox" value="Industrial / Trades"> Industrial / Trades</label>
+                    <label><input type="checkbox" value="Consumer"> Consumer</label>
+                    <label><input type="checkbox" value="Technology"> Technology</label>
+                    <label><input type="checkbox" value="Other"> Other</label>
+                  </div>
+                </div>
+              </div>
               <label><span>Headquarters (City, State)</span><input type="text" name="hq" placeholder="Fort Lauderdale, FL"></label>
               <label><span>Year Founded</span><input type="number" name="yearFounded" placeholder="1998"></label>
             </div>
@@ -193,22 +191,22 @@
                 <textarea name="fitReason" placeholder="Quick pitch: durable cash flows, succession opportunity, strong moat, growth vectors, etc."></textarea>
               </label>
               <div class="row cols-2">
-             <label><span>Biggest Current Challenge</span>
-  <div class="multiselect-dropdown" data-name="challenge">
-    <button type="button" class="dropdown-btn">Select challenges</button>
-    <div class="dropdown-list">
-      <label><input type="checkbox" value="Succession Planning"> Succession Planning</label>
-      <label><input type="checkbox" value="Debt"> Debt</label>
-      <label><input type="checkbox" value="Growth Capital"> Growth Capital</label>
-      <label><input type="checkbox" value="Capital Structure"> Capital Structure</label>
-      <label><input type="checkbox" value="Operational Efficiency"> Operational Efficiency</label>
-      <label><input type="checkbox" value="Market Pressure / Competition"> Market Pressure / Competition</label>
-      <label><input type="checkbox" value="Overdue Bills"> Overdue Bills</label>
-      <label><input type="checkbox" value="Other"> Other</label>
-    </div>
-  </div>
-</label>
-
+                <div class="field-group">
+                  <span>Biggest Current Challenge</span>
+                  <div class="multiselect-dropdown" data-name="challenge">
+                    <button type="button" class="dropdown-btn">Select challenges</button>
+                    <div class="dropdown-list">
+                      <label><input type="checkbox" value="Succession Planning"> Succession Planning</label>
+                      <label><input type="checkbox" value="Debt"> Debt</label>
+                      <label><input type="checkbox" value="Growth Capital"> Growth Capital</label>
+                      <label><input type="checkbox" value="Capital Structure"> Capital Structure</label>
+                      <label><input type="checkbox" value="Operational Efficiency"> Operational Efficiency</label>
+                      <label><input type="checkbox" value="Market Pressure / Competition"> Market Pressure / Competition</label>
+                      <label><input type="checkbox" value="Overdue Bills"> Overdue Bills</label>
+                      <label><input type="checkbox" value="Other"> Other</label>
+                    </div>
+                  </div>
+                </div>
                 <label style="flex-direction:row; align-items:center; gap:10px; margin-top:6px;">
                   <input type="checkbox" name="hasManagementTeam"> <span>Experienced management team in place</span>
                 </label>
@@ -231,7 +229,6 @@
             </div>
           </div>
 
-          <!-- Submit Section -->
           <div class="submitbar">
             <span class="muted">By submitting, you agree to our confidentiality & data use terms.</span>
             <div style="display:flex; gap:10px;">
@@ -239,58 +236,12 @@
               <button type="submit" class="btn">Submit Opportunity</button>
             </div>
           </div>
-
         </form>
-        <!-- Form Ends -->
       </div>
     </section>
 
     <footer>© 2025 Charlton Bleecker Group LLC — All rights reserved.</footer>
   </main>
-
-  <!-- Hybrid submission logic -->
-  <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      const form = document.getElementById("leadForm");
-
-      form.addEventListener("submit", async (e) => {
-        e.preventDefault(); // intercept native submit
-
-        const button = form.querySelector("button[type='submit']");
-        button.disabled = true;
-        button.textContent = "Submitting...";
-
-        const formData = new FormData(form);
-        const formObject = Object.fromEntries(formData.entries());
-
-        try {
-          const response = await fetch(form.action, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(formObject),
-          });
-
-          const data = await response.json();
-
-          if (response.ok && data.status === "received") {
-            const redirectURL = data.redirect || "thank-you.html";
-            setTimeout(() => {
-              window.location.href = redirectURL;
-            }, 800);
-          } else {
-            alert("Submission failed. Please try again.");
-            button.disabled = false;
-            button.textContent = "Submit Opportunity";
-          }
-        } catch (error) {
-          console.error("Error submitting form:", error);
-          alert("Unable to connect to the server. Please try again later.");
-          button.disabled = false;
-          button.textContent = "Submit Opportunity";
-        }
-      });
-    });
-  </script>
 
   <script>
 document.addEventListener("DOMContentLoaded", () => {
@@ -302,7 +253,8 @@ document.addEventListener("DOMContentLoaded", () => {
     hiddenInput.name = dropdown.dataset.name;
     dropdown.appendChild(hiddenInput);
 
-    button.addEventListener("click", () => {
+    button.addEventListener("click", (e) => {
+      e.stopPropagation();
       list.classList.toggle("show");
       button.classList.toggle("active");
     });
@@ -312,7 +264,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const selected = Array.from(list.querySelectorAll("input:checked")).map(cb => cb.value);
         hiddenInput.value = selected.join(", ");
         button.innerHTML = selected.length
-          ? `<span class="selected">${selected.join(", ")}</span>`
+          ? `<span class='selected'>${selected.join(", ")}</span>`
           : `Select ${dropdown.dataset.name}`;
       });
     });
@@ -325,8 +277,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 });
-</script>
-
-
+  </script>
 </body>
 </html>
