@@ -357,3 +357,65 @@ body.thankyou {
 .thankyou-card .btn:hover {
   background: #1b3b6f;
 }
+
+/* =============================
+   Multi-Select Styling (mSquare Theme)
+   ============================= */
+select[multiple] {
+  width: 100%;
+  min-height: 140px;
+  padding: 10px 12px;
+  border: 1px solid #ccd6e0;
+  border-radius: 8px;
+  background-color: #fff;
+  color: #1a1a1a;
+  font-family: inherit;
+  font-size: 15px;
+  line-height: 1.5;
+  outline: none;
+  appearance: none;
+  overflow-y: auto;
+  cursor: pointer;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+/* Hover and focus states */
+select[multiple]:hover {
+  border-color: #9ab8d5;
+}
+
+select[multiple]:focus {
+  border-color: #0a2540;
+  box-shadow: 0 0 0 3px rgba(10, 37, 64, 0.15);
+}
+
+/* Option appearance */
+select[multiple] option {
+  padding: 6px 10px;
+  border-radius: 4px;
+  margin: 2px 0;
+}
+
+/* Highlight selected options */
+select[multiple] option:checked {
+  background-color: #eaf2fa;
+  color: #0a2540;
+  font-weight: 500;
+}
+
+/* Optional scrollbar styling for long lists */
+select[multiple]::-webkit-scrollbar {
+  width: 8px;
+}
+select[multiple]::-webkit-scrollbar-track {
+  background: #f0f4f8;
+  border-radius: 8px;
+}
+select[multiple]::-webkit-scrollbar-thumb {
+  background: #c6d5e3;
+  border-radius: 8px;
+}
+select[multiple]::-webkit-scrollbar-thumb:hover {
+  background: #9ab8d5;
+}
+
