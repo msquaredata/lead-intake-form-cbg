@@ -17,7 +17,6 @@
           <p>Acquiring, scaling & operating enduring businesses</p>
         </div>
       </div>
-
       <nav class="nav">
         <a class="btn" href="#">Submit a Deal</a>
       </nav>
@@ -100,10 +99,11 @@
             <div class="row cols-2">
               <label><span>Business Name</span><input type="text" name="businessName" placeholder="Acme Services, Inc."></label>
               <label><span>Website</span><input type="url" name="website" placeholder="https://example.com"></label>
+
               <div class="field-group">
                 <span>Industry / Sector</span>
                 <div class="multiselect-dropdown" data-name="industry">
-                  <button type="button" class="dropdown-btn">Select industries</button>
+                  <button type="button" class="dropdown-btn" data-dropdown="industry">Select industries</button>
                   <div class="dropdown-list">
                     <label><input type="checkbox" value="Business Services"> Business Services</label>
                     <label><input type="checkbox" value="Defense"> Defense</label>
@@ -117,6 +117,7 @@
                   </div>
                 </div>
               </div>
+
               <label><span>Headquarters (City, State)</span><input type="text" name="hq" placeholder="Fort Lauderdale, FL"></label>
               <label><span>Year Founded</span><input type="number" name="yearFounded" placeholder="1998"></label>
             </div>
@@ -164,6 +165,7 @@
                 </select>
               </label>
             </div>
+
             <div class="row cols-2">
               <label><span>Key Assets</span>
                 <div class="chips">
@@ -177,6 +179,7 @@
                   <label class="chip"><input type="checkbox" name="assets" value="Other"> Other</label>
                 </div>
               </label>
+
               <label><span>Notable Customers or Contracts (optional)</span>
                 <textarea name="notableCustomers" placeholder="e.g., multi-year maintenance contracts; preferred vendor to X"></textarea>
               </label>
@@ -190,11 +193,12 @@
               <label><span>Why is this a strong fit for Charlton Bleecker?</span>
                 <textarea name="fitReason" placeholder="Quick pitch: durable cash flows, succession opportunity, strong moat, growth vectors, etc."></textarea>
               </label>
+
               <div class="row cols-2">
                 <div class="field-group">
                   <span>Biggest Current Challenge</span>
                   <div class="multiselect-dropdown" data-name="challenge">
-                    <button type="button" class="dropdown-btn">Select challenges</button>
+                    <button type="button" class="dropdown-btn" data-dropdown="challenge">Select challenges</button>
                     <div class="dropdown-list">
                       <label><input type="checkbox" value="Succession Planning"> Succession Planning</label>
                       <label><input type="checkbox" value="Debt"> Debt</label>
@@ -243,7 +247,7 @@
     <footer>© 2025 Charlton Bleecker Group LLC — All rights reserved.</footer>
   </main>
 
- <script>
+<script>
 document.addEventListener("DOMContentLoaded", () => {
 
   /* ======= Handle form submission ======= */
@@ -284,7 +288,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   /* ======= Initialize custom multiselect dropdowns ======= */
-  document.querySelectorAll(".multiselect-dropdown").forEach((dropdown) => {
+  document.querySelectorAll(".multiselect-dropdown").forEach(dropdown => {
     const button = dropdown.querySelector(".dropdown-btn");
     const list = dropdown.querySelector(".dropdown-list");
     const hiddenInput = document.createElement("input");
@@ -292,15 +296,18 @@ document.addEventListener("DOMContentLoaded", () => {
     hiddenInput.name = dropdown.dataset.name;
     dropdown.appendChild(hiddenInput);
 
+    // prevent form submission on button click
     button.addEventListener("click", (e) => {
+      e.preventDefault();
       e.stopPropagation();
       list.classList.toggle("show");
       button.classList.toggle("active");
     });
 
-    list.querySelectorAll("input[type='checkbox']").forEach((cb) => {
+    // update selected values
+    list.querySelectorAll("input[type='checkbox']").forEach(cb => {
       cb.addEventListener("change", () => {
-        const selected = Array.from(list.querySelectorAll("input:checked")).map((cb) => cb.value);
+        const selected = Array.from(list.querySelectorAll("input:checked")).map(cb => cb.value);
         hiddenInput.value = selected.join(", ");
         button.innerHTML = selected.length
           ? `<span class='selected'>${selected.join(", ")}</span>`
@@ -308,6 +315,7 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     });
 
+    // close dropdown on outside click
     document.addEventListener("click", (e) => {
       if (!dropdown.contains(e.target)) {
         list.classList.remove("show");
