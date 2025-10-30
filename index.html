@@ -5,22 +5,312 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="assets/styles/main.css">
   <title>Charlton Bleecker — Deal Prospect Intake</title>
+
+  <style>
+    /* --- Multiselect Dropdown Alignment & Style Fix --- */
+    .multiselect-dropdown {
+      position: relative;
+      display: inline-block;
+      width: 100%;
+    }
+
+    .multiselect-dropdown .dropdown-btn {
+      width: 100%;
+      padding: 10px 14px;
+      background: #fff;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      cursor: pointer;
+      text-align: left;
+      font-size: 14px;
+      color: #333;
+      position: relative;
+    }
+
+    .multiselect-dropdown .dropdown-btn::after {
+      content: "▾";
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 12px;
+      color: #555;
+      pointer-events: none;
+    }
+
+    .multiselect-dropdown.open .dropdown-btn::after {
+      transform: translateY(-50%) rotate(180deg);
+    }
+
+    .multiselect-dropdown .dropdown-list {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: #fff;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      margin-top: 4px;
+      padding: 8px 0;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+      display: none;
+      max-height: 200px;
+      overflow-y: auto;
+      z-index: 9999;
+    }
+
+    .multiselect-dropdown.open .dropdown-list {
+      display: block;
+    }
+
+    .multiselect-dropdown .dropdown-list label {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 6px 12px;
+      gap: 8px;
+      font-size: 14px;
+      color: #333;
+      cursor: pointer;
+      line-height: 1.4;
+      text-align: left;
+    }
+
+    .multiselect-dropdown .dropdown-list label:hover {
+      background-color: #f3f6fc;
+    }
+
+    .multiselect-dropdown .dropdown-list input[type="checkbox"] {
+      margin: 0;
+      accent-color: #1a73e8;
+      transform: scale(1.1);
+    }
+  </style>
 </head>
 
 <body>
-  <!-- (All existing markup unchanged) -->
-  <!-- ... truncated for brevity ... -->
-  <footer>© 2025 Charlton Bleecker Group LLC — All rights reserved.</footer>
+  <div class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">
+        <div class="logo">CB</div>
+        <div>
+          <h1>Charlton Bleecker</h1>
+          <p>Acquiring, scaling & operating enduring businesses</p>
+        </div>
+      </div>
+      <nav class="nav">
+        <a class="btn" href="#">Submit a Deal</a>
+      </nav>
+    </div>
+  </div>
+
+  <main class="container">
+    <section class="grid grid-5">
+      <div class="hero">
+        <h2>Deal Prospect Intake</h2>
+        <p>Share a concise snapshot of the opportunity. Estimates are fine. This helps us quickly determine fit and get you a fast, thoughtful response.</p>
+        <div class="bullets">
+          <div class="bullet"><div class="tick">✓</div> 5–7 min</div>
+          <div class="bullet"><div class="tick">✓</div> Secure & confidential</div>
+          <div class="bullet"><div class="tick">✓</div> Owner or advisor friendly</div>
+          <div class="bullet"><div class="tick">✓</div> CRM-ready fields</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card shell">
+      <div class="formgrid">
+        <aside class="rail">
+          <h4>Sections</h4>
+          <ol>
+            <li><span class="num">1</span> Contact</li>
+            <li><span class="num">2</span> Business</li>
+            <li><span class="num">3</span> Ownership</li>
+            <li><span class="num">4</span> Financials</li>
+            <li><span class="num">5</span> Fit</li>
+            <li><span class="num">6</span> Files</li>
+          </ol>
+
+          <div class="why">
+            <strong>Why we ask</strong><br>
+            We use this info to route the deal to the right partner and respond quickly. High-level numbers are fine.
+          </div>
+
+          <div class="aside">
+            <h3>What we look for</h3>
+            <ul>
+              <li>Durable cash flows, recurring or reoccurring revenue</li>
+              <li>Strong teams seeking succession or growth support</li>
+              <li>Lower middle market, $2M–$50M revenue (flexible)</li>
+              <li>Business services, industrials, healthcare, consumer</li>
+            </ul>
+            <div class="note">If you have a teaser/CIM, add it at the end. If not, quick bullet points are perfect.</div>
+          </div>
+        </aside>
+
+        <form id="leadForm" action="https://msquaresolutions.app.n8n.cloud/webhook-test/lead-intake" method="POST">
+
+          <!-- 1. Contact -->
+          <div>
+            <div class="section-title">
+              <span>1 · Contact Information</span>
+              <span class="muted">Owner or advisor can submit</span>
+            </div>
+            <div class="row cols-2">
+              <label><span>First Name</span><input type="text" name="firstName" placeholder="Jane" required></label>
+              <label><span>Last Name</span><input type="text" name="lastName" placeholder="Doe" required></label>
+              <label><span>Role / Relationship</span>
+                <select name="role" required>
+                  <option>Owner</option><option>Accountant</option><option>Advisor</option><option>Attorney</option><option>Broker</option><option>Executive</option><option>Other</option>
+                </select>
+              </label>
+              <label><span>Email</span><input type="email" name="email" placeholder="you@company.com" required></label>
+              <label><span>Phone</span><input type="tel" name="phone" placeholder="(555) 000-1234"></label>
+              <label class="full"><span>Company Represented (if not owner)</span><input type="text" name="companyRepresented" placeholder="Acme Advisors, LLC"></label>
+            </div>
+          </div>
+
+          <!-- 2. Business Profile -->
+          <div>
+            <div class="section-title"><span>2 · Business Profile</span></div>
+            <div class="row cols-2">
+              <label><span>Business Name</span><input type="text" name="businessName" placeholder="Acme Services, Inc."></label>
+              <label><span>Website</span><input type="url" name="website" placeholder="https://example.com"></label>
+
+              <div class="field-group">
+                <span>Industry / Sector</span>
+                <div class="multiselect-dropdown" data-name="industry">
+                  <button type="button" class="dropdown-btn" data-dropdown="industry">Select industries</button>
+                  <div class="dropdown-list">
+                    <label><input type="checkbox" value="Business Services"> Business Services</label>
+                    <label><input type="checkbox" value="Defense"> Defense</label>
+                    <label><input type="checkbox" value="Energy"> Energy</label>
+                    <label><input type="checkbox" value="Financial Services"> Financial Services</label>
+                    <label><input type="checkbox" value="Healthcare"> Healthcare</label>
+                    <label><input type="checkbox" value="Industrial / Trades"> Industrial / Trades</label>
+                    <label><input type="checkbox" value="Consumer"> Consumer</label>
+                    <label><input type="checkbox" value="Technology"> Technology</label>
+                    <label><input type="checkbox" value="Other"> Other</label>
+                  </div>
+                </div>
+              </div>
+
+              <label><span>Headquarters (City, State)</span><input type="text" name="hq" placeholder="Fort Lauderdale, FL"></label>
+              <label><span>Year Founded</span><input type="number" name="yearFounded" placeholder="1998"></label>
+            </div>
+          </div>
+
+          <!-- 3. Ownership -->
+          <div>
+            <div class="section-title"><span>3 · Ownership & Transition</span></div>
+            <div class="row cols-2">
+              <label><span>Current Ownership</span>
+                <select name="ownership">
+                  <option>Founder / Family-Owned</option><option>Partnership</option><option>Private Company</option><option>PE-Backed</option><option>Other</option>
+                </select>
+              </label>
+              <label><span>Transition Goal</span>
+                <select name="transitionGoal">
+                  <option>Exit</option><option>Growth Capital</option><option>Partial Sale / Recap</option><option>Strategic Partnership</option>
+                </select>
+              </label>
+              <label><span>Transition Timing</span>
+                <select name="transitionTiming">
+                  <option>Immediate</option><option>< 12 months</option><option>1–3 years</option><option>3+ years</option>
+                </select>
+              </label>
+            </div>
+          </div>
+
+          <!-- 4. Financial Snapshot -->
+          <div>
+            <div class="section-title"><span>4 · Financial Snapshot (Estimates OK)</span></div>
+            <div class="row cols-3">
+              <label><span>Annual Revenue</span>
+                <select name="revenue">
+                  <option>< $2M</option><option>$2–5M</option><option>$5–10M</option><option>$10–25M</option><option>$25M+</option>
+                </select>
+              </label>
+              <label><span>EBITDA Margin</span>
+                <select name="ebitdaMargin">
+                  <option>< 5%</option><option>5–10%</option><option>10–20%</option><option>20%+</option>
+                </select>
+              </label>
+              <label><span>Debt / Leverage</span>
+                <select name="leverage">
+                  <option>None</option><option>Manageable</option><option>Heavily Leveraged</option><option>Prefer not to say</option>
+                </select>
+              </label>
+            </div>
+          </div>
+
+          <!-- 5. Strategic Fit -->
+          <div>
+            <div class="section-title"><span>5 · Strategic Fit</span></div>
+            <div class="row">
+              <label><span>Why is this a strong fit for Charlton Bleecker?</span>
+                <textarea name="fitReason" placeholder="Quick pitch: durable cash flows, succession opportunity, strong moat, growth vectors, etc."></textarea>
+              </label>
+
+              <div class="row cols-2">
+                <div class="field-group">
+                  <span>Biggest Current Challenge</span>
+                  <div class="multiselect-dropdown" data-name="challenge">
+                    <button type="button" class="dropdown-btn" data-dropdown="challenge">Select challenges</button>
+                    <div class="dropdown-list">
+                      <label><input type="checkbox" value="Succession Planning"> Succession Planning</label>
+                      <label><input type="checkbox" value="Debt"> Debt</label>
+                      <label><input type="checkbox" value="Growth Capital"> Growth Capital</label>
+                      <label><input type="checkbox" value="Capital Structure"> Capital Structure</label>
+                      <label><input type="checkbox" value="Operational Efficiency"> Operational Efficiency</label>
+                      <label><input type="checkbox" value="Market Pressure / Competition"> Market Pressure / Competition</label>
+                      <label><input type="checkbox" value="Overdue Bills"> Overdue Bills</label>
+                      <label><input type="checkbox" value="Other"> Other</label>
+                    </div>
+                  </div>
+                </div>
+                <label style="flex-direction:row; align-items:center; gap:10px; margin-top:6px;">
+                  <input type="checkbox" name="hasManagementTeam"> <span>Experienced management team in place</span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- 6. Files -->
+          <div>
+            <div class="section-title"><span>6 · Files & Extras</span></div>
+            <div class="row cols-2">
+              <label><span>Upload Teaser / CIM / Deck (optional)</span>
+                <div class="drop">Drag & drop files here or <strong>browse</strong></div>
+              </label>
+              <label><span>How did you hear about us?</span>
+                <select name="referralSource">
+                  <option>Referral</option><option>Website</option><option>Event</option><option>Other</option>
+                </select>
+              </label>
+            </div>
+          </div>
+
+          <div class="submitbar">
+            <span class="muted">By submitting, you agree to our confidentiality & data use terms.</span>
+            <div style="display:flex; gap:10px;">
+              <button type="button" class="btn secondary">Save Draft</button>
+              <button type="submit" class="btn">Submit Opportunity</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <footer>© 2025 Charlton Bleecker Group LLC — All rights reserved.</footer>
   </main>
 
 <script>
 document.addEventListener("DOMContentLoaded", () => {
-  console.log("✅ DOM fully loaded — initializing dropdown diagnostics...");
-
-  /* ======= Initialize custom multiselect dropdowns ======= */
-  document.querySelectorAll(".multiselect-dropdown").forEach((dropdown, i) => {
+  document.querySelectorAll(".multiselect-dropdown").forEach(dropdown => {
     const button = dropdown.querySelector(".dropdown-btn");
     const list = dropdown.querySelector(".dropdown-list");
+
     const hiddenInput = document.createElement("input");
     hiddenInput.type = "hidden";
     hiddenInput.name = dropdown.dataset.name;
@@ -31,90 +321,49 @@ document.addEventListener("DOMContentLoaded", () => {
     const updateDropdown = () => {
       const selected = Array.from(list.querySelectorAll("input:checked")).map(cb => cb.value);
       hiddenInput.value = selected.join(", ");
-
-      let newText;
-      if (selected.length === 0) {
-        newText = defaultText;
-        button.classList.remove("has-selection");
-      } else if (selected.length === 1) {
-        newText = selected[0];
-        button.classList.add("has-selection");
-      } else {
-        newText = `${selected.length} items selected`;
-        button.classList.add("has-selection");
-      }
-      button.textContent = newText;
+      button.textContent = selected.length === 0 ? defaultText : selected.length === 1 ? selected[0] : `${selected.length} selected`;
     };
 
-    updateDropdown();
-
-    /* ======= Diagnostic click handler ======= */
-    button.addEventListener("click", (e) => {
+    button.addEventListener("click", e => {
       e.preventDefault();
       e.stopPropagation();
       dropdown.classList.toggle("open");
-
-      console.log(
-        `🟡 Dropdown button clicked (#${i + 1}):`,
-        dropdown.dataset.name,
-        "→ Now open?",
-        dropdown.classList.contains("open")
-      );
     });
 
-    /* ======= Checkbox change handler ======= */
-    list.querySelectorAll("input[type='checkbox']").forEach(cb => {
-      cb.addEventListener("change", updateDropdown);
-    });
-
-    /* ======= Outside click close ======= */
-    document.addEventListener("click", (e) => {
-      if (!dropdown.contains(e.target)) {
-        dropdown.classList.remove("open");
-      }
-    });
+    list.querySelectorAll("input[type='checkbox']").forEach(cb => cb.addEventListener("change", updateDropdown));
+    document.addEventListener("click", e => { if (!dropdown.contains(e.target)) dropdown.classList.remove("open"); });
+    updateDropdown();
   });
 
-  console.log("✅ Dropdown initialization complete — waiting for clicks...");
-
-  /* ======= Handle form submission (unchanged) ======= */
   const form = document.getElementById("leadForm");
-  form.addEventListener("submit", async (e) => {
-    e.preventDefault();
+  if (!form) return;
 
-    const button = form.querySelector("button[type='submit']");
-    button.disabled = true;
-    button.textContent = "Submitting...";
+  form.addEventListener("submit", async e => {
+    e.preventDefault();
+    const btn = form.querySelector("button[type='submit']");
+    btn.disabled = true;
+    btn.textContent = "Submitting...";
 
     const formData = new FormData(form);
-    const formObject = Object.fromEntries(formData.entries());
-
-    document.querySelectorAll(".multiselect-dropdown input[type='hidden']").forEach(input => {
-      formObject[input.name] = input.value;
-    });
+    const payload = Object.fromEntries(formData.entries());
+    document.querySelectorAll(".multiselect-dropdown input[type='hidden']").forEach(i => payload[i.name] = i.value);
 
     try {
-      const response = await fetch(form.action, {
+      const res = await fetch(form.action, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formObject),
+        body: JSON.stringify(payload)
       });
-
-      const data = await response.json();
-
-      if (response.ok && data.status === "received") {
-        const redirectURL = data.redirect || "thank-you.html";
-        setTimeout(() => (window.location.href = redirectURL), 800);
-      } else {
-        alert("Submission failed. Please try again.");
-        button.disabled = false;
-        button.textContent = "Submit Opportunity";
-      }
-    } catch (error) {
-      console.error("❌ Error submitting form:", error);
-      alert("Unable to connect to the server. Please try again later.");
-      button.disabled = false;
-      button.textContent = "Submit Opportunity";
+      const data = await res.json();
+      if (res.ok && data.status === "received") {
+        const redirect = data.redirect || "thank-you.html";
+        setTimeout(() => window.location.href = redirect, 800);
+      } else throw new Error("Submission failed");
+    } catch (err) {
+      alert("Error submitting form. Please try again.");
+      console.error(err);
+      btn.disabled = false;
+      btn.textContent = "Submit Opportunity";
     }
   });
 });
