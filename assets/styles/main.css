@@ -445,6 +445,14 @@ select[multiple]::-webkit-scrollbar-thumb:hover {
   transition: border-color 0.2s, box-shadow 0.2s;
 }
 
+.dropdown-btn .button-text {
+  /* This ensures the text wrapper takes up all available space */
+  flex-grow: 1; 
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
 .dropdown-btn::after {
   content: "▾";
   font-size: 14px;
