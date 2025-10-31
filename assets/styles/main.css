@@ -623,3 +623,9 @@ select[multiple]::-webkit-scrollbar-thumb:hover {
 #fileDropArea input[type="file"] {
   display: none !important;
 }
+
+/* Add visual spacing below upload box */
+.drop,
+.file {
+  margin-bottom: 20px;
+}
