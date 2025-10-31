@@ -1,30 +1,23 @@
 // form.js
 window.addEventListener("load", () => {
-  console.log("✅ DOM fully loaded — initializing dropdowns...");
+  console.log("✅ DOM fully loaded — initializing dropdowns and file upload...");
 
-/* ======= Sort all custom multiselect checkboxes alphabetically ======= */
-
+  /* ======= Sort all custom multiselect checkboxes alphabetically ======= */
   document.querySelectorAll(".multiselect-dropdown .dropdown-list").forEach(list => {
-  const labels = Array.from(list.querySelectorAll("label"));
-
-  labels.sort((a, b) => {
-    const textA = a.textContent.trim();
-    const textB = b.textContent.trim();
-
-    // Always push "Other" to the end
-    if (textA === "Other") return 1;
-    if (textB === "Other") return -1;
-
-    return textA.localeCompare(textB);
+    const labels = Array.from(list.querySelectorAll("label"));
+    labels.sort((a, b) => {
+      const textA = a.textContent.trim();
+      const textB = b.textContent.trim();
+      if (textA === "Other") return 1;
+      if (textB === "Other") return -1;
+      return textA.localeCompare(textB);
+    });
+    list.innerHTML = "";
+    labels.forEach(label => list.appendChild(label));
   });
 
-  list.innerHTML = "";
-  labels.forEach(label => list.appendChild(label));
-});
-
-
-
-  document.querySelectorAll(".multiselect-dropdown").forEach((dropdown, i) => {
+  /* ======= Initialize all multiselect dropdowns ======= */
+  document.querySelectorAll(".multiselect-dropdown").forEach((dropdown) => {
     const button = dropdown.querySelector(".dropdown-btn");
     const list = dropdown.querySelector(".dropdown-list");
     const hiddenInput = document.createElement("input");
@@ -37,11 +30,12 @@ window.addEventListener("load", () => {
     const updateDropdown = () => {
       const selected = Array.from(list.querySelectorAll("input:checked")).map(cb => cb.value);
       hiddenInput.value = selected.join(", ");
-      let newText = selected.length === 0
-        ? defaultText
-        : selected.length === 1
-        ? selected[0]
-        : `${selected.length} items selected`;
+      const newText =
+        selected.length === 0
+          ? defaultText
+          : selected.length === 1
+          ? selected[0]
+          : `${selected.length} items selected`;
       button.textContent = newText;
       button.classList.toggle("has-selection", selected.length > 0);
     };
@@ -64,7 +58,53 @@ window.addEventListener("load", () => {
   });
 
   console.log("✅ Dropdown initialization complete.");
-  
+
+  /* ======= File Upload Logic ======= */
+  const fileInput = document.getElementById("fileUpload");
+  const browseTrigger = document.getElementById("browseTrigger");
+  const fileDropArea = document.getElementById("fileDropArea");
+  const fileDisplay = document.getElementById("fileDisplay");
+
+  if (fileInput && browseTrigger && fileDropArea && fileDisplay) {
+    // Clicking “browse” opens file picker
+    browseTrigger.addEventListener("click", (e) => {
+      e.preventDefault();
+      fileInput.click();
+    });
+
+    // Show selected filenames
+    fileInput.addEventListener("change", () => {
+      const files = Array.from(fileInput.files).map(f => f.name).join(", ");
+      fileDisplay.innerHTML = files || 'Drag & drop files here or <strong>browse</strong>';
+    });
+
+    // Enable drag & drop
+    ["dragenter", "dragover"].forEach(ev => {
+      fileDropArea.addEventListener(ev, e => {
+        e.preventDefault();
+        fileDropArea.classList.add("drag-over");
+      });
+    });
+
+    ["dragleave", "drop"].forEach(ev => {
+      fileDropArea.addEventListener(ev, e => {
+        e.preventDefault();
+        fileDropArea.classList.remove("drag-over");
+      });
+    });
+
+    // Handle dropped files
+    fileDropArea.addEventListener("drop", (e) => {
+      e.preventDefault();
+      fileInput.files = e.dataTransfer.files;
+      const files = Array.from(fileInput.files).map(f => f.name).join(", ");
+      fileDisplay.innerHTML = files || 'Drag & drop files here or <strong>browse</strong>';
+    });
+
+    console.log("✅ File upload logic initialized.");
+  }
+
+  /* ======= Form Submission ======= */
   const form = document.getElementById("leadForm");
   if (!form) return;
 
@@ -87,8 +127,8 @@ window.addEventListener("load", () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formObject),
       });
-      const data = await response.json();
 
+      const data = await response.json();
       if (response.ok && data.status === "received") {
         const redirectURL = data.redirect || "thank-you.html";
         setTimeout(() => (window.location.href = redirectURL), 800);

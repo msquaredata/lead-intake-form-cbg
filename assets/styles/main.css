@@ -590,3 +590,32 @@ select[multiple]::-webkit-scrollbar-thumb:hover {
   font-size: 14px;
   color: var(--txt);
 }
+
+/* ==============================
+   File Upload Styling
+============================== */
+
+.file-drop-area {
+  border: 2px dashed #ccc;
+  border-radius: 8px;
+  padding: 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.file-drop-area.drag-over {
+  border-color: #0073e6;
+  background-color: #f5f9ff;
+}
+
+.file {
+  font-size: 15px;
+  color: #444;
+}
+
+.file strong {
+  color: #0073e6;
+  cursor: pointer;
+  text-decoration: underline;
+}

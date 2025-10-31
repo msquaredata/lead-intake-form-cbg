@@ -247,19 +247,19 @@
               <div class="multiselect-dropdown" data-name="keyassets">
                 <button type="button" class="dropdown-btn" data-dropdown="keyassets">Select assets</button>
                 <div class="dropdown-list">
-                  <label><input type="checkbox" name="assets" value="Contracts"> Contracts</label>
-                  <label><input type="checkbox" name="assets" value="Equipment"> Equipment</label>
-                  <label><input type="checkbox" name="assets" value="Goodwill/Brand"> Goodwill/Brand</label>
-                  <label><input type="checkbox" name="assets" value="IP/Patents"> IP/Patents</label>
-                  <label><input type="checkbox" name="assets" value="Real Estate"> Real Estate</label>
-                  <label><input type="checkbox" name="assets" value="Team"> Team</label>
-                  <label><input type="checkbox" name="assets" value="Technology"> Technology</label>
-                  <label><input type="checkbox" name="assets" value="Other"> Other</label>
+                  <label><input type="checkbox" value="Contracts"> Contracts</label>
+                  <label><input type="checkbox" value="Equipment"> Equipment</label>
+                  <label><input type="checkbox" value="Goodwill/Brand"> Goodwill/Brand</label>
+                  <label><input type="checkbox" value="IP/Patents"> IP/Patents</label>
+                  <label><input type="checkbox" value="Real Estate"> Real Estate</label>
+                  <label><input type="checkbox" value="Team"> Team</label>
+                  <label><input type="checkbox" value="Technology"> Technology</label>
+                  <label><input type="checkbox" value="Other"> Other</label>
                 </div>
               </div>
 
               <label><span>Notable Customers or Contracts (optional)</span>
-                <textarea placeholder="e.g., multi-year maintenance contracts; preferred vendor to X"></textarea>
+                <textarea name="notableCustomers" placeholder="e.g., multi-year maintenance contracts; preferred vendor to X"></textarea>
               </label>
             </div>
           </div>
@@ -300,10 +300,16 @@
           <!-- 6. Files -->
           <div>
             <div class="section-title"><span>6 · Files & Extras</span></div>
-            <div class="row cols-2">
-              <label><span>Upload Teaser / CIM / Deck (optional)</span>
-                <div class="drop">Drag & drop files here or <strong>browse</strong></div>
-              </label>
+         <div class="row cols-2">
+  <label><span>Upload Teaser / CIM / Deck (optional)</span>
+    <div class="file-drop-area" id="fileDropArea">
+      <input type="file" id="fileUpload" name="fileUpload" multiple style="display:none" />
+      <div class="file" id="fileDisplay">
+        Drag & drop files here or <strong id="browseTrigger">browse</strong>
+      </div>
+    </div>
+  </label>
+</div>
               <label><span>How did you hear about us?</span>
                 <select name="referralSource">
                   <option>Referral</option>
