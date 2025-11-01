@@ -105,7 +105,20 @@
 
               <div>
                 <label><span>Industry/Sector</span></label>
-                <div class="multiselect-dropdown" data-name="industry">
+                <select name="industry">
+                  <option value="Business Services"> Business Services</option>
+                  <option value="Consumer"> Consumer</option>
+                  <option value="Defense"> Defense</option>
+                  <option value="Energy"> Energy</option>
+                  <option value="Financial Services"> Financial Services</option>
+                  <option value="Healthcare"> Healthcare</option>
+                  <option value="Industrial/Trades"> Industrial/Trades</option>
+                  <option value="Technology"> Technology</option>
+                  <option value="Other"> Other</option>
+                select>
+              </label>
+            </div>
+                <!-- <div class="multiselect-dropdown" data-name="industry">
                   <button type="button" class="dropdown-btn" data-dropdown="industry">Select industries</button>
                   <div class="dropdown-list">
                     <label><input type="checkbox" value="Business Services"> Business Services</label>
@@ -118,7 +131,7 @@
                     <label><input type="checkbox" value="Technology"> Technology</label>
                     <label><input type="checkbox" value="Other"> Other</label>
                   </div>
-                </div>
+                </div> -->
               </div>
               <label><span>Headquarters (City)</span><input type="text" name="hqCity" placeholder="Fort Lauderdale"></label>
               <label><span>Headquarters (State)</span><select name="hqState">
@@ -293,7 +306,7 @@
                   <input type="checkbox" name="hasManagementTeam">
                   <span>Experienced management team in place</span>
                 </label>
-              </div>
+              </div>f
             </div>
           </div>
 
