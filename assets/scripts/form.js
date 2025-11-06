@@ -1,6 +1,50 @@
 window.addEventListener("load", () => {
   console.log("✅ DOM loaded — initializing form and file upload");
 
+  // === Initialize custom multiselect dropdowns ===
+const dropdowns = document.querySelectorAll(".multiselect-dropdown");
+
+dropdowns.forEach(drop => {
+  const button = drop.querySelector(".dropdown-btn");
+  const list = drop.querySelector(".dropdown-list");
+  const name = drop.getAttribute("data-name");
+  
+  // Create hidden input if not present
+  let hidden = drop.querySelector(`input[name="${name}"]`);
+  if (!hidden) {
+    hidden = document.createElement("input");
+    hidden.type = "hidden";
+    hidden.name = name;
+    drop.appendChild(hidden);
+  }
+
+  // Toggle dropdown visibility
+  button.addEventListener("click", (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    list.classList.toggle("show");
+  });
+
+  // Update hidden input when a checkbox changes
+  list.querySelectorAll("input[type='checkbox']").forEach(cb => {
+    cb.addEventListener("change", () => {
+      const selected = Array.from(list.querySelectorAll("input:checked"))
+        .map(i => i.value)
+        .join(", ");
+      hidden.value = selected;
+      button.textContent = selected || button.getAttribute("data-placeholder") || "Select options";
+    });
+  });
+});
+
+// Close any open dropdown if clicking outside
+document.addEventListener("click", (e) => {
+  document.querySelectorAll(".dropdown-list.show").forEach(list => {
+    if (!list.contains(e.target)) list.classList.remove("show");
+  });
+});
+
+
   const MAX_TOTAL_SIZE_MB = 20;
   const ALLOWED_TYPES = [
     "application/pdf",
@@ -131,7 +175,7 @@ window.addEventListener("load", () => {
       alert("An error occurred. Please try again later.");
     } finally {
       button.disabled = false;
-      button.textContent = "Submit Opportunity";
+      button.textContent = "Submit";
     }
   });
 });
