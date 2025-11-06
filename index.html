@@ -305,22 +305,14 @@
             <div class="row cols-2">
               <label><span>Upload Teaser / CIM / Deck (optional)</span>
                 <div class="file-drop-area" id="fileDropArea">
-                  <input type="file" id="fileUpload" name="fileUpload" multiple style="display:none" accept=".pdf,.doc,.docx,.ppt,.pptx" />
-                 <div class="file" id="fileDisplay">
+                  <input type="file" id="fileUpload" name="fileUpload" multiple
+                    accept=".pdf,.doc,.docx,.xls,.xlsx,.png,.jpg,.jpeg" />
+                  <div class="file" id="fileDisplay">
                     Drag & drop files here or <strong id="browseTrigger">browse</strong>
                   </div>
+                  <ul id="fileList"></ul>
+                  <div id="fileError" class="file-error"></div>
                 </div>
-              </label>
-            </div>
-
-            <div>
-              <label><span>How did you hear about us?</span>
-                <select name="referralSource">
-                  <option>Referral</option>
-                  <option>Website</option>
-                  <option>Event</option>
-                  <option>Other</option>
-                </select>
               </label>
             </div>
           </div>

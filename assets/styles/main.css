@@ -629,3 +629,49 @@ select[multiple]::-webkit-scrollbar-thumb:hover {
 .file {
   margin-bottom: 20px;
 }
+
+/* =============================
+   Enhanced File Upload Styles
+============================= */
+#fileList {
+  list-style: none;
+  margin: 10px 0 0;
+  padding: 0;
+}
+
+.file-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 8px;
+  border-radius: 6px;
+  background: #f9fafb;
+  margin-bottom: 4px;
+  font-size: 14px;
+  color: #1a1a1a;
+}
+
+.file-item .size {
+  color: #6b7280;
+  font-size: 12px;
+}
+
+.file-error {
+  color: #d32f2f;
+  font-size: 13px;
+  margin-top: 6px;
+  display: none;
+}
+
+.file-icon {
+  width: 18px;
+  height: 18px;
+  display: inline-block;
+  background-size: cover;
+}
+
+.file-pdf { background-image: url('https://cdn.jsdelivr.net/gh/tabler/tabler-icons/icons/file-type-pdf.svg'); }
+.file-doc, .file-docx { background-image: url('https://cdn.jsdelivr.net/gh/tabler/tabler-icons/icons/file-type-doc.svg'); }
+.file-xls, .file-xlsx { background-image: url('https://cdn.jsdelivr.net/gh/tabler/tabler-icons/icons/file-type-xls.svg'); }
+.file-png { background-image: url('https://cdn.jsdelivr.net/gh/tabler/tabler-icons/icons/file-type-png.svg'); }
+.file-jpg, .file-jpeg { background-image: url('https://cdn.jsdelivr.net/gh/tabler/tabler-icons/icons/file-type-jpg.svg'); }
