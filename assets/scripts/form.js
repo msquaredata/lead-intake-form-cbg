@@ -110,26 +110,37 @@ window.addEventListener("load", () => {
 
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
+    
     const button = form.querySelector("button[type='submit']");
     button.disabled = true;
     button.textContent = "Submitting...";
 
+    // 1. Create the FormData object, which includes all form fields AND the file(s)
     const formData = new FormData(form);
-    const formObject = Object.fromEntries(formData.entries());
 
+    // 2. Adjust multiselect values in the FormData object
+    // Since the hidden inputs are already part of the form, you might not need this.
+    // However, if your hidden inputs aren't in the DOM when FormData is created,
+    // this ensures the multiselect values are correct.
     document.querySelectorAll(".multiselect-dropdown input[type='hidden']").forEach(input => {
-      formObject[input.name] = input.value;
+      formData.set(input.name, input.value);
     });
 
     try {
+      // FIX: Submit the raw FormData object and REMOVE the Content-Type header.
+      // The browser will automatically set the correct 'multipart/form-data' header.
       const response = await fetch(form.action, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formObject),
+        // Do NOT set Content-Type header when uploading files via FormData
+        body: formData, 
       });
 
-      const data = await response.json();
+      // NOTE: Since you are now submitting FormData (not JSON), 
+      // the expected server response might still be JSON, so we keep parsing as JSON.
+      const data = await response.json(); 
+      
       if (response.ok && data.status === "received") {
+        // You might need to adjust the success condition based on your n8n webhook response
         const redirectURL = data.redirect || "thank-you.html";
         setTimeout(() => (window.location.href = redirectURL), 800);
       } else {
@@ -143,4 +154,3 @@ window.addEventListener("load", () => {
       button.textContent = "Submit Opportunity";
     }
   });
-});
