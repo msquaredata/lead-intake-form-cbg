@@ -68,7 +68,7 @@
           </div>
         </aside>
 
-        <form id="leadForm" action="https://msquaresolutions.app.n8n.cloud/webhook-test/lead-intake" method="POST">
+        <form id="leadForm" action="https://msquaresolutions.app.n8n.cloud/webhook-test/lead-intake" method="POST" enctype="multipart/form-data">
 
           <!-- 1. Contact -->
           <div>
@@ -306,7 +306,7 @@
               <label><span>Upload Teaser / CIM / Deck (optional)</span>
                 <div class="file-drop-area" id="fileDropArea">
                   <input type="file" id="fileUpload" name="fileUpload" multiple style="display:none" />
-                  <div class="file" id="fileDisplay">
+                 <div class="file" id="fileDisplay">
                     Drag & drop files here or <strong id="browseTrigger">browse</strong>
                   </div>
                 </div>
@@ -334,9 +334,9 @@
           <div class="submitbar">
             <span class="muted">By submitting, you agree to our confidentiality & data use terms.</span>
             <div style="display:flex; gap:10px;">
-              <button type="submit" class="btn">Submit Opportunity</button>
+              <button type="submit" class="btn" >Submit Opportunity</button>
             </div>
-          </div>
+        f  </div>
         </form>
       </div>
     </section>
