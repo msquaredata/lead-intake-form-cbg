@@ -2,6 +2,33 @@
 window.addEventListener("load", () => {
   console.log("✅ DOM fully loaded — initializing dropdowns...");
 
+// === File Upload Configuration ===
+const MAX_TOTAL_SIZE_MB = 20;
+const ALLOWED_TYPES = [
+  "application/pdf",
+  "application/msword",
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  "application/vnd.ms-excel",
+  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+  "image/png",
+  "image/jpeg"
+];
+
+// DOM references
+const fileInput = document.getElementById("fileUpload");
+const browseTrigger = document.getElementById("browseTrigger");
+const fileDropArea = document.getElementById("fileDropArea");
+const fileList = document.getElementById("fileList");
+const fileError = document.getElementById("fileError");
+const progressFill = document.getElementById("uploadProgressFill");
+
+// Helper: format bytes → MB
+function formatBytes(bytes) {
+  return (bytes / (1024 * 1024)).toFixed(1) + " MB";
+}
+
+
+
 /* ======= Sort all custom multiselect checkboxes alphabetically ======= */
 
   document.querySelectorAll(".multiselect-dropdown .dropdown-list").forEach(list => {
