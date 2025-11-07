@@ -27,6 +27,78 @@ function formatBytes(bytes) {
   return (bytes / (1024 * 1024)).toFixed(1) + " MB";
 }
 
+// === File Upload Logic ===
+function renderFiles(files) {
+  if (!fileList) return;
+  fileList.innerHTML = "";
+  let total = 0;
+  [...files].forEach(f => {
+    total += f.size;
+    const li = document.createElement("li");
+    li.className = "file-item";
+    li.innerHTML = `
+      <span>📄 ${f.name}</span>
+      <span class="meta">${formatBytes(f.size)}</span>
+    `;
+    fileList.appendChild(li);
+  });
+
+  const pct = Math.min((total / (MAX_TOTAL_SIZE_MB * 1024 * 1024)) * 100, 100);
+  if (progressFill) progressFill.style.width = `${pct}%`;
+
+  if (total / (1024 * 1024) > MAX_TOTAL_SIZE_MB) {
+    fileError.textContent = `Total exceeds ${MAX_TOTAL_SIZE_MB} MB`;
+    fileError.style.display = "block";
+  } else {
+    fileError.textContent = "";
+    fileError.style.display = "none";
+  }
+}
+
+function handleFiles(files) {
+  if (!files.length) return;
+  const invalid = [...files].filter(f => !ALLOWED_TYPES.includes(f.type));
+  if (invalid.length) {
+    fileError.textContent = `Unsupported: ${invalid.map(f => f.name).join(", ")}`;
+    fileError.style.display = "block";
+    return;
+  }
+  fileError.textContent = "";
+  fileError.style.display = "none";
+  renderFiles(files);
+}
+
+if (browseTrigger) {
+  browseTrigger.addEventListener("click", e => {
+    e.preventDefault();
+    fileInput.click();
+  });
+}
+
+if (fileInput) {
+  fileInput.addEventListener("change", e => handleFiles(e.target.files));
+}
+
+if (fileDropArea) {
+  ["dragenter", "dragover"].forEach(ev =>
+    fileDropArea.addEventListener(ev, e => {
+      e.preventDefault();
+      fileDropArea.classList.add("drag-over");
+    })
+  );
+  ["dragleave", "drop"].forEach(ev =>
+    fileDropArea.addEventListener(ev, e => {
+      e.preventDefault();
+      fileDropArea.classList.remove("drag-over");
+    })
+  );
+  fileDropArea.addEventListener("drop", e => {
+    e.preventDefault();
+    fileInput.files = e.dataTransfer.files;
+    handleFiles(e.dataTransfer.files);
+  });
+}
+
 
 
 /* ======= Sort all custom multiselect checkboxes alphabetically ======= */
