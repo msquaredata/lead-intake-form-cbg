@@ -109,4 +109,39 @@ window.addEventListener("load", () => {
       button.textContent = "Submit";
     }
   });
+
+function handleFiles(files) {
+  if (!files.length) return;
+  const invalid = [...files].filter(f => !ALLOWED_TYPES.includes(f.type));
+  if (invalid.length) {
+    fileError.textContent = `Unsupported: ${invalid.map(f => f.name).join(", ")}`;
+    fileError.style.display = "block";
+    return;
+  }
+  fileError.textContent = "";
+  fileError.style.display = "none";
+  renderFiles(files);
+}
+
+fileInput.addEventListener("change", e => handleFiles(e.target.files));
+
+function renderFiles(files) {
+  fileList.innerHTML = "";
+  let total = 0;
+  [...files].forEach(f => {
+    total += f.size;
+    const li = document.createElement("li");
+    li.className = "file-item";
+    li.innerHTML = `
+      <span>📄 ${f.name}</span>
+      <span class="meta">${(f.size / (1024 * 1024)).toFixed(1)} MB</span>
+    `;
+    fileList.appendChild(li);
+  });
+  ...
+}
+
+
+
+
 });
