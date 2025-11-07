@@ -91,7 +91,7 @@
                 </select>
               </label>
               <label><span>Email</span><input type="email" name="email" placeholder="you@company.com" required></label>
-              <label><span>Phone</span><input type="tel" name="phone" placeholder="(555) 000-1234"></label>
+              <label><span>Phone</span><input type="tel" name="phone" placeholder="(555) 000-1234" required></label>
               <label class="full"><span>Company Represented (if not owner)</span><input type="text" name="companyRepresented" placeholder="Acme Advisors, LLC"></label>
             </div>
           </div>
@@ -100,12 +100,12 @@
           <div>
             <div class="section-title"><span>2 · Business Profile</span></div>
             <div class="row cols-2">
-              <label><span>Business Name</span><input type="text" name="businessName" placeholder="Acme Services, Inc."></label>
-              <label><span>Website</span><input type="url" name="website" placeholder="https://example.com"></label>
+              <label><span>Business Name</span><input type="text" name="businessName" placeholder="Acme Services, Inc." required></label>
+              <label><span>Website</span><input type="url" name="website" placeholder="https://example.com" required></label>
 
               <!-- Fixed Industry Dropdown to match hubspot-->
            <label><span>Industry / Sector</span>
-  <select name="industry">
+  <select name="industry" required>
     <option value="">Select Industry</option>
     <option value="BUSINESS_SERVICES">Business Services</option>
     <option value="CONSUMER_SERVICES">Consumer</option>
@@ -119,9 +119,9 @@
   </select>
 </label>
 
-              <label><span>Headquarters (City)</span><input type="text" name="hqCity" placeholder="Fort Lauderdale"></label>
+              <label><span>Headquarters (City)</span><input type="text" name="hqCity" placeholder="Fort Lauderdale" required></label>
               <label><span>Headquarters (State)</span>
-                <select name="hqState">
+                <select name="hqState" required>
                   <option value="">Select a State</option>
                   <option value="AL">Alabama</option>
                   <option value="AK">Alaska</option>
@@ -184,7 +184,7 @@
             <div class="section-title"><span>3 · Ownership & Transition</span></div>
             <div class="row cols-2">
               <label><span>Current Ownership</span>
-                <select name="ownership">
+                <select name="ownership" required>
                   <option>Founder/Family-Owned</option>
                   <option>Partnership</option>
                   <option>Private Company</option>
@@ -193,7 +193,7 @@
                 </select>
               </label>
               <label><span>Transition Goal</span>
-                <select name="transitionGoal">
+                <select name="transitionGoal" required>
                   <option>Exit</option>
                   <option>Growth Capital</option>
                   <option>Partial Sale/Recap</option>
@@ -201,7 +201,7 @@
                 </select>
               </label>
               <label><span>Transition Timing</span>
-                <select name="transitionTiming">
+                <select name="transitionTiming" required>
                   <option>Immediate</option>
                   <option>&lt; 12 months</option>
                   <option>1–3 years</option>
@@ -217,7 +217,7 @@
             <div class="row cols-3">
                 <label>
                   <span>Annual Revenue</span>
-                  <select name="revenueRangeText">
+                  <select name="revenueRangeText" required>
                     <option>&lt; $2M</option>
                     <option>$2–5M</option>
                     <option>$5–10M</option>
@@ -227,7 +227,7 @@
                 </label>
                 <label>
                 <span>EBITDA Margin</span>
-                <select name="ebitdaMargin">
+                <select name="ebitdaMargin" required>
                   <option>&lt; 5%</option>
                   <option>5–10%</option>
                   <option>10–20%</option>
@@ -235,7 +235,7 @@
                 </select>
               </label>
               <label><span>Debt/Leverage</span>
-                <select name="leverage">
+                <select name="leverage" required>
                   <option>None</option>
                   <option>Manageable</option>
                   <option>Heavily Leveraged</option>
