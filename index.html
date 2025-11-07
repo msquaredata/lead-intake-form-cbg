@@ -77,9 +77,9 @@
               <span class="muted">Owner or advisor can submit</span>
             </div>
             <div class="row cols-2">
-              <label><span>First Name</span><input type="text" name="firstName" placeholder="Jane" required></label>
+              <label><span>First Name *</span><input type="text" name="firstName" placeholder="Jane" required></label>
               <label><span>Last Name</span><input type="text" name="lastName" placeholder="Doe" required></label>
-              <label><span>Role/Relationship</span>
+              <label><span>Role/Relationship *</span>
                 <select name="role" required>
                   <option>Owner</option>
                   <option>Accountant</option>
@@ -90,8 +90,9 @@
                   <option>Other</option>
                 </select>
               </label>
-              <label><span>Email</span><input type="email" name="email" placeholder="you@company.com" required></label>
-              <label><span>Phone</span><input type="tel" name="phone" placeholder="(555) 000-1234" required></label>
+              <label><span>Email *</span><input type="email" name="email" placeholder="you@company.com" required></label>
+              <label><span>Phone *</span><input type="tel" name="phone" placeholder="(555) 000-1234" required pattern="[0-9]{10}" 
+       title="Please enter a valid 10-digit phone number></label>
               <label class="full"><span>Company Represented (if not owner)</span><input type="text" name="companyRepresented" placeholder="Acme Advisors, LLC"></label>
             </div>
           </div>
@@ -100,11 +101,11 @@
           <div>
             <div class="section-title"><span>2 · Business Profile</span></div>
             <div class="row cols-2">
-              <label><span>Business Name</span><input type="text" name="businessName" placeholder="Acme Services, Inc." required></label>
-              <label><span>Website</span><input type="url" name="website" placeholder="https://example.com" required></label>
+              <label><span>Business Name *</span><input type="text" name="businessName" placeholder="Acme Services, Inc." required></label>
+              <label><span>Website *</span><input type="url" name="website" placeholder="https://example.com" required></label>
 
               <!-- Fixed Industry Dropdown to match hubspot-->
-           <label><span>Industry / Sector</span>
+           <label><span>Industry/Sector *</span>
   <select name="industry" required>
     <option value="">Select Industry</option>
     <option value="BUSINESS_SERVICES">Business Services</option>
@@ -119,8 +120,8 @@
   </select>
 </label>
 
-              <label><span>Headquarters (City)</span><input type="text" name="hqCity" placeholder="Fort Lauderdale" required></label>
-              <label><span>Headquarters (State)</span>
+              <label><span>Headquarters (City) *</span><input type="text" name="hqCity" placeholder="Fort Lauderdale" required></label>
+              <label><span>Headquarters (State) *</span>
                 <select name="hqState" required>
                   <option value="">Select a State</option>
                   <option value="AL">Alabama</option>
@@ -183,7 +184,7 @@
           <div>
             <div class="section-title"><span>3 · Ownership & Transition</span></div>
             <div class="row cols-2">
-              <label><span>Current Ownership</span>
+              <label><span>Current Ownership *</span>
                 <select name="ownership" required>
                   <option>Founder/Family-Owned</option>
                   <option>Partnership</option>
@@ -192,7 +193,7 @@
                   <option>Other</option>
                 </select>
               </label>
-              <label><span>Transition Goal</span>
+              <label><span>Transition Goal *</span>
                 <select name="transitionGoal" required>
                   <option>Exit</option>
                   <option>Growth Capital</option>
@@ -200,7 +201,7 @@
                   <option>Strategic Partnership</option>
                 </select>
               </label>
-              <label><span>Transition Timing</span>
+              <label><span>Transition Timing *</span>
                 <select name="transitionTiming" required>
                   <option>Immediate</option>
                   <option>&lt; 12 months</option>
@@ -216,7 +217,7 @@
             <div class="section-title"><span>4 · Financial Snapshot (Estimates OK)</span></div>
             <div class="row cols-3">
                 <label>
-                  <span>Annual Revenue</span>
+                  <span>Annual Revenue *</span>
                   <select name="revenueRangeText" required>
                     <option>&lt; $2M</option>
                     <option>$2–5M</option>
@@ -226,7 +227,7 @@
                   </select>
                 </label>
                 <label>
-                <span>EBITDA Margin</span>
+                <span>EBITDA Margin *</span>
                 <select name="ebitdaMargin" required>
                   <option>&lt; 5%</option>
                   <option>5–10%</option>
