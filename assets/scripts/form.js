@@ -100,7 +100,7 @@ window.addEventListener("load", () => {
       alert("Unable to connect to the server. Please try again later.");
     } finally {
       button.disabled = false;
-      button.textContent = "Submit Opportunity";
+      button.textContent = "Submit";
     }
   });
 });
