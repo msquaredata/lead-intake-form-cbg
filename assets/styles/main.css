@@ -675,3 +675,19 @@ select[multiple]::-webkit-scrollbar-thumb:hover {
 .file-xls, .file-xlsx { background-image: url('https://cdn.jsdelivr.net/gh/tabler/tabler-icons/icons/file-type-xls.svg'); }
 .file-png { background-image: url('https://cdn.jsdelivr.net/gh/tabler/tabler-icons/icons/file-type-png.svg'); }
 .file-jpg, .file-jpeg { background-image: url('https://cdn.jsdelivr.net/gh/tabler/tabler-icons/icons/file-type-jpg.svg'); }
+
+/* Progress bar for total upload size */
+.progress {
+  background: #e5e7eb;
+  border-radius: 4px;
+  height: 6px;
+  margin-top: 8px;
+  overflow: hidden;
+}
+.progress-fill {
+  background: #3b82f6;
+  width: 0%;
+  height: 100%;
+  transition: width 0.3s ease;
+}
+

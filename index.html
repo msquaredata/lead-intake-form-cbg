@@ -300,28 +300,31 @@
             </div>
           </div>
 
-          <!-- 6. Files -->
           <div>
             <div class="section-title"><span>6 · Files & Extras</span></div>
             <div class="row cols-2">
               <label><span>Upload Teaser / CIM / Deck (optional)</span>
                 <div class="file-drop-area" id="fileDropArea">
-                  <input type="file" id="fileUpload" name="fileUpload" multiple
-                    accept=".pdf,.doc,.docx,.xls,.xlsx,.png,.jpg,.jpeg" />
+                  <input
+                    type="file"
+                    id="fileUpload"
+                    name="fileUpload"
+                    multiple
+                    accept=".pdf,.doc,.docx,.xls,.xlsx,.png,.jpg,.jpeg"
+                  />
                   <div class="file" id="fileDisplay">
                     Drag & drop files here or <strong id="browseTrigger">browse</strong>
                   </div>
                   <ul id="fileList"></ul>
+
+                  <!-- size progress -->
+                  <div id="uploadProgressBar" class="progress">
+                    <div id="uploadProgressFill" class="progress-fill"></div>
+                  </div>
                   <div id="fileError" class="file-error"></div>
                 </div>
               </label>
             </div>
-          </div>
-
-          <div class="row">
-            <label><span>Other detail (optional)</span>
-              <textarea name="otherDetails" placeholder="Any additional context for the Deal Review Team?"></textarea>
-            </label>
           </div>
 
           <div class="submitbar">
