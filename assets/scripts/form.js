@@ -74,6 +74,12 @@ window.addEventListener("load", () => {
     button.disabled = true;
     button.textContent = "Submitting...";
 
+     // --- Frontend validation for required fields ---
+  if (!form.checkValidity()) {
+    alert("Please fill in all required fields before submitting.");
+    return; // stop form submission if any required fields are missing
+  }
+
     const formData = new FormData(form);
     const formObject = Object.fromEntries(formData.entries());
 
