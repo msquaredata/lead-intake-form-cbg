@@ -1,137 +1,156 @@
+// form.js
 window.addEventListener("load", () => {
-  console.log("✅ DOM loaded — initializing form and file upload");
+  console.log("✅ DOM fully loaded — initializing dropdowns and file upload...");
 
-  const MAX_TOTAL_SIZE_MB = 20;
-  const ALLOWED_TYPES = [
-    "application/pdf",
-    "application/msword",
-    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-    "application/vnd.ms-excel",
-    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-    "image/png",
-    "image/jpeg",
-  ];
+  /* ======= Sort all custom multiselect checkboxes alphabetically ======= */
+  document.querySelectorAll(".multiselect-dropdown .dropdown-list").forEach(list => {
+    const labels = Array.from(list.querySelectorAll("label"));
+    labels.sort((a, b) => {
+      const textA = a.textContent.trim();
+      const textB = b.textContent.trim();
+      if (textA === "Other") return 1;
+      if (textB === "Other") return -1;
+      return textA.localeCompare(textB);
+    });
+    list.innerHTML = "";
+    labels.forEach(label => list.appendChild(label));
+  });
 
+  /* ======= Initialize all multiselect dropdowns ======= */
+  document.querySelectorAll(".multiselect-dropdown").forEach((dropdown) => {
+    const button = dropdown.querySelector(".dropdown-btn");
+    const list = dropdown.querySelector(".dropdown-list");
+    const hiddenInput = document.createElement("input");
+    hiddenInput.type = "hidden";
+    hiddenInput.name = dropdown.dataset.name;
+    dropdown.appendChild(hiddenInput);
+
+    const defaultText = button.textContent.trim();
+
+    const updateDropdown = () => {
+      const selected = Array.from(list.querySelectorAll("input:checked")).map(cb => cb.value);
+      hiddenInput.value = selected.join(", ");
+      const newText =
+        selected.length === 0
+          ? defaultText
+          : selected.length === 1
+          ? selected[0]
+          : `${selected.length} items selected`;
+      button.textContent = newText;
+      button.classList.toggle("has-selection", selected.length > 0);
+    };
+
+    updateDropdown();
+
+    button.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      dropdown.classList.toggle("open");
+    });
+
+    list.querySelectorAll("input[type='checkbox']").forEach(cb =>
+      cb.addEventListener("change", updateDropdown)
+    );
+
+    document.addEventListener("click", (e) => {
+      if (!dropdown.contains(e.target)) dropdown.classList.remove("open");
+    });
+  });
+
+  console.log("✅ Dropdown initialization complete.");
+
+  /* ======= File Upload Logic ======= */
   const fileInput = document.getElementById("fileUpload");
   const browseTrigger = document.getElementById("browseTrigger");
   const fileDropArea = document.getElementById("fileDropArea");
   const fileDisplay = document.getElementById("fileDisplay");
-  const fileList = document.getElementById("fileList");
-  const fileError = document.getElementById("fileError");
-
-  function formatBytes(bytes) {
-    if (bytes === 0) return "0 MB";
-    return (bytes / (1024 * 1024)).toFixed(1) + " MB";
-  }
-
-  function validateFiles(files) {
-    let totalSize = 0;
-    let invalidFiles = [];
-
-    for (const file of files) {
-      totalSize += file.size;
-      if (!ALLOWED_TYPES.includes(file.type)) invalidFiles.push(file.name);
-    }
-
-    const totalMB = totalSize / (1024 * 1024);
-    if (totalMB > MAX_TOTAL_SIZE_MB)
-      return { valid: false, msg: `Total file size (${formatBytes(totalSize)}) exceeds ${MAX_TOTAL_SIZE_MB} MB.` };
-    if (invalidFiles.length)
-      return { valid: false, msg: `Unsupported file(s): ${invalidFiles.join(", ")}.` };
-    return { valid: true, msg: "" };
-  }
-
-  function renderFileList(files) {
-    fileList.innerHTML = "";
-    for (const file of files) {
-      const li = document.createElement("li");
-      li.className = "file-item";
-      const ext = file.name.split(".").pop().toLowerCase();
-      li.innerHTML = `<span class="file-icon file-${ext}"></span> ${file.name} <span class="size">(${formatBytes(file.size)})</span>`;
-      fileList.appendChild(li);
-    }
-  }
-
-  function handleFiles(files) {
-    const validation = validateFiles(files);
-    if (!validation.valid) {
-      fileError.textContent = validation.msg;
-      fileError.style.display = "block";
-      fileInput.value = "";
-      fileList.innerHTML = "";
-      return;
-    }
-    fileError.style.display = "none";
-    renderFileList(files);
-  }
 
   if (fileInput && browseTrigger && fileDropArea && fileDisplay) {
+    // Clicking “browse” opens file picker
     browseTrigger.addEventListener("click", (e) => {
       e.preventDefault();
       fileInput.click();
     });
 
-    fileInput.addEventListener("change", () => handleFiles(fileInput.files));
+    // Show selected filenames
+    fileInput.addEventListener("change", () => {
+      const files = Array.from(fileInput.files).map(f => f.name).join(", ");
+      fileDisplay.innerHTML = files || 'Drag & drop files here or <strong>browse</strong>';
+    });
 
-    ["dragenter", "dragover"].forEach((ev) =>
-      fileDropArea.addEventListener(ev, (e) => {
+    // Enable drag & drop
+    ["dragenter", "dragover"].forEach(ev => {
+      fileDropArea.addEventListener(ev, e => {
         e.preventDefault();
         fileDropArea.classList.add("drag-over");
-      })
-    );
+      });
+    });
 
-    ["dragleave", "drop"].forEach((ev) =>
-      fileDropArea.addEventListener(ev, (e) => {
+    ["dragleave", "drop"].forEach(ev => {
+      fileDropArea.addEventListener(ev, e => {
         e.preventDefault();
         fileDropArea.classList.remove("drag-over");
-      })
-    );
+      });
+    });
 
+    // Handle dropped files
     fileDropArea.addEventListener("drop", (e) => {
       e.preventDefault();
       fileInput.files = e.dataTransfer.files;
-      handleFiles(fileInput.files);
+      const files = Array.from(fileInput.files).map(f => f.name).join(", ");
+      fileDisplay.innerHTML = files || 'Drag & drop files here or <strong>browse</strong>';
     });
 
-    console.log("✅ File upload initialized with validation.");
+    console.log("✅ File upload logic initialized.");
   }
 
-  // === Form submission ===
+  /* ======= Form Submission ======= */
   const form = document.getElementById("leadForm");
   if (!form) return;
 
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
-
-    const formData = new FormData(form);
-
-    const files = fileInput.files;
-    const validation = validateFiles(files);
-    if (!validation.valid) {
-      alert(validation.msg);
-      return;
-    }
-
+    
     const button = form.querySelector("button[type='submit']");
     button.disabled = true;
     button.textContent = "Submitting...";
 
-    try {
-      const response = await fetch(form.action, { method: "POST", body: formData });
-      const data = await response.json();
+    // 1. Create the FormData object, which includes all form fields AND the file(s)
+    const formData = new FormData(form);
 
-      if (response.ok) {
-        const redirect = data.redirect || "thank-you.html";
-        window.location.href = redirect;
+    // 2. Adjust multiselect values in the FormData object
+    // Since the hidden inputs are already part of the form, you might not need this.
+    // However, if your hidden inputs aren't in the DOM when FormData is created,
+    // this ensures the multiselect values are correct.
+    document.querySelectorAll(".multiselect-dropdown input[type='hidden']").forEach(input => {
+      formData.set(input.name, input.value);
+    });
+
+    try {
+      // FIX: Submit the raw FormData object and REMOVE the Content-Type header.
+      // The browser will automatically set the correct 'multipart/form-data' header.
+      const response = await fetch(form.action, {
+        method: "POST",
+        // Do NOT set Content-Type header when uploading files via FormData
+        body: formData, 
+      });
+
+      // NOTE: Since you are now submitting FormData (not JSON), 
+      // the expected server response might still be JSON, so we keep parsing as JSON.
+      const data = await response.json(); 
+      
+      if (response.ok && data.status === "received") {
+        // You might need to adjust the success condition based on your n8n webhook response
+        const redirectURL = data.redirect || "thank-you.html";
+        setTimeout(() => (window.location.href = redirectURL), 800);
       } else {
         alert("Submission failed. Please try again.");
       }
-    } catch (err) {
-      console.error("❌ Error submitting form:", err);
-      alert("An error occurred. Please try again later.");
+    } catch (error) {
+      console.error("❌ Error submitting form:", error);
+      alert("Unable to connect to the server. Please try again later.");
     } finally {
       button.disabled = false;
       button.textContent = "Submit Opportunity";
     }
   });
-});
