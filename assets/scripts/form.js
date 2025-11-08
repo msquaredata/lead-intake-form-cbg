@@ -13,9 +13,8 @@ window.addEventListener("load", () => {
     "image/png",
     "image/jpeg"
   ];
-
-// 💡 NEW: List of supported extensions for user guidance
-  const SUPPORTED_EXTENSIONS = ".pdf, .doc, .docx, .xls, .xlsx, .png, .jpg, .jpeg";
+  // List of supported extensions for user guidance
+  const SUPPORTED_EXTENSIONS = ".pdf, .doc, .docx, .xls, .xlsx, .png, .jpg, .jpeg"; 
 
   // DOM references
   const fileInput = document.getElementById("fileUpload");
@@ -73,12 +72,12 @@ window.addEventListener("load", () => {
     const pct = Math.min((totalSizeMB / MAX_TOTAL_SIZE_MB) * 100, 100);
     progressFill.style.width = `${pct}%`;
 
+    // 💡 FIX: Only set/overwrite the error if it's a size issue, otherwise clear it.
     if (totalSize > maxSizeBytes) {
       fileError.textContent = `Total size exceeds ${MAX_TOTAL_SIZE_MB} MB limit.`;
       fileError.style.display = "block";
-    } else if (fileError.textContent.includes("Unsupported file types")) {
-        // If it's a size error, keep it. Otherwise, hide it unless there's a file type error.
     } else {
+      // This will clear the file type warning after a file deletion or any other valid action.
       fileError.textContent = "";
       fileError.style.display = "none";
     }
@@ -97,6 +96,7 @@ window.addEventListener("load", () => {
 
       fileInput.files = currentFiles.files;
 
+      // renderFiles is called, which will now clear the type warning if size is OK
       renderFiles(currentFiles.files);
     }
   }
@@ -137,20 +137,23 @@ window.addEventListener("load", () => {
         return;
     }
 
-    // 3. 💡 VALIDATION FIX: Check for unsupported files in the merged list
+    // 3. VALIDATION: Check for unsupported files in the merged list
     const invalidFiles = filesToProcess.filter(f => !ALLOWED_TYPES.includes(f.type));
     
     if (invalidFiles.length > 0) {
-      // 💡 UPDATED WARNING MESSAGE: Includes supported types
+      // SET the type warning error text here
       fileError.textContent = `🚫 Warning: Unsupported file types were removed. Files removed: ${invalidFiles.map(f => f.name).join(", ")}. Supported types are: ${SUPPORTED_EXTENSIONS}`;
       fileError.style.display = "block";
       
       // Filter out only the invalid files but keep all previously and newly added VALID files
       filesToProcess = filesToProcess.filter(f => ALLOWED_TYPES.includes(f.type));
     } else {
-        // Clear file type error if everything is valid
-        fileError.textContent = "";
-        fileError.style.display = "none";
+        // Clear file type error if everything in the new selection is valid
+        // Note: This does not affect the size error which is handled in renderFiles
+        if (fileError.textContent.includes("Unsupported file types")) {
+             fileError.textContent = "";
+             fileError.style.display = "none";
+        }
     }
 
     // 4. Update the internal file list and the actual input element
@@ -197,7 +200,6 @@ window.addEventListener("load", () => {
     fileList.addEventListener("click", e => {
         const deleteButton = e.target.closest(".delete-file");
         if (deleteButton) {
-            // CRITICAL FIX: Stop the click event from triggering the file dialog on the parent label
             e.stopPropagation(); 
             e.preventDefault(); 
             
