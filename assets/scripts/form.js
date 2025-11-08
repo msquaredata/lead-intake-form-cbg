@@ -1,6 +1,4 @@
-// form.js
-window.addEventListener("load", () => {
-  console.log("✅ DOM fully loaded — initializing dropdowns...");
+console.log("✅ DOM fully loaded — initializing dropdowns...");
 
 // === File Upload Configuration ===
 const MAX_TOTAL_SIZE_MB = 20;
