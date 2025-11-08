@@ -21,9 +21,10 @@ window.addEventListener("load", () => {
   const fileList = document.getElementById("fileList");
   const fileError = document.getElementById("fileError");
   const progressFill = document.getElementById("uploadProgressFill");
-  const fileInfo = document.getElementById("fileInfo"); 
-  
-  // DataTransfer object is used to create a mutable FileList
+  const fileInfo = document.getElementById("fileInfo"); // Re-added file info reference
+
+  // 💡 NEW: DataTransfer object is used to create a mutable FileList, 
+  // which acts as the source of truth for all currently selected files.
   let currentFiles = new DataTransfer();
 
   // === Helper: format bytes → MB ===
@@ -63,7 +64,6 @@ window.addEventListener("load", () => {
         Max size: <strong>${MAX_TOTAL_SIZE_MB} MB</strong>. 
         Current size: <strong>${totalSizeMB.toFixed(1)} MB</strong>
       `;
-      // Optionally add a class to highlight size when approaching limit
       fileInfo.style.color = totalSizeMB > MAX_TOTAL_SIZE_MB * 0.9 ? 'orange' : 'inherit';
     }
 
@@ -80,86 +80,80 @@ window.addEventListener("load", () => {
     }
   }
   
-  // Deletes a single file by name
+  // 💡 Delete function
   function deleteFile(fileName) {
-    // Convert current FileList to an array
     const filesArray = Array.from(currentFiles.files);
-
-    // Find the index of the file to remove (using a simple name match for simplicity)
     const fileIndex = filesArray.findIndex(f => f.name === fileName);
 
     if (fileIndex > -1) {
-      // Remove the file from the array
       filesArray.splice(fileIndex, 1);
-
-      // Clear the DataTransfer object
+      
       currentFiles = new DataTransfer();
-
-      // Add the remaining files back to the DataTransfer object
       filesArray.forEach(file => currentFiles.items.add(file));
 
-      // Update the main file input with the new FileList
       fileInput.files = currentFiles.files;
 
-      // Re-validate and re-render the list
-      handleFiles(currentFiles.files);
+      // Re-render the list without checking for new files
+      renderFiles(currentFiles.files);
     }
   }
 
-
   // === Validate and handle file input ===
-  function handleFiles(files) {
+  function handleFiles(newFiles) {
+    const incomingFilesArray = Array.from(newFiles);
+    
     // FIX 1: Prevent clearing files on cancel
-    if (files.length === 0 && currentFiles.files.length > 0) {
-        // Dialog was canceled, keep the current file list
-        files = currentFiles.files;
+    if (incomingFilesArray.length === 0 && currentFiles.files.length > 0) {
+        // Dialog was canceled, re-render the existing list and exit
+        return renderFiles(currentFiles.files);
     }
     
-    if (!files || files.length === 0) {
-      if (fileList) fileList.innerHTML = "";
-      if (progressFill) progressFill.style.width = "0%";
-      if (fileInfo) {
-        fileInfo.innerHTML = `Max size: <strong>${MAX_TOTAL_SIZE_MB} MB</strong>. Current size: <strong>0 MB</strong>`;
-        fileInfo.style.color = 'inherit';
-      }
-      fileError.textContent = "";
-      fileError.style.display = "none";
-      
-      // Also clear the internal file list and the input itself
-      currentFiles = new DataTransfer();
-      fileInput.files = currentFiles.files;
-      return;
-    }
-    
-    // Convert new files to array for validation
-    const incomingFilesArray = Array.from(files);
+    // 💡 FIX 2: Implement file appending logic
+    let filesToProcess = Array.from(currentFiles.files);
+    const existingFileSignatures = filesToProcess.map(f => f.name + f.size);
 
-    const invalidFiles = incomingFilesArray.filter(f => !ALLOWED_TYPES.includes(f.type));
+    incomingFilesArray.forEach(newFile => {
+        // Only append files that are not already in the list (based on name + size)
+        if (!existingFileSignatures.includes(newFile.name + newFile.size)) {
+            filesToProcess.push(newFile);
+        }
+    });
+    
+    // If no files at all (e.g., empty initial selection), reset
+    if (filesToProcess.length === 0) {
+        if (fileList) fileList.innerHTML = "";
+        if (progressFill) progressFill.style.width = "0%";
+        if (fileInfo) {
+            fileInfo.innerHTML = `Max size: <strong>${MAX_TOTAL_SIZE_MB} MB</strong>. Current size: <strong>0 MB</strong>`;
+            fileInfo.style.color = 'inherit';
+        }
+        fileError.textContent = "";
+        fileError.style.display = "none";
+        
+        currentFiles = new DataTransfer();
+        fileInput.files = currentFiles.files;
+        return;
+    }
+
+    // Validation step on the merged list
+    const invalidFiles = filesToProcess.filter(f => !ALLOWED_TYPES.includes(f.type));
     
     if (invalidFiles.length > 0) {
-      // Validation failed, clear everything and show error
-      if (fileList) fileList.innerHTML = ""; 
-      if (progressFill) progressFill.style.width = "0%";
-      if (fileInfo) {
-        fileInfo.innerHTML = `Max size: <strong>${MAX_TOTAL_SIZE_MB} MB</strong>. Current size: <strong>0 MB</strong>`;
-        fileInfo.style.color = 'inherit';
-      }
-
-      fileError.textContent = `Unsupported file types: ${invalidFiles.map(f => f.name).join(", ")}`;
+      // If any file is invalid, we should clear the selection to enforce limits/types
+      // Note: A more complex solution could remove only the invalid ones, but clearing is safer for form validation.
+      fileError.textContent = `Unsupported file types selected. Please remove: ${invalidFiles.map(f => f.name).join(", ")}`;
       fileError.style.display = "block";
-
-      // Clear the internal file list and the input itself
-      currentFiles = new DataTransfer();
-      fileInput.files = currentFiles.files;
-      return;
+      
+      // Clear the invalid files from filesToProcess and continue with valid ones
+      filesToProcess = filesToProcess.filter(f => ALLOWED_TYPES.includes(f.type));
+    } else {
+        fileError.textContent = "";
+        fileError.style.display = "none";
     }
 
-    fileError.textContent = "";
-    fileError.style.display = "none";
-    
-    // Update the internal file list for valid changes
+    // Update the internal file list and the actual input element
     currentFiles = new DataTransfer();
-    incomingFilesArray.forEach(file => currentFiles.items.add(file));
+    filesToProcess.forEach(file => currentFiles.items.add(file));
     fileInput.files = currentFiles.files;
 
     renderFiles(currentFiles.files);
@@ -174,7 +168,7 @@ window.addEventListener("load", () => {
   }
 
   if (fileInput) {
-    // File input change handler now just calls handleFiles
+    // Calls handleFiles, which now manages appending
     fileInput.addEventListener("change", e => handleFiles(e.target.files));
   }
 
@@ -193,19 +187,18 @@ window.addEventListener("load", () => {
     );
     fileDropArea.addEventListener("drop", e => {
       e.preventDefault();
-      // On drop, treat the dropped files as the *new* selection
+      // Dropped files are treated as additions/merges
       handleFiles(e.dataTransfer.files);
     });
   }
   
-// 💡 FIX: Event listener for file deletion clicks with stopPropagation() and preventDefault()
+  // 💡 FIX: Event listener for file deletion clicks with stopPropagation() and preventDefault()
   if (fileList) {
     fileList.addEventListener("click", e => {
         const deleteButton = e.target.closest(".delete-file");
         if (deleteButton) {
-            // CRITICAL FIX 1: Stop the event from bubbling up to parents (like the <label> or fileDropArea)
+            // CRITICAL FIX: Stop the click event from triggering the file dialog on the parent label
             e.stopPropagation(); 
-            // CRITICAL FIX 2: Stop the browser's default action (which is opening the file dialog because of the <label> tag)
             e.preventDefault(); 
             
             const fileName = deleteButton.dataset.fileName;
@@ -213,6 +206,7 @@ window.addEventListener("load", () => {
         }
     });
   }
+
 
   // === Multiselect sorting ===
   document.querySelectorAll(".multiselect-dropdown .dropdown-list").forEach(list => {
@@ -287,7 +281,7 @@ window.addEventListener("load", () => {
       return;
     }
 
-    // Use currentFiles.files for submission, which is the validated list
+    // Use currentFiles.files for submission
     const files = currentFiles.files || [];
     let totalSize = [...files].reduce((sum, f) => sum + f.size, 0);
     if (totalSize > MAX_TOTAL_SIZE_MB * 1024 * 1024) {
