@@ -21,9 +21,9 @@ window.addEventListener("load", () => {
   const fileList = document.getElementById("fileList");
   const fileError = document.getElementById("fileError");
   const progressFill = document.getElementById("uploadProgressFill");
-  const fileInfo = document.getElementById("fileInfo"); // Re-added file info reference
+  const fileInfo = document.getElementById("fileInfo"); 
 
-  // 💡 NEW: DataTransfer object is used to create a mutable FileList, 
+  // DataTransfer object is used to create a mutable FileList, 
   // which acts as the source of truth for all currently selected files.
   let currentFiles = new DataTransfer();
 
@@ -32,14 +32,13 @@ window.addEventListener("load", () => {
     return (bytes / (1024 * 1024)).toFixed(1) + " MB";
   }
 
-  // === Render selected files ===
+  // === Render selected files (Includes Delete Icon) ===
   function renderFiles(files) {
     if (!fileList) return;
     fileList.innerHTML = "";
 
     let totalSize = 0;
     
-    // Ensure files is an array-like object before iterating
     const filesArray = Array.from(files);
 
     filesArray.forEach(file => {
@@ -64,7 +63,7 @@ window.addEventListener("load", () => {
         Max size: <strong>${MAX_TOTAL_SIZE_MB} MB</strong>. 
         Current size: <strong>${totalSizeMB.toFixed(1)} MB</strong>
       `;
-      fileInfo.style.color = totalSizeMB > MAX_TOTAL_SIZE_MB * 0.9 ? 'orange' : 'inherit';
+      fileInfo.style.color = totalSizeMB > maxSizeBytes * 0.9 ? 'orange' : 'inherit';
     }
 
 
@@ -74,13 +73,15 @@ window.addEventListener("load", () => {
     if (totalSize > maxSizeBytes) {
       fileError.textContent = `Total size exceeds ${MAX_TOTAL_SIZE_MB} MB limit.`;
       fileError.style.display = "block";
+    } else if (fileError.textContent.includes("Unsupported file types")) {
+        // If it's a size error, keep it. Otherwise, hide it unless there's a file type error.
     } else {
       fileError.textContent = "";
       fileError.style.display = "none";
     }
   }
   
-  // 💡 Delete function
+  // Delete function
   function deleteFile(fileName) {
     const filesArray = Array.from(currentFiles.files);
     const fileIndex = filesArray.findIndex(f => f.name === fileName);
@@ -93,22 +94,20 @@ window.addEventListener("load", () => {
 
       fileInput.files = currentFiles.files;
 
-      // Re-render the list without checking for new files
       renderFiles(currentFiles.files);
     }
   }
 
-  // === Validate and handle file input ===
+  // === Validate and handle file input (Appends files and shows type warning) ===
   function handleFiles(newFiles) {
     const incomingFilesArray = Array.from(newFiles);
     
-    // FIX 1: Prevent clearing files on cancel
+    // 1. Prevent clearing files on cancel
     if (incomingFilesArray.length === 0 && currentFiles.files.length > 0) {
-        // Dialog was canceled, re-render the existing list and exit
         return renderFiles(currentFiles.files);
     }
     
-    // 💡 FIX 2: Implement file appending logic
+    // 2. Implement file appending logic (merge new files with existing)
     let filesToProcess = Array.from(currentFiles.files);
     const existingFileSignatures = filesToProcess.map(f => f.name + f.size);
 
@@ -135,23 +134,23 @@ window.addEventListener("load", () => {
         return;
     }
 
-    // Validation step on the merged list
+    // 3. 💡 VALIDATION FIX: Check for unsupported files in the merged list
     const invalidFiles = filesToProcess.filter(f => !ALLOWED_TYPES.includes(f.type));
     
     if (invalidFiles.length > 0) {
-      // If any file is invalid, we should clear the selection to enforce limits/types
-      // Note: A more complex solution could remove only the invalid ones, but clearing is safer for form validation.
-      fileError.textContent = `Unsupported file types selected. Please remove: ${invalidFiles.map(f => f.name).join(", ")}`;
+      // Show warning for unsupported file types
+      fileError.textContent = `🚫 Warning: Unsupported file types were removed. Please check file type: ${invalidFiles.map(f => f.name).join(", ")}`;
       fileError.style.display = "block";
       
-      // Clear the invalid files from filesToProcess and continue with valid ones
+      // Filter out only the invalid files but keep all previously and newly added VALID files
       filesToProcess = filesToProcess.filter(f => ALLOWED_TYPES.includes(f.type));
     } else {
+        // Clear file type error if everything is valid
         fileError.textContent = "";
         fileError.style.display = "none";
     }
 
-    // Update the internal file list and the actual input element
+    // 4. Update the internal file list and the actual input element
     currentFiles = new DataTransfer();
     filesToProcess.forEach(file => currentFiles.items.add(file));
     fileInput.files = currentFiles.files;
@@ -168,7 +167,6 @@ window.addEventListener("load", () => {
   }
 
   if (fileInput) {
-    // Calls handleFiles, which now manages appending
     fileInput.addEventListener("change", e => handleFiles(e.target.files));
   }
 
@@ -187,12 +185,11 @@ window.addEventListener("load", () => {
     );
     fileDropArea.addEventListener("drop", e => {
       e.preventDefault();
-      // Dropped files are treated as additions/merges
       handleFiles(e.dataTransfer.files);
     });
   }
   
-  // 💡 FIX: Event listener for file deletion clicks with stopPropagation() and preventDefault()
+  // FIX: Event listener for file deletion clicks with stopPropagation() and preventDefault()
   if (fileList) {
     fileList.addEventListener("click", e => {
         const deleteButton = e.target.closest(".delete-file");
