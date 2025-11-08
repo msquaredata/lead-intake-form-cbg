@@ -691,4 +691,24 @@ select[multiple]::-webkit-scrollbar-thumb:hover {
   transition: width 0.3s ease;
 }
 
+/* CSS for the delete icon */
+.delete-file {
+    margin-left: auto; /* Pushes the icon to the right */
+    color: #cc3333;
+    font-size: 1.2em;
+    cursor: pointer;
+    padding: 0 5px;
+    line-height: 1; /* Ensures it aligns well */
+    transition: color 0.1s;
+}
 
+.delete-file:hover {
+    color: #ff0000;
+}
+
+/* Ensure the file list items are laid out correctly */
+.file-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}

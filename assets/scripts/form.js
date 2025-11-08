@@ -8,8 +8,8 @@ window.addEventListener("load", () => {
     "application/pdf",
     "application/msword",
     "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     "application/vnd.ms-excel",
+    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     "image/png",
     "image/jpeg"
   ];
@@ -21,7 +21,11 @@ window.addEventListener("load", () => {
   const fileList = document.getElementById("fileList");
   const fileError = document.getElementById("fileError");
   const progressFill = document.getElementById("uploadProgressFill");
-  const fileInfo = document.getElementById("fileInfo"); // 💡 NEW DOM REFERENCE
+  const fileInfo = document.getElementById("fileInfo"); 
+  
+  // 💡 NEW: DataTransfer object is used to create a mutable FileList
+  // This is the source of truth for all currently selected files.
+  let currentFiles = new DataTransfer();
 
   // === Helper: format bytes → MB ===
   function formatBytes(bytes) {
@@ -34,7 +38,11 @@ window.addEventListener("load", () => {
     fileList.innerHTML = "";
 
     let totalSize = 0;
-    [...files].forEach(file => {
+    
+    // Ensure files is an array-like object before iterating
+    const filesArray = Array.from(files);
+
+    filesArray.forEach(file => {
       totalSize += file.size;
 
       const li = document.createElement("li");
@@ -43,6 +51,7 @@ window.addEventListener("load", () => {
         <span class="file-icon">📄</span>
         <span class="file-name">${file.name}</span>
         <span class="file-size">${formatBytes(file.size)}</span>
+        <span class="delete-file" data-file-name="${file.name}">&times;</span> 
       `;
       fileList.appendChild(li);
     });
@@ -50,13 +59,11 @@ window.addEventListener("load", () => {
     const totalSizeMB = totalSize / (1024 * 1024);
     const maxSizeBytes = MAX_TOTAL_SIZE_MB * 1024 * 1024;
 
-    // 💡 NEW LOGIC: Update file size counter
     if (fileInfo) {
       fileInfo.innerHTML = `
-        Max size: **${MAX_TOTAL_SIZE_MB} MB**. 
-        Current size: **${totalSizeMB.toFixed(1)} MB**
+        Max size: <strong>${MAX_TOTAL_SIZE_MB} MB</strong>. 
+        Current size: <strong>${totalSizeMB.toFixed(1)} MB</strong>
       `;
-      // Optionally add a class to highlight size when approaching limit
       fileInfo.style.color = totalSizeMB > MAX_TOTAL_SIZE_MB * 0.9 ? 'orange' : 'inherit';
     }
 
@@ -72,41 +79,90 @@ window.addEventListener("load", () => {
       fileError.style.display = "none";
     }
   }
+  
+  // 💡 NEW FUNCTION: Deletes a single file by name
+  function deleteFile(fileName) {
+    // Convert current FileList to an array
+    const filesArray = Array.from(currentFiles.files);
+
+    // Find the index of the file to remove (using a simple name match for simplicity)
+    const fileIndex = filesArray.findIndex(f => f.name === fileName);
+
+    if (fileIndex > -1) {
+      // Remove the file from the array
+      filesArray.splice(fileIndex, 1);
+
+      // Clear the DataTransfer object
+      currentFiles = new DataTransfer();
+
+      // Add the remaining files back to the DataTransfer object
+      filesArray.forEach(file => currentFiles.items.add(file));
+
+      // Update the main file input with the new FileList
+      fileInput.files = currentFiles.files;
+
+      // Re-validate and re-render the list
+      handleFiles(currentFiles.files);
+    }
+  }
+
 
   // === Validate and handle file input ===
   function handleFiles(files) {
+    // 💡 FIX 1: Prevent clearing files on cancel
+    if (files.length === 0 && currentFiles.files.length > 0) {
+        // Dialog was canceled, keep the current file list
+        files = currentFiles.files;
+    }
+    
     if (!files || files.length === 0) {
       if (fileList) fileList.innerHTML = "";
       if (progressFill) progressFill.style.width = "0%";
-      // 💡 NEW LOGIC: Reset file info display
       if (fileInfo) {
-        fileInfo.innerHTML = `Max size: **${MAX_TOTAL_SIZE_MB} MB**. Current size: **0 MB**`;
+        fileInfo.innerHTML = `Max size: <strong>${MAX_TOTAL_SIZE_MB} MB</strong>. Current size: <strong>0 MB</strong>`;
         fileInfo.style.color = 'inherit';
       }
       fileError.textContent = "";
       fileError.style.display = "none";
+      
+      // Also clear the internal file list and the input itself
+      currentFiles = new DataTransfer();
+      fileInput.files = currentFiles.files;
       return;
     }
+    
+    // Convert new files to array for validation
+    const incomingFilesArray = Array.from(files);
 
-    const invalidFiles = [...files].filter(f => !ALLOWED_TYPES.includes(f.type));
+    const invalidFiles = incomingFilesArray.filter(f => !ALLOWED_TYPES.includes(f.type));
     
     if (invalidFiles.length > 0) {
+      // Validation failed, clear everything and show error
       if (fileList) fileList.innerHTML = ""; 
       if (progressFill) progressFill.style.width = "0%";
-      // 💡 NEW LOGIC: Reset file info display on error
       if (fileInfo) {
-        fileInfo.innerHTML = `Max size: **${MAX_TOTAL_SIZE_MB} MB**. Current size: **0 MB**`;
+        fileInfo.innerHTML = `Max size: <strong>${MAX_TOTAL_SIZE_MB} MB</strong>. Current size: <strong>0 MB</strong>`;
         fileInfo.style.color = 'inherit';
       }
 
       fileError.textContent = `Unsupported file types: ${invalidFiles.map(f => f.name).join(", ")}`;
       fileError.style.display = "block";
+
+      // Clear the internal file list and the input itself
+      currentFiles = new DataTransfer();
+      fileInput.files = currentFiles.files;
       return;
     }
 
     fileError.textContent = "";
     fileError.style.display = "none";
-    renderFiles(files);
+    
+    // 💡 NEW: Update the internal file list for valid changes
+    currentFiles = new DataTransfer();
+    incomingFilesArray.forEach(file => currentFiles.items.add(file));
+    fileInput.files = currentFiles.files;
+
+    renderFiles(currentFiles.files);
   }
 
   // === Bind UI interactions ===
@@ -118,6 +174,7 @@ window.addEventListener("load", () => {
   }
 
   if (fileInput) {
+    // File input change handler now just calls handleFiles
     fileInput.addEventListener("change", e => handleFiles(e.target.files));
   }
 
@@ -136,10 +193,22 @@ window.addEventListener("load", () => {
     );
     fileDropArea.addEventListener("drop", e => {
       e.preventDefault();
-      fileInput.files = e.dataTransfer.files;
+      // On drop, treat the dropped files as the *new* selection
       handleFiles(e.dataTransfer.files);
     });
   }
+  
+  // 💡 NEW: Event listener for file deletion clicks
+  if (fileList) {
+    fileList.addEventListener("click", e => {
+        const deleteButton = e.target.closest(".delete-file");
+        if (deleteButton) {
+            const fileName = deleteButton.dataset.fileName;
+            deleteFile(fileName);
+        }
+    });
+  }
+
 
   // === Multiselect sorting ===
   document.querySelectorAll(".multiselect-dropdown .dropdown-list").forEach(list => {
@@ -214,7 +283,8 @@ window.addEventListener("load", () => {
       return;
     }
 
-    const files = fileInput?.files || [];
+    // Use currentFiles.files for submission, which is the validated list
+    const files = currentFiles.files || [];
     let totalSize = [...files].reduce((sum, f) => sum + f.size, 0);
     if (totalSize > MAX_TOTAL_SIZE_MB * 1024 * 1024) {
       alert(`Total file size exceeds ${MAX_TOTAL_SIZE_MB} MB.`);
