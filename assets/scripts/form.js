@@ -23,8 +23,7 @@ window.addEventListener("load", () => {
   const progressFill = document.getElementById("uploadProgressFill");
   const fileInfo = document.getElementById("fileInfo"); 
   
-  // 💡 NEW: DataTransfer object is used to create a mutable FileList
-  // This is the source of truth for all currently selected files.
+  // DataTransfer object is used to create a mutable FileList
   let currentFiles = new DataTransfer();
 
   // === Helper: format bytes → MB ===
@@ -64,6 +63,7 @@ window.addEventListener("load", () => {
         Max size: <strong>${MAX_TOTAL_SIZE_MB} MB</strong>. 
         Current size: <strong>${totalSizeMB.toFixed(1)} MB</strong>
       `;
+      // Optionally add a class to highlight size when approaching limit
       fileInfo.style.color = totalSizeMB > MAX_TOTAL_SIZE_MB * 0.9 ? 'orange' : 'inherit';
     }
 
@@ -80,7 +80,7 @@ window.addEventListener("load", () => {
     }
   }
   
-  // 💡 NEW FUNCTION: Deletes a single file by name
+  // Deletes a single file by name
   function deleteFile(fileName) {
     // Convert current FileList to an array
     const filesArray = Array.from(currentFiles.files);
@@ -109,7 +109,7 @@ window.addEventListener("load", () => {
 
   // === Validate and handle file input ===
   function handleFiles(files) {
-    // 💡 FIX 1: Prevent clearing files on cancel
+    // FIX 1: Prevent clearing files on cancel
     if (files.length === 0 && currentFiles.files.length > 0) {
         // Dialog was canceled, keep the current file list
         files = currentFiles.files;
@@ -157,7 +157,7 @@ window.addEventListener("load", () => {
     fileError.textContent = "";
     fileError.style.display = "none";
     
-    // 💡 NEW: Update the internal file list for valid changes
+    // Update the internal file list for valid changes
     currentFiles = new DataTransfer();
     incomingFilesArray.forEach(file => currentFiles.items.add(file));
     fileInput.files = currentFiles.files;
@@ -198,11 +198,13 @@ window.addEventListener("load", () => {
     });
   }
   
-  // 💡 NEW: Event listener for file deletion clicks
+  // 💡 FIX: Event listener for file deletion clicks with stopPropagation()
   if (fileList) {
     fileList.addEventListener("click", e => {
         const deleteButton = e.target.closest(".delete-file");
         if (deleteButton) {
+            // CRITICAL FIX: Stop the click event from bubbling up to the file input container
+            e.stopPropagation(); 
             const fileName = deleteButton.dataset.fileName;
             deleteFile(fileName);
         }
