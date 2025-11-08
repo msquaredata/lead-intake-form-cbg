@@ -29,23 +29,26 @@ function formatBytes(bytes) {
 function renderFiles(files) {
   if (!fileList) return;
   fileList.innerHTML = "";
-  let total = 0;
-  [...files].forEach(f => {
-    total += f.size;
+
+  let totalSize = 0;
+  [...files].forEach(file => {
+    totalSize += file.size;
+
     const li = document.createElement("li");
-    li.className = "file-item";
+    li.classList.add("file-item");
     li.innerHTML = `
-      <span>📄 ${f.name}</span>
-      <span class="meta">${formatBytes(f.size)}</span>
+      <span class="file-icon">📄</span>
+      <span class="file-name">${file.name}</span>
+      <span class="file-size">${(file.size / (1024 * 1024)).toFixed(1)} MB</span>
     `;
     fileList.appendChild(li);
   });
 
-  const pct = Math.min((total / (MAX_TOTAL_SIZE_MB * 1024 * 1024)) * 100, 100);
-  if (progressFill) progressFill.style.width = `${pct}%`;
+  const pct = Math.min((totalSize / (MAX_TOTAL_SIZE_MB * 1024 * 1024)) * 100, 100);
+  progressFill.style.width = `${pct}%`;
 
-  if (total / (1024 * 1024) > MAX_TOTAL_SIZE_MB) {
-    fileError.textContent = `Total exceeds ${MAX_TOTAL_SIZE_MB} MB`;
+  if (totalSize / (1024 * 1024) > MAX_TOTAL_SIZE_MB) {
+    fileError.textContent = `Total size exceeds ${MAX_TOTAL_SIZE_MB} MB limit.`;
     fileError.style.display = "block";
   } else {
     fileError.textContent = "";
@@ -53,18 +56,26 @@ function renderFiles(files) {
   }
 }
 
+
 function handleFiles(files) {
-  if (!files.length) return;
-  const invalid = [...files].filter(f => !ALLOWED_TYPES.includes(f.type));
-  if (invalid.length) {
-    fileError.textContent = `Unsupported: ${invalid.map(f => f.name).join(", ")}`;
+  if (!files || files.length === 0) return;
+
+  // Filter out invalid types
+  const invalidFiles = [...files].filter(f => !ALLOWED_TYPES.includes(f.type));
+  if (invalidFiles.length > 0) {
+    fileError.textContent = `Unsupported file types: ${invalidFiles.map(f => f.name).join(", ")}`;
     fileError.style.display = "block";
     return;
   }
+
+  // Reset error
   fileError.textContent = "";
   fileError.style.display = "none";
+
+  // Update UI
   renderFiles(files);
 }
+
 
 if (browseTrigger) {
   browseTrigger.addEventListener("click", e => {

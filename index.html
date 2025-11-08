@@ -304,27 +304,18 @@
             <div class="section-title"><span>6 · Files & Extras</span></div>
             <div class="row cols-2">
               <label><span>Upload Teaser / CIM / Deck (optional)</span>
-                <div class="file-drop-area" id="fileDropArea">
-                  <input
-                    type="file"
-                    id="fileUpload"
-                    name="fileUpload"
-                    multiple
-                    accept=".pdf,.doc,.docx,.xls,.xlsx,.png,.jpg,.jpeg"
-                  />
-                  <div class="file" id="fileDisplay">
-                    Drag & drop files here or <strong id="browseTrigger">browse</strong>
-                  </div>
-
-                  <!-- List & feedback -->
-                  <ul id="fileList"></ul>
-                  <div id="fileError" class="file-error"></div>
-
-                  <!-- Progress indicator -->
-                  <div id="uploadProgressBar" class="progress">
-                    <div id="uploadProgressFill" class="progress-fill"></div>
-                  </div>
-                </div>
+          <div class="file-drop-area" id="fileDropArea">
+  <input type="file" id="fileUpload" name="fileUpload" multiple
+         accept=".pdf,.doc,.docx,.xls,.xlsx,.png,.jpg,.jpeg">
+  <div class="file" id="fileDisplay">
+    Drag & drop files here or <strong id="browseTrigger">browse</strong>
+  </div>
+  <ul id="fileList"></ul>
+  <div id="uploadProgressBar" class="progress">
+    <div id="uploadProgressFill" class="progress-fill"></div>
+  </div>
+  <div id="fileError" class="file-error"></div>
+</div>
 
               </label>
             </div>
