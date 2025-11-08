@@ -72,15 +72,17 @@ window.addEventListener("load", () => {
     const pct = Math.min((totalSizeMB / MAX_TOTAL_SIZE_MB) * 100, 100);
     progressFill.style.width = `${pct}%`;
 
-    // 💡 FIX: Only set/overwrite the error if it's a size issue, otherwise clear it.
+    // 💡 FIX 1: Only handle the size error here. Preserve the type warning if it exists.
     if (totalSize > maxSizeBytes) {
       fileError.textContent = `Total size exceeds ${MAX_TOTAL_SIZE_MB} MB limit.`;
       fileError.style.display = "block";
-    } else {
-      // This will clear the file type warning after a file deletion or any other valid action.
+    } else if (fileError.textContent.includes(`Total size exceeds ${MAX_TOTAL_SIZE_MB} MB limit.`)) {
+      // If the current error is a size error and size is now okay, clear it.
       fileError.textContent = "";
       fileError.style.display = "none";
     }
+    // If fileError contains the "Unsupported file types" warning, it is left alone here.
+    // That warning is handled/cleared by handleFiles or deleteFile.
   }
   
   // Delete function
@@ -96,7 +98,12 @@ window.addEventListener("load", () => {
 
       fileInput.files = currentFiles.files;
 
-      // renderFiles is called, which will now clear the type warning if size is OK
+      // 💡 FIX 2: Explicitly clear the type warning on deletion (the "next valid action")
+      if (fileError.textContent.includes("Unsupported file types")) {
+          fileError.textContent = "";
+          fileError.style.display = "none";
+      }
+
       renderFiles(currentFiles.files);
     }
   }
@@ -148,8 +155,7 @@ window.addEventListener("load", () => {
       // Filter out only the invalid files but keep all previously and newly added VALID files
       filesToProcess = filesToProcess.filter(f => ALLOWED_TYPES.includes(f.type));
     } else {
-        // Clear file type error if everything in the new selection is valid
-        // Note: This does not affect the size error which is handled in renderFiles
+        // 💡 FIX 3: Clear the type warning if a new, fully valid upload is performed.
         if (fileError.textContent.includes("Unsupported file types")) {
              fileError.textContent = "";
              fileError.style.display = "none";
