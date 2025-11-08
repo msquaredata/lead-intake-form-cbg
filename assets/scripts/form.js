@@ -198,19 +198,21 @@ window.addEventListener("load", () => {
     });
   }
   
-  // 💡 FIX: Event listener for file deletion clicks with stopPropagation()
+// 💡 FIX: Event listener for file deletion clicks with stopPropagation() and preventDefault()
   if (fileList) {
     fileList.addEventListener("click", e => {
         const deleteButton = e.target.closest(".delete-file");
         if (deleteButton) {
-            // CRITICAL FIX: Stop the click event from bubbling up to the file input container
+            // CRITICAL FIX 1: Stop the event from bubbling up to parents (like the <label> or fileDropArea)
             e.stopPropagation(); 
+            // CRITICAL FIX 2: Stop the browser's default action (which is opening the file dialog because of the <label> tag)
+            e.preventDefault(); 
+            
             const fileName = deleteButton.dataset.fileName;
             deleteFile(fileName);
         }
     });
   }
-
 
   // === Multiselect sorting ===
   document.querySelectorAll(".multiselect-dropdown .dropdown-list").forEach(list => {
