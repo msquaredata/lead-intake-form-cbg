@@ -1,4 +1,13 @@
+window.addEventListener("load", () => {
+  console.log("🔍 File uploader binding started"); // diagnostic only
+
+  // all your file input logic and dropdown setup lives here
+
+
+
 console.log("✅ DOM fully loaded — initializing dropdowns...");
+console.log("🔍 File uploader binding started");
+
 
 // === File Upload Configuration ===
 const MAX_TOTAL_SIZE_MB = 20;
@@ -264,7 +273,7 @@ function renderFiles(files) {
   ...
 }
 
-
+});
 
 
 });
