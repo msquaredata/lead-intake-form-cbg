@@ -14,6 +14,9 @@ window.addEventListener("load", () => {
     "image/jpeg"
   ];
 
+// 💡 NEW: List of supported extensions for user guidance
+  const SUPPORTED_EXTENSIONS = ".pdf, .doc, .docx, .xls, .xlsx, .png, .jpg, .jpeg";
+
   // DOM references
   const fileInput = document.getElementById("fileUpload");
   const browseTrigger = document.getElementById("browseTrigger");
@@ -138,8 +141,8 @@ window.addEventListener("load", () => {
     const invalidFiles = filesToProcess.filter(f => !ALLOWED_TYPES.includes(f.type));
     
     if (invalidFiles.length > 0) {
-      // Show warning for unsupported file types
-      fileError.textContent = `🚫 Warning: Unsupported file types were removed. Please check file type: ${invalidFiles.map(f => f.name).join(", ")}`;
+      // 💡 UPDATED WARNING MESSAGE: Includes supported types
+      fileError.textContent = `🚫 Warning: Unsupported file types were removed. Files removed: ${invalidFiles.map(f => f.name).join(", ")}. Supported types are: ${SUPPORTED_EXTENSIONS}`;
       fileError.style.display = "block";
       
       // Filter out only the invalid files but keep all previously and newly added VALID files
