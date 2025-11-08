@@ -187,11 +187,26 @@ if (fileDropArea) {
     });
 
     try {
-      const response = await fetch(form.action, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formObject),
-      });
+  // --- Prepare FormData for submission ---
+const files = fileInput?.files || [];
+let totalSize = [...files].reduce((sum, f) => sum + f.size, 0);
+if (totalSize > MAX_TOTAL_SIZE_MB * 1024 * 1024) {
+  alert(`Total file size exceeds ${MAX_TOTAL_SIZE_MB} MB.`);
+  button.disabled = false;
+  button.textContent = "Submit";
+  return;
+}
+
+const formData = new FormData(form);
+document.querySelectorAll(".multiselect-dropdown input[type='hidden']").forEach(input => {
+  formData.append(input.name, input.value);
+});
+
+const response = await fetch(form.action, {
+  method: "POST",
+  body: formData // <-- send multipart form data automatically
+});
+
       const data = await response.json();
 
       if (response.ok && data.status === "received") {
