@@ -272,58 +272,75 @@ window.addEventListener("load", () => {
 
   console.log("✅ Dropdown initialization complete.");
 
-  // === Form Submission ===
-  const form = document.getElementById("leadForm");
-  if (!form) return;
+// === Form Submission ===
+const form = document.getElementById("leadForm");
+if (!form) return;
 
-  form.addEventListener("submit", async e => {
+form.addEventListener("submit", async e => {
     e.preventDefault();
     const button = form.querySelector("button[type='submit']");
     button.disabled = true;
     button.textContent = "Submitting...";
 
     if (!form.checkValidity()) {
-      alert("Please fill in all required fields before submitting.");
-      button.disabled = false;
-      button.textContent = "Submit";
-      return;
+        alert("Please fill in all required fields before submitting.");
+        button.disabled = false;
+        button.textContent = "Submit";
+        return;
     }
 
-    // Use currentFiles.files for submission
+    // Use currentFiles.files for submission and final size check
     const files = currentFiles.files || [];
     let totalSize = [...files].reduce((sum, f) => sum + f.size, 0);
-    if (totalSize > MAX_TOTAL_SIZE_MB * 1024 * 1024) {
-      alert(`Total file size exceeds ${MAX_TOTAL_SIZE_MB} MB.`);
-      button.disabled = false;
-      button.textContent = "Submit";
-      return;
+    const MAX_SIZE_BYTES = MAX_TOTAL_SIZE_MB * 1024 * 1024; // Use the MB constant
+
+    if (totalSize > MAX_SIZE_BYTES) {
+        alert(`Total file size exceeds ${MAX_TOTAL_SIZE_MB} MB.`);
+        button.disabled = false;
+        button.textContent = "Submit";
+        return;
     }
 
+    // 1. Create FormData from the base form (gets all text inputs)
     const formData = new FormData(form);
+
+    // 2. Append hidden multiselect fields
     document.querySelectorAll(".multiselect-dropdown input[type='hidden']").forEach(input => {
-      formData.append(input.name, input.value);
+        // Use append for multiple values, but it seems your hidden input only holds one string.
+        formData.append(input.name, input.value); 
     });
+    
+    // 3. ✨ CRITICAL FIX: Manually append the files from currentFiles 
+    //    The key 'fileUpload' must match the name of your file input if you want to access it cleanly.
+    const FILE_FIELD_NAME = fileInput.name || "fileUpload"; // Use the name from your HTML input
 
-    try {
-      const response = await fetch(form.action, {
-        method: "POST",
-        body: formData
-      });
-
-      const data = await response.json();
-
-      if (response.ok && data.status === "received") {
-        const redirectURL = data.redirect || "thank-you.html";
-        setTimeout(() => (window.location.href = redirectURL), 800);
-      } else {
-        alert("Submission failed. Please try again.");
-      }
-    } catch (error) {
-      console.error("❌ Error submitting form:", error);
-      alert("Unable to connect to the server. Please try again later.");
-    } finally {
-      button.disabled = false;
-      button.textContent = "Submit";
+    for (let i = 0; i < files.length; i++) {
+        // Append each file using the expected field name from your n8n workflow
+        formData.append(FILE_FIELD_NAME, files[i]); 
     }
-  });
+    
+    // --- Submission Logic ---
+    try {
+        const response = await fetch(form.action, {
+            method: "POST",
+            body: formData
+            // IMPORTANT: Do NOT manually set Content-Type header; let FormData handle it!
+        });
+
+        const data = await response.json();
+
+        if (response.ok && data.status === "received") {
+            const redirectURL = data.redirect || "thank-you.html";
+            setTimeout(() => (window.location.href = redirectURL), 800);
+        } else {
+            alert("Submission failed. Please try again.");
+        }
+    } catch (error) {
+        console.error("❌ Error submitting form:", error);
+        alert("Unable to connect to the server. Please try again later.");
+    } finally {
+        button.disabled = false;
+        button.textContent = "Submit";
+    }
+});
 });
