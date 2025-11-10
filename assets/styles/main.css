@@ -1,14 +1,30 @@
 /* === Base === */
 :root {
-  --bg: #f5f5f5;
-  --txt: #1f2937;
-  --muted: #6b7280;
+  /* Updated Background to a lighter, cool gray */
+  --bg: #f8f9fa; 
+  
+  /* Updated Text to a deep, dark charcoal */
+  --txt: #1a1a1a; 
+  
+  /* Updated Muted text color to a professional, dark gray */
+  --muted: #6c757d; 
+  
+  /* Keeping card background white */
   --card: #ffffff;
-  --border: #e5e7eb;
-  --ink: #111827;
-  --primary: #111111;
-  --shadow: 0 10px 20px rgba(0, 0, 0, .06), 0 2, 6px rgba(0, 0, 0, .04);
-  --radius: 16px;
+  
+  /* Updated Border to a subtle, cool gray */
+  --border: #e9ecef; 
+  
+  /* Updated Ink for primary headings/elements to a deep navy (like the screenshots) */
+  --ink: #0A2540; 
+  
+  /* Updated Primary action color to a strong red/orange (like the n8n button) */
+  --primary: #dc3545; 
+  
+  /* Adjusted shadow for a softer lift */
+  --shadow: 0 4px 12px rgba(0, 0, 0, .05), 0 2px 4px rgba(0, 0, 0, .03);
+  
+  --radius: 12px; /* Slightly reduced for a modern look */
 }
 
 * { box-sizing: border-box; }
@@ -58,7 +74,7 @@ a { color: inherit; }
   display: grid;
   place-items: center;
   color: #fff;
-  background: #111;
+  background: var(--ink); /* THEME UPDATE */
   font-weight: 600;
 }
 
@@ -78,12 +94,16 @@ a { color: inherit; }
   border-radius: 12px;
   font-weight: 600;
   font-size: 14px;
-  border: 1px solid #111;
-  background: #111;
+  border: 1px solid var(--primary); /* THEME UPDATE */
+  background: var(--primary); /* THEME UPDATE */
   color: #fff;
   text-decoration: none;
 }
-.btn.secondary { background: transparent; color: #111; border-color: var(--border); }
+.btn.secondary { 
+  background: transparent; 
+  color: var(--ink); /* THEME UPDATE */
+  border-color: var(--border); 
+}
 .btn:hover { filter: brightness(1.05); }
 
 /* === Grid & Hero === */
@@ -95,17 +115,28 @@ a { color: inherit; }
 }
 
 .hero {
-  background: linear-gradient(135deg, #0f172a, #374151);
+  /* THEME UPDATE: Use new ink color in gradient */
+  background: linear-gradient(135deg, var(--ink), #2b3a50);
   color: #fff;
   border-radius: calc(var(--radius) + 8px);
   padding: 32px;
   margin-top: 24px;
   margin-bottom: 32px;
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+  /* LAYOUT FIX: Center all content */
+  text-align: center; 
 }
 
 .hero h2 { margin: 0; font-size: 28px; }
-.hero p { margin-top: 10px; color: #d1d5db; max-width: 60ch; }
+
+.hero p { 
+  margin-top: 10px; 
+  color: #d1d5db; 
+  /* LAYOUT FIX: Center the paragraph block while respecting max-width */
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 60ch;
+}
 
 .bullets {
   display: grid;
@@ -113,9 +144,20 @@ a { color: inherit; }
   gap: 12px;
   margin-top: 20px;
   font-size: 14px;
+  /* LAYOUT FIX: Constrain width and center the bullet grid */
+  max-width: 450px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
-.bullet { display: flex; gap: 8px; align-items: center; }
+.bullet { 
+  display: flex; 
+  gap: 8px; 
+  align-items: center; 
+  /* LAYOUT FIX: Ensure bullets left-align within their columns */
+  justify-content: flex-start;
+}
+
 .tick {
   width: 20px; height: 20px; border-radius: 999px;
   background: rgba(255, 255, 255, .15);
@@ -145,7 +187,7 @@ a { color: inherit; }
   margin: 0 0 8px 0;
   font-size: 16px;
   font-weight: 700;
-  color: #111827;
+  color: var(--ink); /* THEME UPDATE */
 }
 
 .rail ol {
@@ -166,7 +208,7 @@ a { color: inherit; }
 .rail .num {
   width: 22px;
   height: 22px;
-  background: #111;
+  background: var(--ink); /* THEME UPDATE */
   color: #fff;
   border-radius: 8px;
   display: grid;
