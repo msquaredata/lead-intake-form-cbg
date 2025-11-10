@@ -72,7 +72,7 @@ window.addEventListener("load", () => {
         const pct = Math.min((totalSizeMB / MAX_TOTAL_SIZE_MB) * 100, 100);
         progressFill.style.width = `${pct}%`;
 
-        // 💡 FIX 1: Only handle the size error here. Preserve the type warning if it exists.
+        // 💡 Only handle the size error here. Preserve the type warning if it exists.
         if (totalSize > maxSizeBytes) {
             fileError.textContent = `Total size exceeds ${MAX_TOTAL_SIZE_MB} MB limit.`;
             fileError.style.display = "block";
@@ -81,8 +81,6 @@ window.addEventListener("load", () => {
             fileError.textContent = "";
             fileError.style.display = "none";
         }
-        // If fileError contains the "Unsupported file types" warning, it is left alone here.
-        // That warning is handled/cleared by handleFiles or deleteFile.
     }
     
     // Delete function
@@ -98,7 +96,7 @@ window.addEventListener("load", () => {
 
             fileInput.files = currentFiles.files;
 
-            // 💡 FIX 2: Explicitly clear the type warning on deletion (the "next valid action")
+            // Explicitly clear the type warning on deletion 
             if (fileError.textContent.includes("Unsupported file types")) {
                  fileError.textContent = "";
                  fileError.style.display = "none"; 
@@ -155,7 +153,7 @@ window.addEventListener("load", () => {
             // Filter out only the invalid files but keep all previously and newly added VALID files
             filesToProcess = filesToProcess.filter(f => ALLOWED_TYPES.includes(f.type));
         } else {
-            // 💡 FIX 3: Clear the type warning if a new, fully valid upload is performed.
+            // Clear the type warning if a new, fully valid upload is performed.
             if (fileError.textContent.includes("Unsupported file types")) {
                  fileError.textContent = "";
                  fileError.style.display = "none";
@@ -201,7 +199,7 @@ window.addEventListener("load", () => {
         });
     }
     
-    // FIX: Event listener for file deletion clicks with stopPropagation() and preventDefault()
+    // Event listener for file deletion clicks 
     if (fileList) {
         fileList.addEventListener("click", e => {
             const deleteButton = e.target.closest(".delete-file");
@@ -230,7 +228,7 @@ window.addEventListener("load", () => {
         labels.forEach(label => list.appendChild(label));
     });
 
-    // === Multiselect behavior (Safety check added for missing data-name) ===
+    // === Multiselect behavior ===
     document.querySelectorAll(".multiselect-dropdown").forEach(dropdown => {
         const button = dropdown.querySelector(".dropdown-btn");
         const list = dropdown.querySelector(".dropdown-list");
@@ -242,10 +240,18 @@ window.addEventListener("load", () => {
             console.error("Multiselect initialization failed: Missing 'data-name' attribute on a dropdown.");
             return; 
         }
+        
+        const isRequired = dropdown.hasAttribute('required') || dropdown.querySelector('[required]') !== null;
 
         const hiddenInput = document.createElement("input");
         hiddenInput.type = "hidden";
-        hiddenInput.name = dataName; // Use the safe variable
+        hiddenInput.name = dataName; 
+        
+        if(isRequired) {
+             hiddenInput.setAttribute('required', 'required'); 
+             hiddenInput.classList.add('multiselect-hidden'); // Tag for custom validation
+        }
+        
         dropdown.appendChild(hiddenInput);
 
         const defaultText = button.textContent.trim();
@@ -260,6 +266,15 @@ window.addEventListener("load", () => {
                 : `${selected.length} items selected`;
             button.textContent = newText;
             button.classList.toggle("has-selection", selected.length > 0);
+            
+            // 💡 ADDED: Clear/Apply error state on selection change for required fields
+            if (isRequired) {
+                 if (selected.length > 0) {
+                     button.closest('label')?.classList.remove('field-error');
+                 } else {
+                     button.closest('label')?.classList.add('field-error'); 
+                 }
+            }
         };
 
         updateDropdown();
@@ -280,23 +295,122 @@ window.addEventListener("load", () => {
     });
 
     console.log("✅ Dropdown initialization complete.");
-
-    // === Form Submission (FINAL CORRECTED BLOCK) ===
+    
+    // ======================================
+    // === NEW CUSTOM VALIDATION LOGIC START ===
+    // ======================================
+    
     const form = document.getElementById("leadForm");
     if (!form) return;
+    
+    const requiredFields = form.querySelectorAll('[required]');
 
+    /**
+     * Finds the correct element to apply/clear the error class (usually the parent <label>).
+     * @param {HTMLElement} inputElement - The input, select, textarea, or multiselect-btn element.
+     * @returns {HTMLElement|null} The element to which the 'field-error' class should be applied.
+     */
+    const getTargetElement = (inputElement) => {
+        if (inputElement.classList.contains('dropdown-btn')) {
+            // For a multiselect button, target its parent label
+            return inputElement.closest('.multiselect-dropdown')?.closest('label');
+        }
+        // For standard inputs, target the closest label
+        return inputElement.closest('label');
+    };
+
+    const clearError = (inputElement) => {
+        const targetElement = getTargetElement(inputElement);
+        if (targetElement) {
+            targetElement.classList.remove('field-error');
+        }
+    };
+
+    const applyError = (inputElement) => {
+        const targetElement = getTargetElement(inputElement);
+        if (targetElement) {
+            targetElement.classList.add('field-error');
+        }
+    };
+
+    /**
+     * Checks if a field is valid (i.e., not empty). Only called for [required] fields.
+     */
+    const isValid = (input) => {
+        if (input.type === 'checkbox') {
+            return input.checked;
+        }
+        // For text, select, textarea, hidden inputs, etc., trim whitespace and check if not empty
+        return input.value.trim() !== '';
+    };
+
+    // --- Real-time feedback: Clear error as user types ---
+    requiredFields.forEach(field => {
+        // Skip multiselect hidden fields as their visual feedback is handled in the updateDropdown function
+        if (field.type === 'hidden' && field.classList.contains('multiselect-hidden')) {
+             return; 
+        }
+
+        field.addEventListener('input', () => {
+            if (isValid(field)) {
+                clearError(field);
+            }
+        });
+
+        field.addEventListener('change', () => {
+            if (isValid(field)) {
+                clearError(field);
+            }
+        });
+    });
+    
+    // === Form Submission Override (Replaces form.checkValidity()) ===
     form.addEventListener("submit", async e => {
         e.preventDefault();
         const button = form.querySelector("button[type='submit']");
-        button.disabled = true;
-        button.textContent = "Submitting...";
+        
+        let isFormValid = true;
 
-        if (!form.checkValidity()) {
-            alert("Please fill in all required fields before submitting.");
+        // 1. Reset all previous error states
+        form.querySelectorAll('.field-error').forEach(el => el.classList.remove('field-error'));
+
+        // 2. Check all required fields (Custom Validation)
+        requiredFields.forEach(field => {
+            
+            if (field.classList.contains('multiselect-hidden')) {
+                // For multiselects, check the hidden input value but highlight the visible button
+                 const dropdownButton = field.closest('.multiselect-dropdown')?.querySelector('.dropdown-btn');
+                 if (!isValid(field)) {
+                    if(dropdownButton) applyError(dropdownButton);
+                    isFormValid = false;
+                } else {
+                    if(dropdownButton) clearError(dropdownButton);
+                }
+            } else if (!isValid(field)) {
+                applyError(field);
+                isFormValid = false;
+            } else {
+                clearError(field);
+            }
+        });
+
+        if (!isFormValid) {
+            console.log('Form validation failed. Missing required fields.');
+            // Scroll to the first error field for better UX
+            const firstError = form.querySelector('.field-error');
+            if (firstError) {
+                firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+            // Stop processing and re-enable button
             button.disabled = false;
             button.textContent = "Submit";
-            return;
+            return; 
         }
+        // --- Custom Validation Passed ---
+
+        // Proceed with submission (original code structure)
+        button.disabled = true;
+        button.textContent = "Submitting...";
 
         // Use currentFiles.files for submission and final size check
         const files = currentFiles.files || [];
@@ -321,8 +435,6 @@ window.addEventListener("load", () => {
             formData.append(FILE_FIELD_NAME, files[i]); 
         }
         
-        // 3. REDUNDANT APPEND LOOP REMOVED HERE: This was causing the duplicate multiselect array.
-
         // --- Submission Logic ---
         try {
             const response = await fetch(form.action, {
