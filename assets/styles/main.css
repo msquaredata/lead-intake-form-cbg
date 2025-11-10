@@ -1,30 +1,20 @@
 /* === Base === */
 :root {
-  /* Updated Background to a lighter, cool gray */
-  --bg: #f8f9fa; 
-  
-  /* Updated Text to a deep, dark charcoal */
-  --txt: #1a1a1a; 
-  
-  /* Updated Muted text color to a professional, dark gray */
-  --muted: #6c757d; 
-  
-  /* Keeping card background white */
+  /* BACKGROUNDS & TEXT */
+  --bg: #f8f9fa; /* Lighter background */
+  --txt: #1a1a1a; /* Deep charcoal text */
+  --muted: #6c757d; /* Professional dark gray muted text */
   --card: #ffffff;
+  --border: #e9ecef; /* Subtle, cool gray border */
   
-  /* Updated Border to a subtle, cool gray */
-  --border: #e9ecef; 
-  
-  /* Updated Ink for primary headings/elements to a deep navy (like the screenshots) */
-  --ink: #0A2540; 
-  
-  /* Updated Primary action color to a strong red/orange (like the n8n button) */
-  --primary: #dc3545; 
-  
-  /* Adjusted shadow for a softer lift */
+  /* THEME COLORS (New Schematic: Navy & Red) */
+  --ink: #0A2540; /* Deep Navy Blue (Primary text, borders, dark accents) */
+  --primary: #dc3545; /* Strong Red/Orange (Primary action color: Buttons, Hero, Logo, Numbers) */
+  --hero: #6c757d;
+
+  /* STYLING */
   --shadow: 0 4px 12px rgba(0, 0, 0, .05), 0 2px 4px rgba(0, 0, 0, .03);
-  
-  --radius: 12px; /* Slightly reduced for a modern look */
+  --radius: 12px;
 }
 
 * { box-sizing: border-box; }
@@ -67,6 +57,7 @@ a { color: inherit; }
 
 .brand { display: flex; align-items: center; gap: 12px; }
 
+/* LOGO: Uses Red (--primary) */
 .logo {
   width: 36px;
   height: 36px;
@@ -74,7 +65,7 @@ a { color: inherit; }
   display: grid;
   place-items: center;
   color: #fff;
-  background: var(--ink); /* THEME UPDATE */
+  background: var(--primary); 
   font-weight: 600;
 }
 
@@ -94,14 +85,14 @@ a { color: inherit; }
   border-radius: 12px;
   font-weight: 600;
   font-size: 14px;
-  border: 1px solid var(--primary); /* THEME UPDATE */
-  background: var(--primary); /* THEME UPDATE */
+  border: 1px solid var(--primary); /* THEME: Red */
+  background: var(--primary); /* THEME: Red */
   color: #fff;
   text-decoration: none;
 }
 .btn.secondary { 
   background: transparent; 
-  color: var(--ink); /* THEME UPDATE */
+  color: var(--ink); /* THEME: Navy for secondary text */
   border-color: var(--border); 
 }
 .btn:hover { filter: brightness(1.05); }
@@ -115,53 +106,57 @@ a { color: inherit; }
 }
 
 .hero {
-  /* THEME UPDATE: Use new ink color in gradient */
-  background: linear-gradient(135deg, var(--ink), #2b3a50);
+  background: var(--hero);
   color: #fff;
   border-radius: calc(var(--radius) + 8px);
   padding: 32px;
   margin-top: 24px;
   margin-bottom: 32px;
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
-  /* LAYOUT FIX: Center all content */
-  text-align: center; 
+  /* LAYOUT: Center all block content */
+  text-align: center;
 }
 
-.hero h2 { margin: 0; font-size: 28px; }
+.hero h2 { 
+  margin: 0; 
+  font-size: 32px; /* Increased size for balance */
+}
 
 .hero p { 
   margin-top: 10px; 
-  color: #d1d5db; 
-  /* LAYOUT FIX: Center the paragraph block while respecting max-width */
+  color: #fff; /* Changed from d1d5db to pure white for better contrast on red */
+  font-size: 18px; /* Increased size for balance */
+  max-width: 60ch; 
   margin-left: auto;
   margin-right: auto;
-  max-width: 60ch;
 }
 
 .bullets {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px;
+  gap: 16px; 
   margin-top: 20px;
-  font-size: 14px;
-  /* LAYOUT FIX: Constrain width and center the bullet grid */
-  max-width: 450px;
-  margin-left: auto;
-  margin-right: auto;
+  font-size: 16px; 
+  max-width: 550px; /* Increased width for balance */
+  margin-left: auto; /* Centering the block */
+  margin-right: auto; /* Centering the block */
 }
 
 .bullet { 
   display: flex; 
   gap: 8px; 
   align-items: center; 
-  /* LAYOUT FIX: Ensure bullets left-align within their columns */
-  justify-content: flex-start;
+  /* FIX: Center bullet content within its column */
+  justify-content: center; 
 }
 
 .tick {
-  width: 20px; height: 20px; border-radius: 999px;
-  background: rgba(255, 255, 255, .15);
-  display: grid; place-items: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 999px;
+  /* This transparent white works well on the red background */
+  background: rgba(255, 255, 255, .15); 
+  display: grid;
+  place-items: center;
 }
 
 /* Cards */
@@ -187,7 +182,7 @@ a { color: inherit; }
   margin: 0 0 8px 0;
   font-size: 16px;
   font-weight: 700;
-  color: var(--ink); /* THEME UPDATE */
+  color: var(--ink); /* THEME: Navy */
 }
 
 .rail ol {
@@ -205,10 +200,11 @@ a { color: inherit; }
   margin: 6px 0;
 }
 
+/* SIDEBAR NUMBERS: Uses Red (--primary) */
 .rail .num {
   width: 22px;
   height: 22px;
-  background: var(--ink); /* THEME UPDATE */
+  background: var(--primary); /* THEME: Red */
   color: #fff;
   border-radius: 8px;
   display: grid;
@@ -226,6 +222,7 @@ a { color: inherit; }
   font-size: 13px;
   color: #4b5563;
   line-height: 1.4;
+  margin-bottom: 16px;
 }
 
 /* === Aside (helper card under rail) === */
@@ -239,16 +236,34 @@ a { color: inherit; }
 .aside h3 { margin: 0; font-size: 16px; }
 
 .aside ul {
-  list-style-type: disc;
-  margin: 10px 0 0 24px;
-  padding-left: 10px;
-  color: #374151;
+  list-style: none;
+  padding: 0;
+  margin: 12px 0 0 0;
+}
+
+.aside ul li {
+  position: relative;
+  padding-left: 18px;
+  margin: 8px 0;
+  line-height: 1.55;
+  color: #111827;
   font-size: 14px;
-  line-height: 1.6;
+}
+
+.aside ul li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 8px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background-color: var(--primary); /* THEME: Red accent for list bullets */
+  opacity: 0.85;
 }
 
 .aside .note {
-  margin-top: 14px;
+  margin-top: 18px;
   padding: 12px;
   border: 1px dashed var(--border);
   border-radius: 12px;
@@ -374,7 +389,7 @@ body.thankyou {
 }
 
 .thankyou-card h2 {
-  color: #0A2540;
+  color: var(--ink); /* THEME: Navy */
   margin-bottom: 18px;
   font-size: 1.8rem;
 }
@@ -387,7 +402,7 @@ body.thankyou {
 
 .thankyou-card .btn {
   display: inline-block;
-  background: #0A2540;
+  background: var(--ink); /* THEME: Navy for Thank You page button */
   color: #fff;
   padding: 12px 28px;
   border-radius: 8px;
@@ -427,7 +442,7 @@ select[multiple]:hover {
 }
 
 select[multiple]:focus {
-  border-color: #0a2540;
+  border-color: var(--ink); /* THEME: Navy */
   box-shadow: 0 0 0 3px rgba(10, 37, 64, 0.15);
 }
 
@@ -441,7 +456,7 @@ select[multiple] option {
 /* Highlight selected options */
 select[multiple] option:checked {
   background-color: #eaf2fa;
-  color: #0a2540;
+  color: var(--ink); /* THEME: Navy */
   font-weight: 500;
 }
 
@@ -467,7 +482,6 @@ select[multiple]::-webkit-scrollbar-thumb:hover {
 .multiselect-dropdown {
   position: relative;
   width: 100%;
-  /* CRITICAL: Ensure z-index is high for dropdown content */
   z-index: 10;
 }
 
@@ -475,11 +489,10 @@ select[multiple]::-webkit-scrollbar-thumb:hover {
   width: 100%;
   text-align: left;
   background: #fff;
-  /* Use var(--border) for consistency, although #ccd6e0 is fine */
   border: 1px solid var(--border); 
-  border-radius: 12px; /* Make it match other inputs (12px vs 8px) */
-  padding: 12px 14px; /* Matches input[type="text"] padding */
-  font-size: 14px;  /* Matches input[type="text"] font-size */
+  border-radius: 12px; 
+  padding: 12px 14px; 
+  font-size: 14px;  
   cursor: pointer;
   display: flex;
   justify-content: space-between;
@@ -491,18 +504,16 @@ select[multiple]::-webkit-scrollbar-thumb:hover {
 .dropdown-btn::after {
   content: "▾";
   font-size: 14px;
-  color: #0a2540;
+  color: var(--ink); /* THEME: Navy */
 }
 
-/* NEW: Highlight button when it has a selection */
 .dropdown-btn.has-selection {
-  color: #0a2540;
+  color: var(--ink); /* THEME: Navy */
   font-weight: 500;
 }
 
-/* NEW: Highlight button border when open */
 .multiselect-dropdown.open .dropdown-btn {
-  border-color: #0a2540;
+  border-color: var(--ink); /* THEME: Navy */
   box-shadow: 0 0 0 3px rgba(10, 37, 64, 0.15);
 }
 
@@ -516,10 +527,9 @@ select[multiple]::-webkit-scrollbar-thumb:hover {
   border-radius: 8px;
   padding: 8px;
   
-  /* CRITICAL FIX: Use opacity/visibility to show/hide to avoid display:none conflicts */
   visibility: hidden; 
   opacity: 0;
-  pointer-events: none; /* Disable interaction when hidden */
+  pointer-events: none; 
   transition: opacity 0.2s, visibility 0.2s;
 
   flex-direction: column;
@@ -529,12 +539,11 @@ select[multiple]::-webkit-scrollbar-thumb:hover {
   z-index: 1000;
 }
 
-/* NEW: Rule to show the dropdown list when the parent has the 'open' class */
 .multiselect-dropdown.open .dropdown-list {
   visibility: visible;
   opacity: 1;
-  pointer-events: auto; /* Enable interaction when visible */
-  display: flex; /* Ensure it lays out as a column */
+  pointer-events: auto; 
+  display: flex; 
 }
 
 .dropdown-list label {
@@ -546,19 +555,17 @@ select[multiple]::-webkit-scrollbar-thumb:hover {
 }
 
 .dropdown-list input[type="checkbox"] {
-  accent-color: #0a2540;
+  accent-color: var(--ink); /* THEME: Navy */
 }
 
 /* =============================
    Sidebar Layout & Bullet Style
    ============================= */
 
-/* Adds breathing room between sidebar sections */
 .rail .why {
-  margin-bottom: 16px; /* space below the “Why we ask” card */
+  margin-bottom: 16px; 
 }
 
-/* Reintroduce elegant bullets with proper spacing */
 .aside ul {
   list-style: none;
   padding: 0;
@@ -574,7 +581,6 @@ select[multiple]::-webkit-scrollbar-thumb:hover {
   font-size: 14px;
 }
 
-/* Subtle round bullet (consistent with mSquare theme) */
 .aside ul li::before {
   content: '';
   position: absolute;
@@ -583,11 +589,10 @@ select[multiple]::-webkit-scrollbar-thumb:hover {
   width: 5px;
   height: 5px;
   border-radius: 50%;
-  background-color: #0A2540; /* navy theme accent */
+  background-color: var(--primary); /* THEME: Red accent for list bullets */
   opacity: 0.85;
 }
 
-/* Small breathing room between “What we look for” card and note */
 .aside .note {
   margin-top: 18px;
 }
@@ -614,7 +619,7 @@ select[multiple]::-webkit-scrollbar-thumb:hover {
   margin: 0;
   flex-shrink: 0;
   transform: scale(1.1);
-  accent-color: #0a2540;
+  accent-color: var(--ink); /* THEME: Navy */
 }
 
 .multiselect-dropdown .dropdown-list label:hover {
@@ -735,12 +740,12 @@ select[multiple]::-webkit-scrollbar-thumb:hover {
 
 /* CSS for the delete icon */
 .delete-file {
-    margin-left: auto; /* Pushes the icon to the right */
+    margin-left: auto; 
     color: #cc3333;
     font-size: 1.2em;
     cursor: pointer;
     padding: 0 5px;
-    line-height: 1; /* Ensures it aligns well */
+    line-height: 1; 
     transition: color 0.1s;
 }
 
