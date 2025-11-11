@@ -1,0 +1,1416 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Charlton Bleecker — Deal Prospect Intake</title>
+    <!-- Tailwind CSS CDN for aesthetics -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Base styles from assets/styles/main.css (merged here) */
+        :root {
+            --color-primary: #3b82f6; /* blue-500 */
+            --color-secondary: #10b981; /* emerald-500 */
+            --color-text: #1f2937; /* gray-800 */
+            --color-light-text: #6b7280; /* gray-500 */
+            --color-bg: #f9fafb; /* gray-50 */
+            --color-white: #ffffff;
+            --color-border: #e5e7eb; /* gray-200 */
+            --color-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--color-bg);
+            color: var(--color-text);
+            line-height: 1.6;
+        }
+
+        /* Utility classes to avoid external Tailwind (though CDN is loaded) */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .topbar {
+            background-color: var(--color-white);
+            border-bottom: 1px solid var(--color-border);
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+            margin-bottom: 30px;
+        }
+
+        .topbar-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo {
+            background-color: var(--color-primary);
+            color: var(--color-white);
+            font-weight: 700;
+            padding: 8px 12px;
+            border-radius: 6px;
+        }
+
+        .brand h1 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            line-height: 1.2;
+            margin: 0;
+        }
+
+        .brand p {
+            font-size: 0.8rem;
+            color: var(--color-light-text);
+            margin: 0;
+            line-height: 1.2;
+        }
+
+        .nav .btn {
+            padding: 8px 15px;
+            background-color: var(--color-secondary);
+            color: var(--color-white);
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: background-color 0.2s;
+        }
+
+        .nav .btn:hover {
+            background-color: #059669; /* emerald-600 */
+        }
+
+        .grid-5 {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .hero {
+            grid-column: span 3;
+            padding: 20px 0;
+        }
+        
+        @media (max-width: 768px) {
+            .hero {
+                grid-column: span 5;
+            }
+        }
+
+        .hero h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: var(--color-primary);
+        }
+
+        .hero p {
+            font-size: 1.1rem;
+            color: var(--color-light-text);
+            margin-bottom: 20px;
+        }
+        
+        .bullets {
+            display: flex;
+            gap: 20px;
+            font-size: 0.9rem;
+            color: var(--color-light-text);
+        }
+        
+        .bullet {
+            display: flex;
+            align-items: center;
+        }
+        
+        .tick {
+            color: var(--color-secondary);
+            font-weight: 700;
+            margin-right: 5px;
+        }
+
+        .card.shell {
+            background-color: var(--color-white);
+            border-radius: 8px;
+            box-shadow: var(--color-shadow);
+            padding: 30px;
+            grid-column: 1 / -1; /* Full width */
+            border: 1px solid var(--color-border);
+        }
+
+        .formgrid {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            gap: 40px;
+        }
+
+        @media (max-width: 900px) {
+            .formgrid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+        }
+
+        .rail h4 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-top: 0;
+            margin-bottom: 15px;
+            color: var(--color-primary);
+        }
+
+        .rail ol {
+            list-style: none;
+            padding: 0;
+            margin-bottom: 30px;
+            border-left: 3px solid var(--color-border);
+        }
+
+        .rail ol li {
+            padding: 8px 0 8px 15px;
+            color: var(--color-light-text);
+            position: relative;
+        }
+
+        .rail ol li .num {
+            position: absolute;
+            left: -19px;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: var(--color-primary);
+            color: var(--color-white);
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .why, .aside {
+            background-color: #f0f4ff; /* light blue */
+            border: 1px solid #c3d4f8; /* slightly darker blue */
+            border-radius: 6px;
+            padding: 15px;
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+        }
+        
+        .aside h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-top: 0;
+            margin-bottom: 10px;
+            color: var(--color-primary);
+        }
+        
+        .aside ul {
+            list-style: disc;
+            padding-left: 20px;
+            margin-bottom: 10px;
+        }
+        
+        .aside .note {
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid #c3d4f8;
+            font-style: italic;
+        }
+
+        /* Form styles */
+        #leadForm > div {
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--color-border);
+        }
+        
+        #leadForm > div:last-of-type {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .section-title {
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--color-text);
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+        }
+
+        .section-title span.muted {
+            font-size: 0.9rem;
+            font-weight: 400;
+            color: var(--color-light-text);
+        }
+
+        .row {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .cols-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .cols-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+
+        @media (max-width: 600px) {
+            .cols-2, .cols-3 {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        label {
+            display: flex;
+            flex-direction: column;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--color-text);
+        }
+
+        .label-inline {
+            flex-direction: row;
+            align-items: center;
+        }
+
+        .label-inline input[type="checkbox"] {
+            margin-right: 10px;
+        }
+
+        input:not([type="checkbox"]), select, textarea {
+            padding: 10px 15px;
+            border: 1px solid var(--color-border);
+            border-radius: 6px;
+            margin-top: 5px;
+            font-size: 1rem;
+            color: var(--color-text);
+            background-color: var(--color-white);
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        input:focus, select:focus, textarea:focus, .dropdown-btn.active {
+            outline: none;
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+        }
+        
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        .full {
+            grid-column: 1 / -1;
+        }
+
+        /* Tooltip style */
+        .has-tooltip {
+            position: relative;
+        }
+
+        .info-icon {
+            cursor: pointer;
+            margin-left: 5px;
+            color: var(--color-primary);
+            font-style: normal;
+        }
+
+        .info-icon:hover::after {
+            content: attr(data-tip);
+            position: absolute;
+            top: 100%;
+            left: 0;
+            z-index: 20;
+            background-color: var(--color-text);
+            color: var(--color-white);
+            padding: 8px 12px;
+            border-radius: 4px;
+            white-space: nowrap;
+            font-size: 0.8rem;
+            line-height: 1.4;
+            transform: translateY(5px);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        /* File Upload */
+        #fileDropArea {
+            border: 2px dashed var(--color-border);
+            border-radius: 6px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            background-color: #fefefe;
+            transition: border-color 0.2s, background-color 0.2s;
+        }
+        
+        #fileDropArea.highlight {
+            border-color: var(--color-primary);
+            background-color: #e0f2fe; /* light blue */
+        }
+        
+        #fileDropArea.has-files {
+            border-color: var(--color-secondary);
+        }
+
+        #fileDropArea p {
+            margin: 0;
+            font-size: 0.9rem;
+        }
+        
+        #browseTrigger {
+            color: var(--color-primary);
+            text-decoration: underline;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        #fileList {
+            list-style: none;
+            padding: 0;
+            margin-top: 15px;
+            border-top: 1px solid var(--color-border);
+        }
+        
+        #fileList li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--color-border);
+            font-size: 0.9rem;
+        }
+        
+        #fileList .file-size {
+            color: var(--color-light-text);
+            margin-left: 10px;
+        }
+        
+        #fileList .muted {
+            color: var(--color-light-text);
+            font-style: italic;
+        }
+        
+        .remove-file-btn {
+            background: none;
+            border: none;
+            color: #ef4444; /* red-500 */
+            cursor: pointer;
+            font-size: 1.2rem;
+            margin-left: 10px;
+            line-height: 1;
+        }
+
+        #fileError {
+            color: #ef4444; /* red-500 */
+            font-weight: 500;
+            margin-top: 10px;
+            font-size: 0.9rem;
+            display: none;
+        }
+
+        #fileError.active {
+            display: block;
+        }
+
+        #uploadProgress {
+            height: 8px;
+            background-color: var(--color-border);
+            border-radius: 4px;
+            margin-top: 10px;
+            overflow: hidden;
+        }
+
+        #uploadProgressFill {
+            height: 100%;
+            background-color: var(--color-secondary);
+            transition: width 0.3s ease;
+            width: 0;
+        }
+        
+        /* Submit Bar */
+        .submitbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0 0 0;
+        }
+        
+        .submitbar .muted {
+            font-size: 0.8rem;
+            color: var(--color-light-text);
+        }
+
+        .btn {
+            padding: 10px 20px;
+            background-color: var(--color-primary);
+            color: var(--color-white);
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: background-color 0.2s;
+        }
+
+        .btn:hover {
+            background-color: #2563eb; /* blue-600 */
+        }
+
+        .btn-success {
+            background-color: var(--color-secondary) !important;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 30px 0 10px;
+            font-size: 0.8rem;
+            color: var(--color-light-text);
+        }
+
+        /* ------------------------------------------- */
+        /* --- Multiselect Dropdown Styling (CRITICAL FIX) --- */
+        /* ------------------------------------------- */
+
+        /* Ensures the dropdown list stays within the container and has a hover effect */
+        .multiselect-dropdown {
+            position: relative; /* CRITICAL: Allows dropdown-list absolute positioning */
+            display: block;
+            width: 100%;
+        }
+
+        /* The button that triggers the dropdown */
+        .multiselect-dropdown .dropdown-btn {
+            width: 100%;
+            padding: 10px 15px;
+            border: 1px solid #d1d5db; /* Gray-300 */
+            border-radius: 6px;
+            background-color: #ffffff;
+            text-align: left;
+            cursor: pointer;
+            transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 5px; /* Aligns with input fields */
+        }
+
+        .multiselect-dropdown .dropdown-btn:hover {
+            border-color: #6366f1; /* Indigo-500 */
+        }
+
+        /* The list container - HIDES by default */
+        .multiselect-dropdown .dropdown-list {
+            position: absolute; /* CRITICAL: Floats above other content */
+            top: 100%; /* Position right below the button */
+            left: 0;
+            right: 0;
+            z-index: 100; /* CRITICAL: Make sure it's on top */
+            background-color: var(--color-white);
+            border: 1px solid #d1d5db;
+            border-top: none;
+            border-radius: 0 0 6px 6px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            padding: 10px 0;
+            max-height: 200px;
+            overflow-y: auto;
+            
+            /* CRITICAL: The default state is hidden */
+            display: none; 
+        }
+
+        /* The active state - SHOWS the list */
+        .multiselect-dropdown .dropdown-list.active {
+            display: block; /* CRITICAL: Overrides 'display: none;' */
+        }
+
+        /* Style for individual items */
+        .multiselect-dropdown .dropdown-list label {
+            padding: 8px 15px;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            transition: background-color 0.1s;
+            font-weight: 400; /* Lighter weight for items */
+            font-size: 1rem;
+        }
+
+        .multiselect-dropdown .dropdown-list label:hover {
+            background-color: #f3f4f6; /* Gray-100 */
+        }
+
+        .multiselect-dropdown input[type="checkbox"] {
+            margin-right: 10px;
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="topbar">
+        <div class="topbar-inner">
+            <div class="brand">
+                <div class="logo">CB</div>
+                <div>
+                    <h1>Charlton Bleecker</h1>
+                    <p>Acquiring, scaling & operating enduring businesses</p>
+                </div>
+            </div>
+            <nav class="nav">
+                <!-- <a class="btn" href="#">Submit a Deal</a> -->
+            </nav>
+        </div>
+    </div>
+
+    <main class="container">
+        <section class="grid grid-5">
+            <div class="hero">
+                <h2>Deal Prospect Intake</h2>
+                <p>Share a concise snapshot of the opportunity. Estimates are fine. This helps us quickly determine fit and get
+                    you a fast, thoughtful response.</p>
+                <div class="bullets">
+                    <div class="bullet">
+                        <div class="tick">✓</div> 5–7 min
+                    </div>
+                    <div class="bullet">
+                        <div class="tick">✓</div> Secure & confidential
+                    </div>
+                    <div class="bullet">
+                        <div class="tick">✓</div> Owner or advisor friendly
+                    </div>
+                    <div class="bullet">
+                        <div class="tick">✓</div> CRM-ready fields
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="card shell">
+            <div class="formgrid">
+                <aside class="rail">
+                    <h4>Sections</h4>
+                    <ol>
+                        <li><span class="num">1</span> Contact</li>
+                        <li><span class="num">2</span> Business</li>
+                        <li><span class="num">3</span> Ownership</li>
+                        <li><span class="num">4</span> Financials</li>
+                        <li><span class="num">5</span> Fit</li>
+                        <li><span class="num">6</span> Miscellaneous</li>
+                    </ol>
+
+                    <div class="why">
+                        <strong>Why we ask</strong><br>
+                        We use this info to route the deal to the right partner and respond quickly. High-level numbers are fine.
+                    </div>
+
+                    <div class="aside ui">
+                        <h3>What we look for</h3>
+                        <ul>
+                            <li>Durable cash flows, recurring or reoccurring revenue</li>
+                            <li>Strong teams seeking succession or growth support</li>
+                            <li>Lower middle market, $2M–$50M revenue (flexible)</li>
+                            <li>Business services, industrials, healthcare, consumer</li>
+                        </ul>
+                        <div class="note">If you have a teaser/CIM, add it at the end. If not, quick bullet points are perfect.
+                        </div>
+                    </div>
+                </aside>
+
+                <form id="leadForm" action="https://msquaresolutions.app.n8n.cloud/webhook-test/lead-intake" method="POST"
+                    enctype="multipart/form-data">
+                    
+                    <div id="submissionErrorBox" style="display:none; color: white; background-color: #ef4444; padding: 10px; border-radius: 6px; margin-bottom: 20px;"></div>
+
+
+                    <!-- 1. Contact -->
+                    <div>
+                        <div class="section-title">
+                            <span>1 · Contact Information</span>
+                            <span class="muted">Owner or advisor can submit</span>
+                        </div>
+                        <div class="row cols-2">
+                            <label><span>First Name *</span><input type="text" name="firstName" id="firstNameInput" required></label>
+                            <label><span>Last Name *</span><input type="text" name="lastName" id="lastNameInput" required></label>
+                            <label><span>Role/Relationship *</span>
+                                <select name="role" id="roleSelect" required>
+                                    <option value="">Select Role</option>
+                                    <option>Owner</option>
+                                    <option>Accountant</option>
+                                    <option>Advisor</option>
+                                    <option>Attorney</option>
+                                    <option>Broker</option>
+                                    <option>Executive</option>
+                                    <option>Other</option>
+                                </select>
+                            </label>
+                            <label><span>Email *</span><input type="email" name="email" id="emailInput" placeholder="you@company.com"
+                                    required></label>
+                            <label class="has-tooltip"><span>Phone<span class="info-icon"
+                                        data-tip="Please use the format XXX-XXX-XXXX. A country code (+1 or 1) is optional.">ⓘ</span></span><input
+                                    type="tel" name="phone" id="phoneInput" placeholder="+1-555-000-1234" required pattern="^(\+?1-)?\d{3}-\d{3}-\d{4}$"
+                                    title="Please enter a phone number in the format XXX-XXX-XXXX, optionally including the country code (e.g., +1-555-000-1234)."></label>
+                            <label class="full"><span>Company Represented (if not owner)</span><input type="text"
+                                    name="companyRepresented" id="companyRepresentedInput" placeholder="Acme Advisors, LLC"></label>
+                        </div>
+                    </div>
+
+                    <!-- 2. Business Profile -->
+                    <div>
+                        <div class="section-title"><span>2 · Business Profile</span></div>
+                        <div class="row cols-2">
+                            <label><span>Business Name *</span><input type="text" name="businessName" id="businessNameInput"
+                                    placeholder="Acme Services, Inc." required></label>
+                            <label class="has-tooltip"><span>Website<span class="info-icon"
+                                        data-tip="Must include 'http://' or 'https://' to ensure valid submission.">ⓘ
+                                    </span></span><input type="url" name="website" id="websiteInput" placeholder="https://example.com" required
+                                    pattern="^https?:\/\/.*$" title="Please include the full protocol (http:// or https://)"></label>
+                            <label><span>Industry/Sector *</span>
+                                <select name="industry" id="industrySelect" required>
+                                    <option value="">Select Industry</option>
+                                    <option value="BUSINESS_SERVICES">Business Services</option>
+                                    <option value="CONSUMER_SERVICES">Consumer Services</option>
+                                    <option value="INFORMATION_TECHNOLOGY_AND_SERVICES">Technology</option>
+                                    <option value="OTHER">Other</option>
+                                </select>
+                            </label>
+
+                            <label><span>Headquarters (City) *</span><input type="text" name="hqCity" id="hqCityInput" placeholder="Fort Lauderdale"
+                                    required></label>
+                            <label><span>Headquarters (State) *</span>
+                                <select name="hqState" id="hqStateSelect" required>
+                                    <option value="">Select State</option>
+                                    <option value="AL">Alabama</option>
+                                    <option value="AK">Alaska</option>
+                                    <option value="AZ">Arizona</option>
+                                    <option value="AR">Arkansas</option>
+                                    <option value="CA">California</option>
+                                    <option value="CO">Colorado</option>
+                                    <option value="CT">Connecticut</option>
+                                    <option value="DE">Delaware</option>
+                                    <option value="FL">Florida</option>
+                                    <option value="GA">Georgia</option>
+                                    <option value="HI">Hawaii</option>
+                                    <option value="ID">Idaho</option>
+                                    <option value="IL">Illinois</option>
+                                    <option value="IN">Indiana</option>
+                                    <option value="IA">Iowa</option>
+                                    <option value="KS">Kansas</option>
+                                    <option value="KY">Kentucky</option>
+                                    <option value="LA">Louisiana</option>
+                                    <option value="ME">Maine</option>
+                                    <option value="MD">Maryland</option>
+                                    <option value="MA">Massachusetts</option>
+                                    <option value="MI">Michigan</option>
+                                    <option value="MN">Minnesota</option>
+                                    <option value="MS">Mississippi</option>
+                                    <option value="MO">Missouri</option>
+                                    <option value="MT">Montana</option>
+                                    <option value="NE">Nebraska</option>
+                                    <option value="NV">Nevada</option>
+                                    <option value="NH">New Hampshire</option>
+                                    <option value="NJ">New Jersey</option>
+                                    <option value="NM">New Mexico</option>
+                                    <option value="NY">New York</option>
+                                    <option value="NC">North Carolina</option>
+                                    <option value="ND">North Dakota</option>
+                                    <option value="OH">Ohio</option>
+                                    <option value="OK">Oklahoma</option>
+                                    <option value="OR">Oregon</option>
+                                    <option value="PA">Pennsylvania</option>
+                                    <option value="RI">Rhode Island</option>
+                                    <option value="SC">South Carolina</option>
+                                    <option value="SD">South Dakota</option>
+                                    <option value="TN">Tennessee</option>
+                                    <option value="TX">Texas</option>
+                                    <option value="UT">Utah</option>
+                                    <option value="VT">Vermont</option>
+                                    <option value="VA">Virginia</option>
+                                    <option value="WA">Washington</option>
+                                    <option value="WV">West Virginia</option>
+                                    <option value="WI">Wisconsin</option>
+                                    <option value="WY">Wyoming</option>
+                                </select>
+                            </label>
+                            <label><span>Year Founded</span><input type="number" name="yearFounded" id="yearFoundedInput" placeholder="1998" pattern="\d{4}"
+                                    title="Please enter a four-digit year (e.g., 1998)."></label>
+                        </div>
+                    </div>
+
+                    <!-- 3. Ownership -->
+                    <div>
+                        <div class="section-title"><span>3 · Ownership & Transition</span></div>
+                        <div class="row cols-2">
+                            <label><span>Current Ownership *</span>
+                                <select name="ownership" id="ownershipSelect" required>
+                                    <option value="">Select Type</option>
+                                    <option>Founder/Family-Owned</option>
+                                    <option>Partnership</option>
+                                    <option>Private Company</option>
+                                    <option>PE-Backed</option>
+                                    <option>Other</option>
+                                </select>
+                            </label>
+                            <label><span>Transition Goal *</span>
+                                <select name="transitionGoal" id="transitionGoalSelect" required>
+                                    <option value="">Select Goal</option>
+                                    <option>Exit</option>
+                                    <option>Growth Capital</option>
+                                    <option>Partial Sale/Recap</option>
+                                    <option>Strategic Partnership</option>
+                                </select>
+                            </label>
+                            <label><span>Transition Timing *</span>
+                                <select name="transitionTiming" id="transitionTimingSelect" required>
+                                    <option value="">Select Timing</option>
+                                    <option>Immediate</option>
+                                    <option>&lt; 12 months</option>
+                                    <option>1–3 years</option>
+                                    <option>3+ years</option>
+                                </select>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- 4. Financial Snapshot -->
+                    <div>
+                        <div class="section-title"><span>4 · Financial Snapshot (Estimates OK)</span></div>
+                        <div class="row cols-3">
+                            <label>
+                                <span>Annual Revenue *</span>
+                                <select name="revenueRangeText" id="revenueRangeTextSelect" required>
+                                    <option value="">Select Revenue</option>
+                                    <option>&lt; $2M</option>
+                                    <option>$2–5M</option>
+                                    <option>$5–10M</option>
+                                    <option>$10–25M</option>
+                                    <option>$25M+</option>
+                                </select>
+                            </label>
+                            <label>
+                                <span>EBITDA Margin *</span>
+                                <select name="ebitdaMargin" id="ebitdaMarginSelect" required>
+                                    <option value="">Select Margin</option>
+                                    <option>&lt; 5%</option>
+                                    <option>5–10%</option>
+                                    <option>10–20%</option>
+                                    <option>20%+</option>
+                                </select>
+                            </label>
+                            <label><span>Debt/Leverage *</span>
+                                <select name="leverage" id="leverageSelect" required>
+                                    <option value="">Select Status</option>
+                                    <option>None</option>
+                                    <option>Manageable</option>
+                                    <option>Heavily Leveraged</option>
+                                    <option>Prefer not to say</option>
+                                </select>
+                            </label>
+                        </div>
+
+                        <div class="row cols-1">
+                            <label><span>Key Assets</span></label>
+                            <div class="multiselect-dropdown" data-name="keyAssets">
+                                <!-- CRITICAL: Removed data-dropdown and ID from button, using parent data-name for binding -->
+                                <button type="button" class="dropdown-btn">Select assets</button>
+                                <div class="dropdown-list">
+                                    <!-- Checkboxes need unique IDs if labels are used -->
+                                    <label for="asset1"><input type="checkbox" id="asset1" value="Contracts">Contracts</label>
+                                    <label for="asset2"><input type="checkbox" id="asset2" value="Equipment">Equipment</label>
+                                    <label for="asset3"><input type="checkbox" id="asset3" value="Goodwill/Brand">Goodwill/Brand</label>
+                                    <label for="asset4"><input type="checkbox" id="asset4" value="IP/Patents">IP/Patents</label>
+                                    <label for="asset5"><input type="checkbox" id="asset5" value="Real Estate">Real Estate</label>
+                                    <label for="asset6"><input type="checkbox" id="asset6" value="Team">Team</label>
+                                    <label for="asset7"><input type="checkbox" id="asset7" value="Technology">Technology</label>
+                                    <label for="asset8"><input type="checkbox" id="asset8" value="Other">Other</label>
+                                </div>
+                            </div>
+
+                            <label><span>Notable Customers or Contracts (optional)</span>
+                                <textarea name="notableCustomers" id="notableCustomersInput"
+                                    placeholder="e.g., multi-year maintenance contracts; preferred vendor to X"></textarea>
+                            </label>
+                            
+                            <!-- File Upload Section -->
+                            <div class="field-group">
+                                <label for="fileUpload"><span>Supporting Documents (Teaser/CIM)</span></label>
+                                <div id="fileDropArea">
+                                    <input type="file" id="fileUpload" name="fileUpload" accept=".pdf,.doc,.docx,.xls,.xlsx,.png,.jpg,.jpeg" multiple style="display: none;">
+                                    <p>Drag & drop files here, or <span id="browseTrigger">browse your computer</span>.</p>
+                                    <p id="fileInfo">(0/3 files, 0 Bytes / 20 MB max)</p>
+                                    <div id="uploadProgress"><div id="uploadProgressFill"></div></div>
+                                </div>
+                                <ul id="fileList">
+                                    <li class="muted">No files attached. Max: 3 files, 20 MB total.</li>
+                                </ul>
+                                <div id="fileError" class="active"></div> 
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 5. Strategic Fit -->
+                    <div>
+                        <div class="section-title"><span>5 · Strategic Fit</span></div>
+                        <div class="row">
+                            <label><span>Why is this a strong fit for Charlton Bleecker?</span>
+                                <textarea name="fitReason" id="fitReasonInput"
+                                    placeholder="Quick pitch: durable cash flows, succession opportunity, strong moat, growth vectors, etc."></textarea>
+                            </label>
+
+                            <div class="row cols-2">
+                                <div class="field-group">
+                                    <label>Biggest Current Challenge</label>
+                                    <div class="multiselect-dropdown" data-name="challenge">
+                                        <!-- CRITICAL: Removed data-dropdown and ID from button, using parent data-name for binding -->
+                                        <button type="button" class="dropdown-btn">Select challenges</button>
+                                        <div class="dropdown-list">
+                                            <label for="chal1"><input type="checkbox" id="chal1" value="Succession Planning">Succession Planning</label>
+                                            <label for="chal2"><input type="checkbox" id="chal2" value="Excessive Debt">Excessive Debt</label>
+                                            <label for="chal3"><input type="checkbox" id="chal3" value="Need Growth Capital">Need Growth Capital</label>
+                                            <label for="chal4"><input type="checkbox" id="chal4" value="Operational Efficiency">Operational Efficiency</label>
+                                            <label for="chal5"><input type="checkbox" value="Market Pressure/Competition">Market
+                                                Pressure/Competition</label>
+                                            <label for="chal6"><input type="checkbox" id="chal6" value="Overdue Bills">Overdue Bills</label>
+                                            <label for="chal7"><input type="checkbox" id="chal7" value="Other">Other</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <label class="label-inline">
+                                    <input type="checkbox" name="hasManagementTeam" id="hasManagementTeamCheckbox">
+                                    <span>Experienced management team in place</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 6. Miscellaneous -->
+                    <div class="section-title"><span>6 · Miscellaneous</span></div>
+                    <div>
+                        <label><span>How did you hear about us?</span>
+                            <select name="referralSource" id="referralSourceSelect">
+                                <option>Referral</option>
+                                <option>Website</option>
+                                <option>Event</option>
+                                <option>Other</option>
+                            </select>
+                        </label>
+                    </div>
+                    <div class="row">
+                        <label><span>Other detail (optional)</span>
+                            <textarea name="otherDetails" id="otherDetailsInput" placeholder="Any additional context for the Deal Review Team?"></textarea>
+                        </label>
+                    </div>
+                    <div class="submitbar">
+                        <span class="muted">By submitting, you agree to our confidentiality & data use terms.</span>
+                        <div style="display:flex; gap:10px;">
+                            <button type="button" id="loadTestDataButton" class="btn" style="background-color: #555; color: white;">
+                                Load Test Data
+                            </button>
+                            <button type="submit" class="btn">Submit</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <footer>© 2025 Charlton Bleecker Group LLC — All rights reserved.</footer>
+    </main>
+
+    <!-- === JAVASCRIPT: form.js (Merged) === -->
+    <script>
+        window.addEventListener("load", () => {
+            console.log("🔍 Form binding and initialization started");
+            
+            // --- Configuration ---
+            const MAX_TOTAL_SIZE_MB = 20;
+            const MAX_SINGLE_FILE_SIZE_MB = 10;
+            const MAX_FILE_COUNT = 3;
+            const ALLOWED_TYPES = [
+                "application/pdf",
+                "application/msword",
+                "application/vnd.openxmlformats-officedocument.wordprocessingml.document", // .docx
+                "application/vnd.ms-excel",
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", // .xlsx
+                "image/png",
+                "image/jpeg"
+            ];
+            const SUPPORTED_EXTENSIONS = ".pdf, .doc, .docx, .xls, .xlsx, .png, .jpg, .jpeg"; 
+
+            // --- DOM references ---
+            const fileInput = document.getElementById("fileUpload");
+            const browseTrigger = document.getElementById("browseTrigger");
+            const fileDropArea = document.getElementById("fileDropArea");
+            const fileList = document.getElementById("fileList");
+            const fileError = document.getElementById("fileError");
+            const progressFill = document.getElementById("uploadProgressFill");
+            const fileInfo = document.getElementById("fileInfo"); 
+            const form = document.getElementById("leadForm");
+            const submissionErrorBox = document.getElementById('submissionErrorBox');
+
+            let currentFiles = new DataTransfer();
+
+            // --- Helper: format bytes ---
+            const formatBytes = (bytes) => {
+                if (bytes === 0) return '0 Bytes';
+                const k = 1024;
+                const dm = 2;
+                const sizes = ['Bytes', 'KB', 'MB'];
+                const i = Math.floor(Math.log(bytes) / Math.log(k));
+                return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+            };
+
+            // --- Helper: Update Total Size & Info UI ---
+            const updateFileInfo = () => {
+                const files = currentFiles.files;
+                let totalSize = 0;
+                Array.from(files).forEach(file => {
+                    totalSize += file.size;
+                });
+
+                const totalSizeMB = totalSize / (1024 * 1024);
+                
+                fileInfo.textContent = `(${files.length}/${MAX_FILE_COUNT} files, ${formatBytes(totalSize)} / ${MAX_TOTAL_SIZE_MB} MB max)`;
+                
+                const progressPercentage = Math.min(100, (totalSizeMB / MAX_TOTAL_SIZE_MB) * 100);
+                progressFill.style.width = `${progressPercentage}%`;
+                
+                if (totalSizeMB > MAX_TOTAL_SIZE_MB) {
+                    fileError.textContent = `Error: Total file size exceeds ${MAX_TOTAL_SIZE_MB} MB. Please remove files.`;
+                    fileError.classList.add('active');
+                    return false;
+                } else {
+                    fileError.classList.remove('active');
+                    fileError.textContent = '';
+                    return true;
+                }
+            };
+
+            // --- Helper: Render File List ---
+            const renderFileList = () => {
+                const files = currentFiles.files;
+                fileList.innerHTML = ''; // Clear current list
+
+                if (files.length === 0) {
+                    fileList.innerHTML = '<li class="muted">No files attached. Max: 3 files, 20 MB total.</li>';
+                    fileDropArea.classList.remove('has-files');
+                    return;
+                }
+
+                fileDropArea.classList.add('has-files');
+                Array.from(files).forEach((file, index) => {
+                    const li = document.createElement('li');
+                    li.innerHTML = `
+                        <span class="file-name">${file.name}</span>
+                        <span class="file-size">${formatBytes(file.size)}</span>
+                        <button type="button" class="remove-file-btn" data-index="${index}" aria-label="Remove file ${file.name}">
+                            &times;
+                        </button>
+                    `;
+                    fileList.appendChild(li);
+                });
+                
+                fileList.querySelectorAll('.remove-file-btn').forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        const index = parseInt(e.currentTarget.dataset.index);
+                        removeFile(index);
+                    });
+                });
+                
+                updateFileInfo();
+            };
+            
+            // --- File Removal Logic ---
+            const removeFile = (indexToRemove) => {
+                const newDT = new DataTransfer();
+                Array.from(currentFiles.files).forEach((file, index) => {
+                    if (index !== indexToRemove) {
+                        newDT.items.add(file);
+                    }
+                });
+                currentFiles = newDT;
+                renderFileList();
+            };
+
+            // --- File Validation and Addition Logic ---
+            const addFiles = (filesToAdd) => {
+                fileError.textContent = ''; 
+                fileError.classList.remove('active');
+                
+                let newFilesCount = 0;
+                let filesExceedingSize = [];
+                let invalidTypeCount = 0;
+
+                Array.from(filesToAdd).forEach(file => {
+                    const totalCount = currentFiles.files.length + newFilesCount;
+                    
+                    if (totalCount >= MAX_FILE_COUNT) {
+                        return;
+                    }
+
+                    if ((file.size / (1024 * 1024)) > MAX_SINGLE_FILE_SIZE_MB) {
+                        filesExceedingSize.push(file.name);
+                        return;
+                    }
+
+                    if (!ALLOWED_TYPES.includes(file.type)) {
+                        invalidTypeCount++;
+                        return;
+                    }
+                    
+                    currentFiles.items.add(file);
+                    newFilesCount++;
+                });
+                
+                if (filesExceedingSize.length > 0) {
+                    fileError.textContent = `Error: The following file(s) exceed the ${MAX_SINGLE_FILE_SIZE_MB} MB limit: ${filesExceedingSize.join(', ')}.`;
+                    fileError.classList.add('active');
+                } else if (invalidTypeCount > 0) {
+                    fileError.textContent = `Error: ${invalidTypeCount} file(s) were ignored due to unsupported file types. Supported: ${SUPPORTED_EXTENSIONS}`;
+                    fileError.classList.add('active');
+                } else if (newFilesCount > 0 && (currentFiles.files.length > MAX_FILE_COUNT)) {
+                     fileError.textContent = `Warning: Only the first ${MAX_FILE_COUNT} files are kept.`;
+                     fileError.classList.add('active');
+                }
+                
+                renderFileList();
+                updateFileInfo();
+            };
+
+            // --- File Drop and Input Listeners ---
+            if (fileDropArea) {
+                ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                    fileDropArea.addEventListener(eventName, e => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                    }, false);
+                });
+
+                ['dragenter', 'dragover'].forEach(eventName => {
+                    fileDropArea.addEventListener(eventName, () => fileDropArea.classList.add('highlight'), false);
+                });
+
+                ['dragleave', 'drop'].forEach(eventName => {
+                    fileDropArea.addEventListener(eventName, () => fileDropArea.classList.remove('highlight'), false);
+                });
+
+                fileDropArea.addEventListener('drop', (e) => {
+                    addFiles(e.dataTransfer.files);
+                }, false);
+            }
+            
+            if (fileInput) {
+                if (browseTrigger) {
+                    browseTrigger.addEventListener('click', () => fileInput.click());
+                }
+                
+                fileInput.addEventListener('change', (e) => {
+                    addFiles(e.target.files);
+                    fileInput.value = ''; 
+                });
+            }
+
+            renderFileList();
+
+
+            // === Multiselect Dropdown Logic (FIXED/DEBUGGED) ===
+            const multiselects = document.querySelectorAll('.multiselect-dropdown');
+            
+            multiselects.forEach(dropdown => {
+                const dataName = dropdown.getAttribute('data-name');
+                const button = dropdown.querySelector('.dropdown-btn');
+                const list = dropdown.querySelector('.dropdown-list');
+                const checkboxes = list ? list.querySelectorAll('input[type="checkbox"]') : [];
+                
+                if (!button || !list) {
+                    console.error(`Multiselect binding failed for dropdown with data-name="${dataName}". Missing button or list.`);
+                    return; 
+                }
+
+                // 1. Create a hidden input to hold the comma-separated values for submission
+                const hiddenInput = document.createElement('input');
+                hiddenInput.type = 'hidden';
+                hiddenInput.name = dataName;
+                hiddenInput.value = '';
+                dropdown.appendChild(hiddenInput);
+
+                // 2. Function to update the button text and the hidden input value
+                const updateSelection = () => {
+                    const selectedValues = [];
+                    const selectedLabels = [];
+                    
+                    checkboxes.forEach(checkbox => {
+                        if (checkbox.checked) {
+                            selectedValues.push(checkbox.value);
+                            // Find the text content of the parent label
+                            const label = checkbox.closest('label');
+                            if (label) {
+                                selectedLabels.push(label.textContent.trim());
+                            } else {
+                                selectedLabels.push(checkbox.value);
+                            }
+                        }
+                    });
+
+                    // Set the value of the hidden input for form submission
+                    hiddenInput.value = selectedValues.join(',');
+                    
+                    if (selectedValues.length === 0) {
+                        const displayName = dataName.charAt(0).toUpperCase() + dataName.slice(1).replace(/([a-z])([A-Z])/g, '$1 $2');
+                        button.textContent = `Select ${displayName}`;
+                    } else if (selectedValues.length === 1) {
+                        button.textContent = selectedLabels[0];
+                    } else {
+                        button.textContent = `${selectedValues.length} selected`;
+                    }
+                };
+
+                // 3. Bind listeners
+                updateSelection(); // Initial update
+
+                // Toggle dropdown list visibility
+                button.addEventListener('click', (e) => {
+                    e.stopPropagation(); 
+                    
+                    // DEBUG LOGGING
+                    console.log(`Dropdown Clicked: ${dataName}. Current list active state: ${list.classList.contains('active')}`);
+                    
+                    // CRITICAL: Toggle the active class
+                    list.classList.toggle('active');
+                    button.classList.toggle('active');
+                });
+
+                // Update when a checkbox state changes
+                checkboxes.forEach(checkbox => {
+                    checkbox.addEventListener('change', updateSelection);
+                });
+
+                // Close dropdown when clicking outside
+                document.addEventListener('click', (e) => {
+                    if (!dropdown.contains(e.target)) {
+                        list.classList.remove('active');
+                        button.classList.remove('active');
+                    }
+                });
+            });
+
+
+            // === Form Submission Handler ===
+            if (form) {
+                form.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+
+                    const button = form.querySelector('button[type="submit"]');
+                    submissionErrorBox.style.display = 'none';
+
+                    if (!form.checkValidity()) {
+                        console.warn("Form validation failed. Browser should show warnings.");
+                        button.textContent = "Check Fields!";
+                        setTimeout(() => { button.textContent = "Submit"; }, 1500);
+                        return;
+                    }
+
+                    if (!updateFileInfo()) {
+                         button.textContent = "File Too Large!";
+                         setTimeout(() => { button.textContent = "Submit"; }, 1500);
+                        return;
+                    }
+                    
+                    button.disabled = true;
+                    button.textContent = "Submitting...";
+                    button.classList.remove("btn-success");
+
+                    const formData = new FormData(form);
+
+                    if (fileInput) {
+                        const files = currentFiles.files;
+                        const FILE_FIELD_NAME = fileInput.name || "fileUpload";
+
+                        for (let i = 0; i < files.length; i++) {
+                            formData.append(FILE_FIELD_NAME, files[i]); 
+                        }
+                    }
+                    
+                    let response = null; 
+                    
+                    try {
+                        response = await fetch(form.action, {
+                            method: "POST",
+                            body: formData
+                        });
+
+                        const responseText = await response.text();
+                        let data = {};
+
+                        if (responseText.trim().length > 0 && responseText.trim().startsWith('{')) {
+                            try {
+                                data = JSON.parse(responseText);
+                            } catch (e) {
+                                console.warn("Could not parse response as JSON. Assuming success based on status code.");
+                            }
+                        }
+
+                        if (response.ok) {
+                            console.log("✅ Form submission successful (HTTP OK). Preparing redirect.");
+                            
+                            const redirectURL = data.redirect || "thank-you.html"; 
+                            
+                            button.textContent = "Success!";
+                            button.classList.add("btn-success");
+                            
+                            setTimeout(() => (window.location.href = redirectURL), 1000); 
+
+                        } else {
+                            console.error("❌ Submission failed (HTTP Status Error).", response.status, responseText);
+                            const message = `Submission failed. The server returned an error: ${response.status}. See console for details.`;
+                            submissionErrorBox.textContent = message;
+                            submissionErrorBox.style.display = 'block';
+                        }
+                    } catch (error) {
+                        console.error("❌ Error submitting form (Network/Fetch Failure):", error);
+                        const message = "Unable to connect to the server. Please check your network. See console for details.";
+                        submissionErrorBox.textContent = message;
+                        submissionErrorBox.style.display = 'block';
+                    } finally {
+                        if (response === null || !response.ok) {
+                             setTimeout(() => {
+                                button.disabled = false;
+                                button.textContent = "Submit";
+                             }, 500);
+                        }
+                    }
+                });
+            }
+        });
+    </script>
+
+    <!-- === JAVASCRIPT: testdataloader.js (Merged) === -->
+    <script>
+        // --- WARNING: This file is for testing only and should NOT be deployed to production. ---
+
+        window.addEventListener("load", () => {
+
+            const loadTestButton = document.getElementById("loadTestDataButton");
+
+            if (!loadTestButton) {
+                return;
+            }
+
+            console.log("🧪 Test Data Loader Initialized.");
+
+            function loadTestData() {
+                console.log("🚀 Loading test data into form fields...");
+
+                // --- 1. Standard Input Fields ---
+                const fields = {
+                    firstNameInput: "Jane",
+                    lastNameInput: "Tester (Auto-Fill)",
+                    emailInput: "jane.tester@test-corp.io",
+                    phoneInput: "555-867-5309", 
+                    companyRepresentedInput: "Test Advisors, LLC",
+                    businessNameInput: "Test Corp XYZ Inc.",
+                    websiteInput: "https://www.test-corp-xyz.io",
+                    hqCityInput: "Testville",
+                    yearFoundedInput: 2005,
+                };
+
+                for (const id in fields) {
+                    const field = document.getElementById(id);
+                    if (field) {
+                        field.value = fields[id];
+                    }
+                }
+
+                // --- 2. Standard Select Fields ---
+                const selects = {
+                    roleSelect: "Advisor",
+                    industrySelect: "BUSINESS_SERVICES", 
+                    hqStateSelect: "FL", 
+                    ownershipSelect: "Founder/Family-Owned",
+                    transitionGoalSelect: "Exit",
+                    transitionTimingSelect: "< 12 months",
+                    revenueRangeTextSelect: "$10–25M",
+                    ebitdaMarginSelect: "20%+",
+                    leverageSelect: "Manageable",
+                    referralSourceSelect: "Website"
+                };
+
+                for (const id in selects) {
+                    const select = document.getElementById(id);
+                    if (select) {
+                        select.value = selects[id];
+                    }
+                }
+
+                // --- 3. Textarea Fields ---
+                const textareas = {
+                    notableCustomersInput: "Multi-year contracts with major utility companies (50% recurring revenue).",
+                    fitReasonInput: "Strong recurring revenue model, founder is ready for a clean exit, established team in place.",
+                    otherDetailsInput: "Seller prefers an expedited close timeline. NDA is on file."
+                };
+
+                for (const id in textareas) {
+                    const textarea = document.getElementById(id);
+                    if (textarea) {
+                        textarea.value = textareas[id];
+                    }
+                }
+
+                // --- 4. Checkbox Fields ---
+                const hasManagementTeamCheckbox = document.getElementById("hasManagementTeamCheckbox");
+                if (hasManagementTeamCheckbox) {
+                    hasManagementTeamCheckbox.checked = true;
+                }
+
+                // --- 5. Multiselect Dropdowns ---
+                function setMultiselect(dataName, valuesArray) {
+                    const multiselectDiv = document.querySelector(`.multiselect-dropdown[data-name="${dataName}"]`);
+                    if (!multiselectDiv) return;
+
+                    const dropdownList = multiselectDiv.querySelector('.dropdown-list');
+                    dropdownList.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+                        const isSelected = valuesArray.includes(checkbox.value);
+                        checkbox.checked = isSelected;
+
+                        // Trigger change event to update the button text in form.js
+                        checkbox.dispatchEvent(new Event('change', { bubbles: true }));
+                    });
+                }
+
+                setMultiselect("keyAssets", ["Goodwill/Brand", "Team", "Contracts"]);
+                setMultiselect("challenge", ["Succession Planning", "Operational Efficiency"]);
+
+
+                console.log("✅ All required fields populated with test data.");
+            }
+
+            loadTestButton.addEventListener('click', loadTestData);
+
+        });
+    </script>
+</body>
+
+</html>
