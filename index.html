@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -28,12 +29,21 @@
     <section class="grid grid-5">
       <div class="hero">
         <h2>Deal Prospect Intake</h2>
-        <p>Share a concise snapshot of the opportunity. Estimates are fine. This helps us quickly determine fit and get you a fast, thoughtful response.</p>
+        <p>Share a concise snapshot of the opportunity. Estimates are fine. This helps us quickly determine fit and get
+          you a fast, thoughtful response.</p>
         <div class="bullets">
-          <div class="bullet"><div class="tick">✓</div> 5–7 min</div>
-          <div class="bullet"><div class="tick">✓</div> Secure & confidential</div>
-          <div class="bullet"><div class="tick">✓</div> Owner or advisor friendly</div>
-          <div class="bullet"><div class="tick">✓</div> CRM-ready fields</div>
+          <div class="bullet">
+            <div class="tick">✓</div> 5–7 min
+          </div>
+          <div class="bullet">
+            <div class="tick">✓</div> Secure & confidential
+          </div>
+          <div class="bullet">
+            <div class="tick">✓</div> Owner or advisor friendly
+          </div>
+          <div class="bullet">
+            <div class="tick">✓</div> CRM-ready fields
+          </div>
         </div>
       </div>
     </section>
@@ -64,11 +74,13 @@
               <li>Lower middle market, $2M–$50M revenue (flexible)</li>
               <li>Business services, industrials, healthcare, consumer</li>
             </ul>
-            <div class="note">If you have a teaser/CIM, add it at the end. If not, quick bullet points are perfect.</div>
+            <div class="note">If you have a teaser/CIM, add it at the end. If not, quick bullet points are perfect.
+            </div>
           </div>
         </aside>
 
-        <form id="leadForm" action="https://msquaresolutions.app.n8n.cloud/webhook-test/lead-intake" method="POST" enctype="multipart/form-data">
+        <form id="leadForm" action="https://msquaresolutions.app.n8n.cloud/webhook-test/lead-intake" method="POST"
+          enctype="multipart/form-data">
 
           <!-- 1. Contact -->
           <div>
@@ -90,9 +102,14 @@
                   <option>Other</option>
                 </select>
               </label>
-              <label><span>Email *</span><input type="email" name="email" placeholder="you@company.com" required></label>
-              <label><span>Phone</span><input type="tel" name="phone" placeholder="+1-555-000-1234" required pattern="^(\+?1-)?\d{3}-\d{3}-\d{4}$" title="Please enter a phone number in the format XXX-XXX-XXXX, optionally including the country code (e.g., +1-555-000-1234)."></label>
-              <label class="full"><span>Company Represented (if not owner)</span><input type="text" name="companyRepresented" placeholder="Acme Advisors, LLC"></label>
+              <label><span>Email *</span><input type="email" name="email" placeholder="you@company.com"
+                  required></label>
+              <label class="has-tooltip"><span>Phone<span class="info-icon"
+                    data-tip="Please use the format XXX-XXX-XXXX. A country code (+1 or 1) is optional.">ⓘ</span></span><input
+                  type="tel" name="phone" placeholder="+1-555-000-1234" required pattern="^(\+?1-)?\d{3}-\d{3}-\d{4}$"
+                  title="Please enter a phone number in the format XXX-XXX-XXXX, optionally including the country code (e.g., +1-555-000-1234)."></label>
+              <label class="full"><span>Company Represented (if not owner)</span><input type="text"
+                  name="companyRepresented" placeholder="Acme Advisors, LLC"></label>
             </div>
           </div>
 
@@ -100,26 +117,30 @@
           <div>
             <div class="section-title"><span>2 · Business Profile</span></div>
             <div class="row cols-2">
-              <label><span>Business Name *</span><input type="text" name="businessName" placeholder="Acme Services, Inc." required></label>
-              <label class="has-tooltip"><span>Website<span class="info-icon" data-tip="Must include 'http://' or 'https://' to ensure valid submission.">ⓘ
-              </span></span><input type="url" name="website" placeholder="https://example.com" required pattern="^https?:\/\/.*$" title="Please include the full protocol (http:// or https://)"></label>
+              <label><span>Business Name *</span><input type="text" name="businessName"
+                  placeholder="Acme Services, Inc." required></label>
+              <label class="has-tooltip"><span>Website<span class="info-icon"
+                    data-tip="Must include 'http://' or 'https://' to ensure valid submission.">ⓘ
+                  </span></span><input type="url" name="website" placeholder="https://example.com" required
+                  pattern="^https?:\/\/.*$" title="Please include the full protocol (http:// or https://)"></label>
               <!-- Fixed Industry Dropdown to match hubspot-->
-           <label><span>Industry/Sector *</span>
-  <select name="industry" required>
-    <option value="">Select Industry</option>
-    <option value="BUSINESS_SERVICES">Business Services</option>
-    <option value="CONSUMER_SERVICES">Consumer</option>
-    <option value="DEFENSE_SPACE">Defense</option>
-    <option value="OIL_ENERGY">Energy</option>
-    <option value="FINANCIAL_SERVICES">Financial Services</option>
-    <option value="HOSPITAL_HEALTH_CARE">Healthcare</option>
-    <option value="MECHANICAL_OR_INDUSTRIAL_ENGINEERING">Industrial/Trades</option>
-    <option value="INFORMATION_TECHNOLOGY_AND_SERVICES">Technology</option>
-    <option value="OTHER">Other</option>
-  </select>
-</label>
+              <label><span>Industry/Sector *</span>
+                <select name="industry" required>
+                  <option value="">Select Industry</option>
+                  <option value="BUSINESS_SERVICES">Business Services</option>
+                  <option value="CONSUMER_SERVICES">Consumer</option>
+                  <option value="DEFENSE_SPACE">Defense</option>
+                  <option value="OIL_ENERGY">Energy</option>
+                  <option value="FINANCIAL_SERVICES">Financial Services</option>
+                  <option value="HOSPITAL_HEALTH_CARE">Healthcare</option>
+                  <option value="MECHANICAL_OR_INDUSTRIAL_ENGINEERING">Industrial/Trades</option>
+                  <option value="INFORMATION_TECHNOLOGY_AND_SERVICES">Technology</option>
+                  <option value="OTHER">Other</option>
+                </select>
+              </label>
 
-              <label><span>Headquarters (City) *</span><input type="text" name="hqCity" placeholder="Fort Lauderdale" required></label>
+              <label><span>Headquarters (City) *</span><input type="text" name="hqCity" placeholder="Fort Lauderdale"
+                  required></label>
               <label><span>Headquarters (State) *</span>
                 <select name="hqState" required>
                   <option value="">Select State</option>
@@ -175,7 +196,8 @@
                   <option value="WY">Wyoming</option>
                 </select>
               </label>
-              <label><span>Year Founded</span><input type="number" name="yearFounded" placeholder="1998" pattern="\d{4}" title="Please enter a four-digit year (e.g., 1998)."></label>
+              <label><span>Year Founded</span><input type="number" name="yearFounded" placeholder="1998" pattern="\d{4}"
+                  title="Please enter a four-digit year (e.g., 1998)."></label>
             </div>
           </div>
 
@@ -218,18 +240,18 @@
           <div>
             <div class="section-title"><span>4 · Financial Snapshot (Estimates OK)</span></div>
             <div class="row cols-3">
-                <label>
-                  <span>Annual Revenue *</span>
-                  <select name="revenueRangeText" required>
-                    <option value="">Select Revenue</option>
-                    <option>&lt; $2M</option>
-                    <option>$2–5M</option>
-                    <option>$5–10M</option>
-                    <option>$10–25M</option>
-                    <option>$25M+</option>
-                  </select>
-                </label>
-                <label>
+              <label>
+                <span>Annual Revenue *</span>
+                <select name="revenueRangeText" required>
+                  <option value="">Select Revenue</option>
+                  <option>&lt; $2M</option>
+                  <option>$2–5M</option>
+                  <option>$5–10M</option>
+                  <option>$10–25M</option>
+                  <option>$25M+</option>
+                </select>
+              </label>
+              <label>
                 <span>EBITDA Margin *</span>
                 <select name="ebitdaMargin" required>
                   <option value="">Select Margin</option>
@@ -267,7 +289,8 @@
               </div>
 
               <label><span>Notable Customers or Contracts (optional)</span>
-                <textarea name="notableCustomers" placeholder="e.g., multi-year maintenance contracts; preferred vendor to X"></textarea>
+                <textarea name="notableCustomers"
+                  placeholder="e.g., multi-year maintenance contracts; preferred vendor to X"></textarea>
               </label>
             </div>
           </div>
@@ -277,7 +300,8 @@
             <div class="section-title"><span>5 · Strategic Fit</span></div>
             <div class="row">
               <label><span>Why is this a strong fit for Charlton Bleecker?</span>
-                <textarea name="fitReason" placeholder="Quick pitch: durable cash flows, succession opportunity, strong moat, growth vectors, etc."></textarea>
+                <textarea name="fitReason"
+                  placeholder="Quick pitch: durable cash flows, succession opportunity, strong moat, growth vectors, etc."></textarea>
               </label>
 
               <div class="row cols-2">
@@ -291,7 +315,8 @@
                       <label><input type="checkbox" value="Need Growth Capital">Need Growth Capital</label>
                       <!-- <label><input type="checkbox" value="Capital Structure">Capital Structure</label> -->
                       <label><input type="checkbox" value="Operational Efficiency">Operational Efficiency</label>
-                      <label><input type="checkbox" value="Market Pressure/Competition">Market Pressure/Competition</label>
+                      <label><input type="checkbox" value="Market Pressure/Competition">Market
+                        Pressure/Competition</label>
                       <label><input type="checkbox" value="Overdue Bills">Overdue Bills</label>
                       <label><input type="checkbox" value="Other">Other</label>
                     </div>
@@ -304,7 +329,7 @@
               </div>
             </div>
           </div>
-          
+
           <!-- 6. File upload (Deactivated for now given we are using the free version of Hubspot that does not support access to the file manager API)
           <div>
             <div class="section-title"><span>6 · Files & Extras</span></div>
@@ -328,18 +353,18 @@
               </label>
             </div>
           </div> -->
-           <div class="section-title"><span>6 · Miscellaneous</span></div>
+          <div class="section-title"><span>6 · Miscellaneous</span></div>
           <div>
-              <label><span>How did you hear about us?</span>
-                <select name="referralSource">
-                  <option>Referral</option>
-                  <option>Website</option>
-                  <option>Event</option>
-                  <option>Other</option>
-                </select>
-              </label>
-            </div>
-             <div class="row">
+            <label><span>How did you hear about us?</span>
+              <select name="referralSource">
+                <option>Referral</option>
+                <option>Website</option>
+                <option>Event</option>
+                <option>Other</option>
+              </select>
+            </label>
+          </div>
+          <div class="row">
             <label><span>Other detail (optional)</span>
               <textarea name="otherDetails" placeholder="Any additional context for the Deal Review Team?"></textarea>
             </label>
@@ -347,7 +372,7 @@
           <div class="submitbar">
             <span class="muted">By submitting, you agree to our confidentiality & data use terms.</span>
             <div style="display:flex; gap:10px;">
-              <button type="submit" class="btn" >Submit</button>
+              <button type="submit" class="btn">Submit</button>
             </div>
           </div>
         </form>
@@ -359,4 +384,5 @@
 
   <script src="assets/scripts/form.js"></script>
 </body>
+
 </html>
