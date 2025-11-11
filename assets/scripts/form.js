@@ -68,225 +68,225 @@ window.addEventListener("load", () => {
     // === End CSV Loader ===
 
 
-    // === File Upload Configuration (Disabled for now)===
-    // const MAX_TOTAL_SIZE_MB = 20;
-    // const ALLOWED_TYPES = [
-    //     "application/pdf",
-    //     "application/msword",
-    //     "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-    //     "application/vnd.ms-excel",
-    //     "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-    //     "image/png",
-    //     "image/jpeg"
-    // ];
-    // // List of supported extensions for user guidance
-    // const SUPPORTED_EXTENSIONS = ".pdf, .doc, .docx, .xls, .xlsx, .png, .jpg, .jpeg"; 
+    // // === File Upload Configuration (Disabled for now)===
+    // // const MAX_TOTAL_SIZE_MB = 20;
+    // // const ALLOWED_TYPES = [
+    // //     "application/pdf",
+    // //     "application/msword",
+    // //     "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    // //     "application/vnd.ms-excel",
+    // //     "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    // //     "image/png",
+    // //     "image/jpeg"
+    // // ];
+    // // // List of supported extensions for user guidance
+    // // const SUPPORTED_EXTENSIONS = ".pdf, .doc, .docx, .xls, .xlsx, .png, .jpg, .jpeg"; 
 
-    // // DOM references
-    // const fileInput = document.getElementById("fileUpload");
-    // const browseTrigger = document.getElementById("browseTrigger");
-    // const fileDropArea = document.getElementById("fileDropArea");
-    // const fileList = document.getElementById("fileList");
-    // const fileError = document.getElementById("fileError");
-    // const progressFill = document.getElementById("uploadProgressFill");
-    // const fileInfo = document.getElementById("fileInfo"); 
+    // // // DOM references
+    // // const fileInput = document.getElementById("fileUpload");
+    // // const browseTrigger = document.getElementById("browseTrigger");
+    // // const fileDropArea = document.getElementById("fileDropArea");
+    // // const fileList = document.getElementById("fileList");
+    // // const fileError = document.getElementById("fileError");
+    // // const progressFill = document.getElementById("uploadProgressFill");
+    // // const fileInfo = document.getElementById("fileInfo"); 
 
-    // DataTransfer object is used to create a mutable FileList, 
-    // which acts as the source of truth for all currently selected files.
-    let currentFiles = new DataTransfer();
+    // // DataTransfer object is used to create a mutable FileList, 
+    // // which acts as the source of truth for all currently selected files.
+    // let currentFiles = new DataTransfer();
 
-    // === CONDITIONAL FILE UPLOADER LOGIC START ===
-    if (fileInput) {
+    // // === CONDITIONAL FILE UPLOADER LOGIC START ===
+    // if (fileInput) {
         
-        console.log("✅ File upload component found. Initializing uploader...");
+    //     console.log("✅ File upload component found. Initializing uploader...");
         
-        // === Helper: format bytes → MB ===
-        function formatBytes(bytes) {
-            return (bytes / (1024 * 1024)).toFixed(1) + " MB";
-        }
+    //     // === Helper: format bytes → MB ===
+    //     function formatBytes(bytes) {
+    //         return (bytes / (1024 * 1024)).toFixed(1) + " MB";
+    //     }
 
-        // === Render selected files (Includes Delete Icon) ===
-        function renderFiles(files) {
-            if (!fileList) return;
-            fileList.innerHTML = "";
+    //     // === Render selected files (Includes Delete Icon) ===
+    //     function renderFiles(files) {
+    //         if (!fileList) return;
+    //         fileList.innerHTML = "";
 
-            let totalSize = 0;
+    //         let totalSize = 0;
             
-            const filesArray = Array.from(files);
+    //         const filesArray = Array.from(files);
 
-            filesArray.forEach(file => {
-                totalSize += file.size;
+    //         filesArray.forEach(file => {
+    //             totalSize += file.size;
 
-                const li = document.createElement("li");
-                li.classList.add("file-item");
-                li.innerHTML = `
-                    <span class="file-icon">📄</span>
-                    <span class="file-name">${file.name}</span>
-                    <span class="file-size">${formatBytes(file.size)}</span>
-                    <span class="delete-file" data-file-name="${file.name}">&times;</span> 
-                `;
-                fileList.appendChild(li);
-            });
+    //             const li = document.createElement("li");
+    //             li.classList.add("file-item");
+    //             li.innerHTML = `
+    //                 <span class="file-icon">📄</span>
+    //                 <span class="file-name">${file.name}</span>
+    //                 <span class="file-size">${formatBytes(file.size)}</span>
+    //                 <span class="delete-file" data-file-name="${file.name}">&times;</span> 
+    //             `;
+    //             fileList.appendChild(li);
+    //         });
 
-            const totalSizeMB = totalSize / (1024 * 1024);
-            const maxSizeBytes = MAX_TOTAL_SIZE_MB * 1024 * 1024;
+    //         const totalSizeMB = totalSize / (1024 * 1024);
+    //         const maxSizeBytes = MAX_TOTAL_SIZE_MB * 1024 * 1024;
 
-            if (fileInfo) {
-                fileInfo.innerHTML = `
-                    Max size: <strong>${MAX_TOTAL_SIZE_MB} MB</strong>. 
-                    Current size: <strong>${totalSizeMB.toFixed(1)} MB</strong>
-                `;
-                fileInfo.style.color = totalSizeMB > maxSizeBytes * 0.9 ? 'orange' : 'inherit';
-            }
+    //         if (fileInfo) {
+    //             fileInfo.innerHTML = `
+    //                 Max size: <strong>${MAX_TOTAL_SIZE_MB} MB</strong>. 
+    //                 Current size: <strong>${totalSizeMB.toFixed(1)} MB</strong>
+    //             `;
+    //             fileInfo.style.color = totalSizeMB > maxSizeBytes * 0.9 ? 'orange' : 'inherit';
+    //         }
 
 
-            const pct = Math.min((totalSizeMB / MAX_TOTAL_SIZE_MB) * 100, 100);
-            progressFill.style.width = `${pct}%`;
+    //         const pct = Math.min((totalSizeMB / MAX_TOTAL_SIZE_MB) * 100, 100);
+    //         progressFill.style.width = `${pct}%`;
 
-            // 💡 Only handle the size error here. Preserve the type warning if it exists.
-            if (totalSize > maxSizeBytes) {
-                fileError.textContent = `Total size exceeds ${MAX_TOTAL_SIZE_MB} MB limit.`;
-                fileError.style.display = "block";
-            } else if (fileError.textContent.includes(`Total size exceeds ${MAX_TOTAL_SIZE_MB} MB limit.`)) {
-                // If the current error is a size error and size is now okay, clear it.
-                fileError.textContent = "";
-                fileError.style.display = "none";
-            }
-        }
+    //         // 💡 Only handle the size error here. Preserve the type warning if it exists.
+    //         if (totalSize > maxSizeBytes) {
+    //             fileError.textContent = `Total size exceeds ${MAX_TOTAL_SIZE_MB} MB limit.`;
+    //             fileError.style.display = "block";
+    //         } else if (fileError.textContent.includes(`Total size exceeds ${MAX_TOTAL_SIZE_MB} MB limit.`)) {
+    //             // If the current error is a size error and size is now okay, clear it.
+    //             fileError.textContent = "";
+    //             fileError.style.display = "none";
+    //         }
+    //     }
         
-        // Delete function
-        function deleteFile(fileName) {
-            const filesArray = Array.from(currentFiles.files);
-            const fileIndex = filesArray.findIndex(f => f.name === fileName);
+    //     // Delete function
+    //     function deleteFile(fileName) {
+    //         const filesArray = Array.from(currentFiles.files);
+    //         const fileIndex = filesArray.findIndex(f => f.name === fileName);
 
-            if (fileIndex > -1) {
-                filesArray.splice(fileIndex, 1);
+    //         if (fileIndex > -1) {
+    //             filesArray.splice(fileIndex, 1);
                 
-                currentFiles = new DataTransfer();
-                filesArray.forEach(file => currentFiles.items.add(file));
+    //             currentFiles = new DataTransfer();
+    //             filesArray.forEach(file => currentFiles.items.add(file));
 
-                fileInput.files = currentFiles.files;
+    //             fileInput.files = currentFiles.files;
 
-                // Explicitly clear the type warning on deletion 
-                if (fileError.textContent.includes("Unsupported file types")) {
-                     fileError.textContent = "";
-                     fileError.style.display = "none"; 
-                }
+    //             // Explicitly clear the type warning on deletion 
+    //             if (fileError.textContent.includes("Unsupported file types")) {
+    //                  fileError.textContent = "";
+    //                  fileError.style.display = "none"; 
+    //             }
 
-                renderFiles(currentFiles.files);
-            }
-        }
+    //             renderFiles(currentFiles.files);
+    //         }
+    //     }
 
-        // === Validate and handle file input (Appends files and shows type warning) ===
-        function handleFiles(newFiles) {
-            const incomingFilesArray = Array.from(newFiles);
+    //     // === Validate and handle file input (Appends files and shows type warning) ===
+    //     function handleFiles(newFiles) {
+    //         const incomingFilesArray = Array.from(newFiles);
             
-            // 1. Prevent clearing files on cancel
-            if (incomingFilesArray.length === 0 && currentFiles.files.length > 0) {
-                return renderFiles(currentFiles.files);
-            }
+    //         // 1. Prevent clearing files on cancel
+    //         if (incomingFilesArray.length === 0 && currentFiles.files.length > 0) {
+    //             return renderFiles(currentFiles.files);
+    //         }
             
-            // 2. Implement file appending logic (merge new files with existing)
-            let filesToProcess = Array.from(currentFiles.files);
-            const existingFileSignatures = filesToProcess.map(f => f.name + f.size);
+    //         // 2. Implement file appending logic (merge new files with existing)
+    //         let filesToProcess = Array.from(currentFiles.files);
+    //         const existingFileSignatures = filesToProcess.map(f => f.name + f.size);
 
-            incomingFilesArray.forEach(newFile => {
-                // Only append files that are not already in the list (based on name + size)
-                if (!existingFileSignatures.includes(newFile.name + newFile.size)) {
-                    filesToProcess.push(newFile);
-                }
-            });
+    //         incomingFilesArray.forEach(newFile => {
+    //             // Only append files that are not already in the list (based on name + size)
+    //             if (!existingFileSignatures.includes(newFile.name + newFile.size)) {
+    //                 filesToProcess.push(newFile);
+    //             }
+    //         });
             
-            // If no files at all (e.g., empty initial selection), reset
-            if (filesToProcess.length === 0) {
-                if (fileList) fileList.innerHTML = "";
-                if (progressFill) progressFill.style.width = "0%";
-                if (fileInfo) {
-                    fileInfo.innerHTML = `Max size: <strong>${MAX_TOTAL_SIZE_MB} MB</strong>. Current size: <strong>0 MB</strong>`;
-                    fileInfo.style.color = 'inherit';
-                }
-                fileError.textContent = "";
-                fileError.style.display = "none";
+    //         // If no files at all (e.g., empty initial selection), reset
+    //         if (filesToProcess.length === 0) {
+    //             if (fileList) fileList.innerHTML = "";
+    //             if (progressFill) progressFill.style.width = "0%";
+    //             if (fileInfo) {
+    //                 fileInfo.innerHTML = `Max size: <strong>${MAX_TOTAL_SIZE_MB} MB</strong>. Current size: <strong>0 MB</strong>`;
+    //                 fileInfo.style.color = 'inherit';
+    //             }
+    //             fileError.textContent = "";
+    //             fileError.style.display = "none";
                 
-                currentFiles = new DataTransfer();
-                fileInput.files = currentFiles.files;
-                return;
-            }
+    //             currentFiles = new DataTransfer();
+    //             fileInput.files = currentFiles.files;
+    //             return;
+    //         }
 
-            // 3. VALIDATION: Check for unsupported files in the merged list
-            const invalidFiles = filesToProcess.filter(f => !ALLOWED_TYPES.includes(f.type));
+    //         // 3. VALIDATION: Check for unsupported files in the merged list
+    //         const invalidFiles = filesToProcess.filter(f => !ALLOWED_TYPES.includes(f.type));
             
-            if (invalidFiles.length > 0) {
-                // SET the type warning error text here
-                fileError.textContent = `🚫 Warning: Unsupported file types were removed. Files removed: ${invalidFiles.map(f => f.name).join(", ")}. Supported types are: ${SUPPORTED_EXTENSIONS}`;
-                fileError.style.display = "block";
+    //         if (invalidFiles.length > 0) {
+    //             // SET the type warning error text here
+    //             fileError.textContent = `🚫 Warning: Unsupported file types were removed. Files removed: ${invalidFiles.map(f => f.name).join(", ")}. Supported types are: ${SUPPORTED_EXTENSIONS}`;
+    //             fileError.style.display = "block";
                 
-                // Filter out only the invalid files but keep all previously and newly added VALID files
-                filesToProcess = filesToProcess.filter(f => ALLOWED_TYPES.includes(f.type));
-            } else {
-                // Clear the type warning if a new, fully valid upload is performed.
-                if (fileError.textContent.includes("Unsupported file types")) {
-                     fileError.textContent = "";
-                     fileError.style.display = "none";
-                }
-            }
+    //             // Filter out only the invalid files but keep all previously and newly added VALID files
+    //             filesToProcess = filesToProcess.filter(f => ALLOWED_TYPES.includes(f.type));
+    //         } else {
+    //             // Clear the type warning if a new, fully valid upload is performed.
+    //             if (fileError.textContent.includes("Unsupported file types")) {
+    //                  fileError.textContent = "";
+    //                  fileError.style.display = "none";
+    //             }
+    //         }
 
-            // 4. Update the internal file list and the actual input element
-            currentFiles = new DataTransfer();
-            filesToProcess.forEach(file => currentFiles.items.add(file));
-            fileInput.files = currentFiles.files;
+    //         // 4. Update the internal file list and the actual input element
+    //         currentFiles = new DataTransfer();
+    //         filesToProcess.forEach(file => currentFiles.items.add(file));
+    //         fileInput.files = currentFiles.files;
 
-            renderFiles(currentFiles.files);
-        }
+    //         renderFiles(currentFiles.files);
+    //     }
 
-        // === Bind UI interactions ===
-        if (browseTrigger) {
-            browseTrigger.addEventListener("click", e => {
-                e.preventDefault();
-                fileInput.click();
-            });
-        }
+    //     // === Bind UI interactions ===
+    //     if (browseTrigger) {
+    //         browseTrigger.addEventListener("click", e => {
+    //             e.preventDefault();
+    //             fileInput.click();
+    //         });
+    //     }
 
-        if (fileInput) {
-            fileInput.addEventListener("change", e => handleFiles(e.target.files));
-        }
+    //     if (fileInput) {
+    //         fileInput.addEventListener("change", e => handleFiles(e.target.files));
+    //     }
 
-        if (fileDropArea) {
-            ["dragenter", "dragover"].forEach(ev =>
-                fileDropArea.addEventListener(ev, e => {
-                    e.preventDefault();
-                    fileDropArea.classList.add("drag-over");
-                })
-            );
-            ["dragleave", "drop"].forEach(ev =>
-                fileDropArea.addEventListener(ev, e => {
-                    e.preventDefault();
-                    fileDropArea.classList.remove("drag-over");
-                })
-            );
-            fileDropArea.addEventListener("drop", e => {
-                e.preventDefault();
-                handleFiles(e.dataTransfer.files);
-            });
-        }
+    //     if (fileDropArea) {
+    //         ["dragenter", "dragover"].forEach(ev =>
+    //             fileDropArea.addEventListener(ev, e => {
+    //                 e.preventDefault();
+    //                 fileDropArea.classList.add("drag-over");
+    //             })
+    //         );
+    //         ["dragleave", "drop"].forEach(ev =>
+    //             fileDropArea.addEventListener(ev, e => {
+    //                 e.preventDefault();
+    //                 fileDropArea.classList.remove("drag-over");
+    //             })
+    //         );
+    //         fileDropArea.addEventListener("drop", e => {
+    //             e.preventDefault();
+    //             handleFiles(e.dataTransfer.files);
+    //         });
+    //     }
         
-        // Event listener for file deletion clicks 
-        if (fileList) {
-            fileList.addEventListener("click", e => {
-                const deleteButton = e.target.closest(".delete-file");
-                if (deleteButton) {
-                    e.stopPropagation(); 
-                    e.preventDefault(); 
+    //     // Event listener for file deletion clicks 
+    //     if (fileList) {
+    //         fileList.addEventListener("click", e => {
+    //             const deleteButton = e.target.closest(".delete-file");
+    //             if (deleteButton) {
+    //                 e.stopPropagation(); 
+    //                 e.preventDefault(); 
                     
-                    const fileName = deleteButton.dataset.fileName;
-                    deleteFile(fileName);
-                }
-            });
-        }
-    } else {
-        console.log("⚠️ File uploader binding skipped.");
-    }
-    // === CONDITIONAL FILE UPLOADER LOGIC END ===
+    //                 const fileName = deleteButton.dataset.fileName;
+    //                 deleteFile(fileName);
+    //             }
+    //         });
+    //     }
+    // } else {
+    //     console.log("⚠️ File uploader binding skipped.");
+    // }
+    // // === CONDITIONAL FILE UPLOADER LOGIC END ===
 
 
     // === Multiselect sorting ===
