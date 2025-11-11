@@ -3,10 +3,12 @@ window.addEventListener("load", () => {
     console.log("✅ DOM fully loaded — initializing dropdowns...");
 
     // === DYNAMIC DROPDOWN LOADER CALL ===
-    loadDropdownFromCSV('industrySelect', 'assets/data/industries.csv');
+    loadDropdownFromCSV('industrySelect', 'assets/data/industries.csv'); // <-- ACTIVATED
 
 
 // === CSV Loader Function with Active Filter ===
+    // NOTE: This function is included to demonstrate dynamic loading capability. 
+    // It requires a CSV file at 'assets/data/industries.csv' to function correctly.
     async function loadDropdownFromCSV(selectId, csvPath) {
         const selectElement = document.getElementById(selectId);
         if (!selectElement) {
@@ -17,7 +19,9 @@ window.addEventListener("load", () => {
         try {
             const response = await fetch(csvPath);
             if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
+                // If the CSV file is missing (404), this warning is triggered, and we stop.
+                console.warn(`Dynamic load failed for ${csvPath}. Using static options from HTML if available. Status: ${response.status}`);
+                return; 
             }
             const csvText = await response.text();
 
@@ -34,46 +38,37 @@ window.addEventListener("load", () => {
                 };
             });
 
-            // 2. FILTER STEP: Only keep items where 'active' is 'Y'
-            const filteredData = parsedData.filter(item => item.active && item.active.toUpperCase() === 'Y');
+            // 2. FILTER STEP: Only keep rows where the third column (active) is 'Y'
+            const activeData = parsedData.filter(item => item.active === 'Y');
 
-            // 3. Clear the initial state
-            selectElement.innerHTML = '';
+            // 3. Clear existing options and add a default 'Select' option
+            selectElement.innerHTML = '<option value="">Select Industry</option>';
 
-            // 4. Add a default empty option
-            const defaultOption = document.createElement('option');
-            defaultOption.value = '';
-            defaultOption.textContent = 'Select an option...';
-            selectElement.appendChild(defaultOption);
-
-
-            // 5. Populate the dropdown with filtered data
-            filteredData.forEach(item => {
+            // 4. Populate the dropdown with active options
+            activeData.forEach(item => {
                 const option = document.createElement('option');
                 option.value = item.value;
                 option.textContent = item.label;
                 selectElement.appendChild(option);
             });
-            console.log(`✅ Dropdown '${selectId}' successfully loaded with ${filteredData.length} active options.`);
 
+            console.log(`Dropdown #${selectId} loaded successfully with ${activeData.length} active options from CSV.`);
 
         } catch (error) {
-            console.error(`❌ Failed to load CSV data for ${selectId}:`, error);
-            selectElement.innerHTML = '<option value="" disabled selected>Error loading options</option>';
+            console.error(`Error loading CSV for dropdown ${selectId}:`, error);
         }
     }
-    // === End CSV Loader ===
-
-
-
+    
     // === File Upload Configuration ===
     const MAX_TOTAL_SIZE_MB = 20;
+    const MAX_SINGLE_FILE_SIZE_MB = 10;
+    const MAX_FILE_COUNT = 3;
     const ALLOWED_TYPES = [
         "application/pdf",
         "application/msword",
-        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document", // .docx
         "application/vnd.ms-excel",
-        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", // .xlsx
         "image/png",
         "image/jpeg"
     ];
@@ -88,448 +83,369 @@ window.addEventListener("load", () => {
     const fileError = document.getElementById("fileError");
     const progressFill = document.getElementById("uploadProgressFill");
     const fileInfo = document.getElementById("fileInfo"); 
-    
-    // DataTransfer object (Must be declared outside function if used in form submission)
-    let currentFiles = new DataTransfer();
-    
-        
-    // === CONDITIONAL FILE UPLOADER LOGIC ===
-    if (fileInput) {
-        
-        console.log("✅ File upload component found. Initializing uploader...");
-        
-        // === Helper: format bytes → MB ===
-        function formatBytes(bytes) {
-            return (bytes / (1024 * 1024)).toFixed(1) + " MB";
-        }
-
-        // === Render selected files (Includes Delete Icon) ===
-        function renderFiles(files) {
-            if (!fileList) return;
-            fileList.innerHTML = "";
-
-            let totalSize = 0;
-            
-            const filesArray = Array.from(files);
-
-            filesArray.forEach(file => {
-                totalSize += file.size;
-
-                const li = document.createElement("li");
-                li.classList.add("file-item");
-                li.innerHTML = `
-                    <span class="file-icon">📄</span>
-                    <span class="file-name">${file.name}</span>
-                    <span class="file-size">${formatBytes(file.size)}</span>
-                    <span class="delete-file" data-file-name="${file.name}">&times;</span> 
-                `;
-                fileList.appendChild(li);
-            });
-
-            const totalSizeMB = totalSize / (1024 * 1024);
-            const maxSizeBytes = MAX_TOTAL_SIZE_MB * 1024 * 1024;
-
-            if (fileInfo) {
-                fileInfo.innerHTML = `
-                    Max size: <strong>${MAX_TOTAL_SIZE_MB} MB</strong>. 
-                    Current size: <strong>${totalSizeMB.toFixed(1)} MB</strong>
-                `;
-                fileInfo.style.color = totalSizeMB > maxSizeBytes * 0.9 ? 'orange' : 'inherit';
-            }
-
-
-            const pct = Math.min((totalSizeMB / MAX_TOTAL_SIZE_MB) * 100, 100);
-            progressFill.style.width = `${pct}%`;
-
-            // 💡 Only handle the size error here. Preserve the type warning if it exists.
-            if (totalSize > maxSizeBytes) {
-                fileError.textContent = `Total size exceeds ${MAX_TOTAL_SIZE_MB} MB limit.`;
-                fileError.style.display = "block";
-            } else if (fileError.textContent.includes(`Total size exceeds ${MAX_TOTAL_SIZE_MB} MB limit.`)) {
-                // If the current error is a size error and size is now okay, clear it.
-                fileError.textContent = "";
-                fileError.style.display = "none";
-            }
-        }
-        
-        // Delete function
-        function deleteFile(fileName) {
-            const filesArray = Array.from(currentFiles.files);
-            const fileIndex = filesArray.findIndex(f => f.name === fileName);
-
-            if (fileIndex > -1) {
-                filesArray.splice(fileIndex, 1);
-                
-                currentFiles = new DataTransfer();
-                filesArray.forEach(file => currentFiles.items.add(file));
-
-                fileInput.files = currentFiles.files;
-
-                // Explicitly clear the type warning on deletion 
-                if (fileError.textContent.includes("Unsupported file types")) {
-                     fileError.textContent = "";
-                     fileError.style.display = "none"; 
-                }
-
-                renderFiles(currentFiles.files);
-            }
-        }
-
-        // === Validate and handle file input (Appends files and shows type warning) ===
-        function handleFiles(newFiles) {
-            const incomingFilesArray = Array.from(newFiles);
-            
-            // 1. Prevent clearing files on cancel
-            if (incomingFilesArray.length === 0 && currentFiles.files.length > 0) {
-                return renderFiles(currentFiles.files);
-            }
-            
-            // 2. Implement file appending logic (merge new files with existing)
-            let filesToProcess = Array.from(currentFiles.files);
-            const existingFileSignatures = filesToProcess.map(f => f.name + f.size);
-
-            incomingFilesArray.forEach(newFile => {
-                // Only append files that are not already in the list (based on name + size)
-                if (!existingFileSignatures.includes(newFile.name + newFile.size)) {
-                    filesToProcess.push(newFile);
-                }
-            });
-            
-            // If no files at all (e.g., empty initial selection), reset
-            if (filesToProcess.length === 0) {
-                if (fileList) fileList.innerHTML = "";
-                if (progressFill) progressFill.style.width = "0%";
-                if (fileInfo) {
-                    fileInfo.innerHTML = `Max size: <strong>${MAX_TOTAL_SIZE_MB} MB</strong>. Current size: <strong>0 MB</strong>`;
-                    fileInfo.style.color = 'inherit';
-                }
-                fileError.textContent = "";
-                fileError.style.display = "none";
-                
-                currentFiles = new DataTransfer();
-                fileInput.files = currentFiles.files;
-                return;
-            }
-
-            // 3. VALIDATION: Check for unsupported files in the merged list
-            const invalidFiles = filesToProcess.filter(f => !ALLOWED_TYPES.includes(f.type));
-            
-            if (invalidFiles.length > 0) {
-                // SET the type warning error text here
-                fileError.textContent = `🚫 Warning: Unsupported file types were removed. Files removed: ${invalidFiles.map(f => f.name).join(", ")}. Supported types are: ${SUPPORTED_EXTENSIONS}`;
-                fileError.style.display = "block";
-                
-                // Filter out only the invalid files but keep all previously and newly added VALID files
-                filesToProcess = filesToProcess.filter(f => ALLOWED_TYPES.includes(f.type));
-            } else {
-                // Clear the type warning if a new, fully valid upload is performed.
-                if (fileError.textContent.includes("Unsupported file types")) {
-                     fileError.textContent = "";
-                     fileError.style.display = "none";
-                }
-            }
-
-            // 4. Update the internal file list and the actual input element
-            currentFiles = new DataTransfer();
-            filesToProcess.forEach(file => currentFiles.items.add(file));
-            fileInput.files = currentFiles.files;
-
-            renderFiles(currentFiles.files);
-        }
-
-        // === Bind UI interactions ===
-        if (browseTrigger) {
-            browseTrigger.addEventListener("click", e => {
-                e.preventDefault();
-                fileInput.click();
-            });
-        }
-
-        if (fileInput) {
-            fileInput.addEventListener("change", e => handleFiles(e.target.files));
-        }
-
-        if (fileDropArea) {
-            ["dragenter", "dragover"].forEach(ev =>
-                fileDropArea.addEventListener(ev, e => {
-                    e.preventDefault();
-                    fileDropArea.classList.add("drag-over");
-                })
-            );
-            ["dragleave", "drop"].forEach(ev =>
-                fileDropArea.addEventListener(ev, e => {
-                    e.preventDefault();
-                    fileDropArea.classList.remove("drag-over");
-                })
-            );
-            fileDropArea.addEventListener("drop", e => {
-                e.preventDefault();
-                handleFiles(e.dataTransfer.files);
-            });
-        }
-        
-        // Event listener for file deletion clicks 
-        if (fileList) {
-            fileList.addEventListener("click", e => {
-                const deleteButton = e.target.closest(".delete-file");
-                if (deleteButton) {
-                    e.stopPropagation(); 
-                    e.preventDefault(); 
-                    
-                    const fileName = deleteButton.dataset.fileName;
-                    deleteFile(fileName);
-                }
-            });
-        }
-    } else {
-         console.log("⚠️ File uploader binding skipped.");
-    }
-
-// ------------------------------------------------
-// --- START: DROPDOWN & FORM VALIDATION (Always Runs) ---
-// ------------------------------------------------
-
-    // === Multiselect sorting ===
-    document.querySelectorAll(".multiselect-dropdown .dropdown-list").forEach(list => {
-        const labels = Array.from(list.querySelectorAll("label"));
-        labels.sort((a, b) => {
-            const textA = a.textContent.trim();
-            const textB = b.textContent.trim();
-            if (textA === "Other") return 1;
-            if (textB === "Other") return -1;
-            return textA.localeCompare(textB);
-        });
-        list.innerHTML = "";
-        labels.forEach(label => list.appendChild(label));
-    });
-
-    // === Multiselect behavior ===
-    document.querySelectorAll(".multiselect-dropdown").forEach(dropdown => {
-        const button = dropdown.querySelector(".dropdown-btn");
-        const list = dropdown.querySelector(".dropdown-list");
-        
-        const dataName = dropdown.dataset.name;
-        
-        // Safety check to prevent errors if the data-name attribute is missing
-        if (!dataName) {
-            console.error("Multiselect initialization failed: Missing 'data-name' attribute on a dropdown.");
-            return; 
-        }
-        
-        const isRequired = dropdown.hasAttribute('required') || dropdown.querySelector('[required]') !== null;
-
-        const hiddenInput = document.createElement("input");
-        hiddenInput.type = "hidden";
-        hiddenInput.name = dataName; 
-        
-        if(isRequired) {
-             hiddenInput.setAttribute('required', 'required'); 
-             hiddenInput.classList.add('multiselect-hidden'); // Tag for custom validation
-        }
-        
-        dropdown.appendChild(hiddenInput);
-
-        const defaultText = button.textContent.trim();
-
-        const updateDropdown = () => {
-            const selected = Array.from(list.querySelectorAll("input:checked")).map(cb => cb.value);
-            hiddenInput.value = selected.join(", ");
-            let newText = selected.length === 0
-                ? defaultText
-                : selected.length === 1
-                ? selected[0]
-                : `${selected.length} items selected`;
-            button.textContent = newText;
-            button.classList.toggle("has-selection", selected.length > 0);
-            
-            // 💡 ADDED: Clear/Apply error state on selection change for required fields
-            if (isRequired) {
-                 if (selected.length > 0) {
-                     button.closest('label')?.classList.remove('field-error');
-                 } else {
-                     button.closest('label')?.classList.add('field-error'); 
-                 }
-            }
-        };
-
-        updateDropdown();
-
-        button.addEventListener("click", e => {
-            e.preventDefault();
-            e.stopPropagation();
-            dropdown.classList.toggle("open");
-        });
-
-        list.querySelectorAll("input[type='checkbox']").forEach(cb =>
-            cb.addEventListener("change", updateDropdown)
-        );
-
-        document.addEventListener("click", e => {
-            if (!dropdown.contains(e.target)) dropdown.classList.remove("open");
-        });
-    });
-
-    console.log("✅ Dropdown initialization complete.");
-    
-    // ======================================
-    // === NEW CUSTOM VALIDATION LOGIC START ===
-    // ======================================
-    
     const form = document.getElementById("leadForm");
-    if (!form) return;
-    
-    const requiredFields = form.querySelectorAll('[required]');
 
-    /**
-     * Finds the correct element to apply/clear the error class (usually the parent <label>).
-     * @param {HTMLElement} inputElement - The input, select, textarea, or multiselect-btn element.
-     * @returns {HTMLElement|null} The element to which the 'field-error' class should be applied.
-     */
-    const getTargetElement = (inputElement) => {
-        if (inputElement.classList.contains('dropdown-btn')) {
-            // For a multiselect button, target its parent label
-            return inputElement.closest('.multiselect-dropdown')?.closest('label');
-        }
-        // For standard inputs, target the closest label
-        return inputElement.closest('label');
+    // DataTransfer object is used to create a mutable FileList, 
+    // which acts as the source of truth for all currently selected files.\
+    let currentFiles = new DataTransfer();
+
+    // === Helper: format bytes ===
+    const formatBytes = (bytes) => {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const dm = 2;
+        const sizes = ['Bytes', 'KB', 'MB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
     };
 
-    const clearError = (inputElement) => {
-        const targetElement = getTargetElement(inputElement);
-        if (targetElement) {
-            targetElement.classList.remove('field-error');
-        }
-    };
-
-    const applyError = (inputElement) => {
-        const targetElement = getTargetElement(inputElement);
-        if (targetElement) {
-            targetElement.classList.add('field-error');
-        }
-    };
-
-    /**
-     * Checks if a field is valid, honoring HTML required, pattern, and type rules.
-     */
-    const isValid = (input) => {
-        // checkValidity() handles required, pattern, type="email", type="url", etc.
-        return input.checkValidity();
-    };
-
-    // --- Real-time feedback: Clear error as user types ---
-    requiredFields.forEach(field => {
-        // Skip multiselect hidden fields as their visual feedback is handled in the updateDropdown function
-        if (field.type === 'hidden' && field.classList.contains('multiselect-hidden')) {
-             return; 
-        }
-
-        field.addEventListener('input', () => {
-            if (isValid(field)) {
-                clearError(field);
-            }
+    // === Helper: Update Total Size & Info UI ===
+    const updateFileInfo = () => {
+        const files = currentFiles.files;
+        let totalSize = 0;
+        Array.from(files).forEach(file => {
+            totalSize += file.size;
         });
 
-        field.addEventListener('change', () => {
-            if (isValid(field)) {
-                clearError(field);
-            }
-        });
-    });
-    
-    // === Form Submission Override (Replaces form.checkValidity()) ===
-    form.addEventListener("submit", async e => {
-        e.preventDefault();
-        const button = form.querySelector("button[type='submit']");
+        const totalSizeMB = totalSize / (1024 * 1024);
         
-        let isFormValid = true;
-
-        // 1. Reset all previous error states
-        form.querySelectorAll('.field-error').forEach(el => el.classList.remove('field-error'));
-
-        // 2. Check all required fields (Custom Validation) - Now uses checkValidity()
-        requiredFields.forEach(field => {
-            
-            // Check if the field is part of a multiselect dropdown
-            const isMultiselectHidden = field.classList.contains('multiselect-hidden');
-            const elementToHighlight = isMultiselectHidden 
-                ? field.closest('.multiselect-dropdown')?.querySelector('.dropdown-btn') 
-                : field;
-           
-            if (!isValid(field)) {
-                if(elementToHighlight) applyError(elementToHighlight);
-                isFormValid = false; // Stop submission
-            } else {
-                if(elementToHighlight) clearError(elementToHighlight);
-            }
-        });
-
-        if (!isFormValid) {
-            console.log('Form validation failed. Missing required fields.');
-            // Scroll to the first error field for better UX
-            const firstError = form.querySelector('.field-error');
-            if (firstError) {
-                firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }
-            // Stop processing and re-enable button
-            button.disabled = false;
-            button.textContent = "Submit";
-            return; 
+        // Update text
+        fileInfo.textContent = `(${files.length}/${MAX_FILE_COUNT} files, ${formatBytes(totalSize)} / ${MAX_TOTAL_SIZE_MB} MB max)`;
+        
+        // Update progress bar
+        const progressPercentage = Math.min(100, (totalSizeMB / MAX_TOTAL_SIZE_MB) * 100);
+        progressFill.style.width = `${progressPercentage}%`;
+        
+        // Check for total size error
+        if (totalSizeMB > MAX_TOTAL_SIZE_MB) {
+            fileError.textContent = `Error: Total file size exceeds ${MAX_TOTAL_SIZE_MB} MB. Please remove files.`;
+            fileError.classList.add('active');
+            return false;
+        } else {
+            fileError.classList.remove('active');
+            fileError.textContent = '';
+            return true;
         }
-        // --- Custom Validation Passed ---
+    };
 
-        // Proceed with submission (original code structure)
-        button.disabled = true;
-        button.textContent = "Submitting...";
+    // === Helper: Render File List ===
+    const renderFileList = () => {
+        const files = currentFiles.files;
+        fileList.innerHTML = ''; // Clear current list
 
-        // Only proceed with file logic if the fileInput element exists
-        const files = fileInput ? (currentFiles.files || []) : [];
-        let totalSize = [...files].reduce((sum, f) => sum + f.size, 0);
-        const MAX_SIZE_BYTES = MAX_TOTAL_SIZE_MB * 1024 * 1024;
-
-        if (totalSize > MAX_SIZE_BYTES) {
-            alert(`Total file size exceeds ${MAX_TOTAL_SIZE_MB} MB.`);
-            button.disabled = false;
-            button.textContent = "Submit";
+        if (files.length === 0) {
+            fileList.innerHTML = '<li class="muted">No files attached. Max: 3 files, 20 MB total.</li>';
+            fileDropArea.classList.remove('has-files');
             return;
         }
 
-        // 1. Create FormData from the base form (gets ALL text inputs and hidden multiselects)
-        const formData = new FormData(form);
-
-        // 2. CRITICAL FIX: Manually append the files from currentFiles 
-        if (fileInput) {
-            const FILE_FIELD_NAME = fileInput.name || "fileUpload";
-
-            for (let i = 0; i < files.length; i++) {
-                formData.append(FILE_FIELD_NAME, files[i]); 
+        fileDropArea.classList.add('has-files');
+        Array.from(files).forEach((file, index) => {
+            const li = document.createElement('li');
+            li.innerHTML = `
+                <span class="file-name">${file.name}</span>
+                <span class="file-size">${formatBytes(file.size)}</span>
+                <button type="button" class="remove-file-btn" data-index="${index}" aria-label="Remove file ${file.name}">
+                    &times;
+                </button>
+            `;
+            fileList.appendChild(li);
+        });
+        
+        // Bind remove buttons after rendering
+        fileList.querySelectorAll('.remove-file-btn').forEach(button => {
+            button.addEventListener('click', (e) => {
+                const index = parseInt(e.currentTarget.dataset.index);
+                removeFile(index);
+            });
+        });
+        
+        updateFileInfo();
+    };
+    
+    // === File Removal Logic ===
+    const removeFile = (indexToRemove) => {
+        const newDT = new DataTransfer();
+        const filesArray = Array.from(currentFiles.files);
+        
+        filesArray.forEach((file, index) => {
+            if (index !== indexToRemove) {
+                newDT.items.add(file);
             }
+        });
+
+        currentFiles = newDT;
+        renderFileList();
+    };
+
+    // === File Validation and Addition Logic ===
+    const addFiles = (filesToAdd) => {
+        fileError.textContent = ''; // Clear previous errors
+        fileError.classList.remove('active');
+        
+        let newFilesCount = 0;
+        let filesExceedingSize = [];
+        let invalidTypeCount = 0;
+
+        Array.from(filesToAdd).forEach(file => {
+            const totalCount = currentFiles.files.length + newFilesCount;
+            
+            // Check 1: Max file count
+            if (totalCount >= MAX_FILE_COUNT) {
+                return; // Skip if max count reached
+            }
+
+            // Check 2: Single file size limit
+            if ((file.size / (1024 * 1024)) > MAX_SINGLE_FILE_SIZE_MB) {
+                filesExceedingSize.push(file.name);
+                return;
+            }
+
+            // Check 3: File type
+            if (!ALLOWED_TYPES.includes(file.type)) {
+                invalidTypeCount++;
+                return;
+            }
+            
+            // Add valid file to DataTransfer object
+            currentFiles.items.add(file);
+            newFilesCount++;
+        });
+        
+        // Handle error messages
+        if (filesExceedingSize.length > 0) {
+            fileError.textContent = `Error: The following file(s) exceed the ${MAX_SINGLE_FILE_SIZE_MB} MB limit: ${filesExceedingSize.join(', ')}.`;
+            fileError.classList.add('active');
+        } else if (invalidTypeCount > 0) {
+            fileError.textContent = `Error: ${invalidTypeCount} file(s) were ignored due to unsupported file types. Supported: ${SUPPORTED_EXTENSIONS}`;
+            fileError.classList.add('active');
+        } else if (newFilesCount > 0 && (currentFiles.files.length > MAX_FILE_COUNT)) {
+             // This catch handles the edge case where the loop was allowed to run, but total count was reached
+             fileError.textContent = `Warning: Only the first ${MAX_FILE_COUNT} files are kept.`;
+             fileError.classList.add('active');
         }
         
-        // --- Submission Logic ---
-        console.log("Attempting to send form data to webhook:", form.action);
-        try {
-            const response = await fetch(form.action, {
-                method: "POST",
-                body: formData
+        // After adding, re-render and check total size constraint
+        renderFileList();
+        updateFileInfo();
+    };
+
+    // === Drag and Drop Listeners ===
+    if (fileDropArea) {
+        // Prevent default behavior (prevent file from being opened in browser)
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            fileDropArea.addEventListener(eventName, e => {
+                e.preventDefault();
+                e.stopPropagation();
+            }, false);
+        });
+
+        // Highlight drop area on drag enter/over
+        ['dragenter', 'dragover'].forEach(eventName => {
+            fileDropArea.addEventListener(eventName, () => fileDropArea.classList.add('highlight'), false);
+        });
+
+        // Unhighlight drop area on drag leave/drop
+        ['dragleave', 'drop'].forEach(eventName => {
+            fileDropArea.addEventListener(eventName, () => fileDropArea.classList.remove('highlight'), false);
+        });
+
+        // Handle file drop
+        fileDropArea.addEventListener('drop', (e) => {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            addFiles(files);
+        }, false);
+    }
+    
+    // === Standard Input Listener ===
+    if (fileInput) {
+        // Trigger file input when browse trigger is clicked
+        if (browseTrigger) {
+            browseTrigger.addEventListener('click', () => fileInput.click());
+        }
+        
+        // Listen for files selected via the file dialog
+        fileInput.addEventListener('change', (e) => {
+            addFiles(e.target.files);
+            // Must clear the file input value so selecting the same file triggers 'change' next time
+            fileInput.value = ''; 
+        });
+    }
+
+    // Initial render
+    renderFileList();
+
+
+    // === Multiselect Dropdown Logic ===
+    const multiselects = document.querySelectorAll('.multiselect-dropdown');
+    
+    multiselects.forEach(dropdown => {
+        const button = dropdown.querySelector('.dropdown-btn');
+        const list = dropdown.querySelector('.dropdown-list');
+        const checkboxes = list.querySelectorAll('input[type="checkbox"]');
+        const dataName = dropdown.getAttribute('data-name');
+        
+        // Create a hidden input to hold the comma-separated values for submission
+        const hiddenInput = document.createElement('input');
+        hiddenInput.type = 'hidden';
+        hiddenInput.name = dataName; // Use the data-name attribute for the name
+        hiddenInput.value = '';
+        dropdown.appendChild(hiddenInput);
+
+        // Function to update the button text and the hidden input value
+        const updateSelection = () => {
+            const selectedValues = [];
+            checkboxes.forEach(checkbox => {
+                if (checkbox.checked) {
+                    selectedValues.push(checkbox.value);
+                }
             });
 
-            const data = await response.json();
-
-            if (response.ok && data.status === "received") {
-                const redirectURL = data.redirect || "thank-you.html";
-                setTimeout(() => (window.location.href = redirectURL), 800);
+            hiddenInput.value = selectedValues.join(',');
+            
+            if (selectedValues.length === 0) {
+                button.textContent = `Select ${dataName}`;
+            } else if (selectedValues.length === 1) {
+                // If only one is selected, display its label (checkbox value)
+                button.textContent = selectedValues[0]; 
             } else {
-                alert("Submission failed. Please try again.");
+                button.textContent = `${selectedValues.length} selected`;
             }
-        } catch (error) {
-            console.error("❌ Error submitting form:", error);
-            alert("Unable to connect to the server. Please try again later.");
-        } finally {
-            // Guarantees button re-enables after a short delay, even if fetch times out
-            setTimeout(() => {
-                button.disabled = false;
-                button.textContent = "Submit";
-            }, 500); 
-        }
+        };
+
+        // Initialize and bind listeners
+        updateSelection(); // Initial update
+
+        // Toggle dropdown list visibility
+        button.addEventListener('click', (e) => {
+            e.stopPropagation(); // Prevents click on button from immediately closing via document listener
+            list.classList.toggle('active');
+            button.classList.toggle('active');
+        });
+
+        // Update when a checkbox state changes
+        checkboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', updateSelection);
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!dropdown.contains(e.target)) {
+                list.classList.remove('active');
+                button.classList.remove('active');
+            }
+        });
     });
+
+
+    // === Form Submission Handler ===
+    if (form) {
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const button = form.querySelector('button[type="submit"]');
+            
+            // Basic client-side validation check (HTML5 standard validity)
+            if (!form.checkValidity()) {
+                console.warn("Form validation failed. Browser should show warnings.");
+                // This triggers the browser's native error display
+                button.textContent = "Check Fields!";
+                setTimeout(() => {
+                    button.textContent = "Submit";
+                }, 1500);
+                return;
+            }
+
+            // Client-side file size check (Total size)
+            if (!updateFileInfo()) {
+                 button.textContent = "File Too Large!";
+                 setTimeout(() => {
+                    button.textContent = "Submit";
+                }, 1500);
+                return;
+            }
+            
+            // Disable button and show loading state
+            button.disabled = true;
+            button.textContent = "Submitting...";
+            button.classList.remove("btn-success");
+
+
+            // 1. Create FormData from the base form (gets ALL text inputs and hidden multiselects)
+            const formData = new FormData(form);
+
+            // 2. CRITICAL FIX: Manually append the files from currentFiles 
+            if (fileInput) {
+                const files = currentFiles.files;
+                const FILE_FIELD_NAME = fileInput.name || "fileUpload";
+
+                for (let i = 0; i < files.length; i++) {
+                    formData.append(FILE_FIELD_NAME, files[i]); 
+                }
+            }
+            
+            // --- Submission Logic ---
+            console.log("Attempting to send form data to webhook:", form.action);
+            
+            // Ensure response is declared outside the try block for access in finally
+            let response = null; 
+            
+            try {
+                response = await fetch(form.action, {
+                    method: "POST",
+                    body: formData
+                });
+
+                // --- ROBUST RESPONSE HANDLING (CRITICAL FOR N8N) ---
+                // Try to read the response as text first. This prevents crashes if the body is empty or not JSON.
+                const responseText = await response.text();
+                let data = {};
+
+                // If text is present and looks like JSON, attempt to parse it
+                if (responseText.trim().length > 0 && responseText.trim().startsWith('{')) {
+                    try {
+                        data = JSON.parse(responseText);
+                    } catch (e) {
+                        console.warn("Could not parse response as JSON. Assuming success based on status code.");
+                    }
+                }
+                // --- END ROBUST RESPONSE HANDLING ---
+
+
+                // Check for a successful HTTP status code (200-299)
+                if (response.ok) {
+                    console.log("✅ Form submission successful (HTTP OK). Preparing redirect.");
+                    
+                    // Use a redirect URL if n8n returned it in JSON (data.redirect), otherwise use the default
+                    const redirectURL = data.redirect || "thank-you.html"; 
+                    
+                    // Show success, disable button again briefly, then redirect
+                    button.textContent = "Success!";
+                    button.classList.add("btn-success");
+                    
+                    // Use a shorter delay for success feedback
+                    setTimeout(() => (window.location.href = redirectURL), 1000); 
+
+                } else {
+                    // Handle non-OK status (e.g., 400, 500)
+                    console.error("❌ Submission failed (HTTP Status Error).", response.status, responseText);
+                    alert(`Submission failed. The server returned an error: ${response.status}`);
+                }
+            } catch (error) {
+                console.error("❌ Error submitting form (Network/Fetch Failure):", error);
+                alert("Unable to connect to the server. Please check your network.");
+            } finally {
+                // Guarantees button re-enables after a short delay, especially on error
+                if (response === null || !response.ok) {
+                     // Only re-enable if the fetch failed entirely or if the response was NOT successful
+                     setTimeout(() => {
+                        button.disabled = false;
+                        button.textContent = "Submit";
+                     }, 500);
+                }
+            }
+        });
+    }
+
 });
