@@ -91,8 +91,7 @@
                 </select>
               </label>
               <label><span>Email *</span><input type="email" name="email" placeholder="you@company.com" required></label>
-              <label><span>Phone *</span><input type="text" name="phone" placeholder="1-305-555-1234" required pattern="^1-\d{3}-\d{3}-\d{4}$" 
-       title="Please enter a valid 10-digit phone number"></label>
+              <label><span>Phone</span><input type="tel" name="phone" placeholder="+1-555-000-1234" required pattern="^(\+?1-)?\d{3}-\d{3}-\d{4}$" title="Please enter a phone number in the format XXX-XXX-XXXX, optionally including the country code (e.g., +1-555-000-1234)."></label>
               <label class="full"><span>Company Represented (if not owner)</span><input type="text" name="companyRepresented" placeholder="Acme Advisors, LLC"></label>
             </div>
           </div>
