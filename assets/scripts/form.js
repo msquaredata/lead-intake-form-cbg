@@ -479,29 +479,29 @@ window.addEventListener("load", () => {
         button.disabled = true;
         button.textContent = "Submitting...";
 
-        // Only use file logic if the fileInput element exists
-        const files = fileInput ? (currentFiles.files || []) : [];
-        let totalSize = [...files].reduce((sum, f) => sum + f.size, 0);
-        const MAX_SIZE_BYTES = MAX_TOTAL_SIZE_MB * 1024 * 1024;
+        // // Only use file logic if the fileInput element exists
+        // const files = fileInput ? (currentFiles.files || []) : [];
+        // let totalSize = [...files].reduce((sum, f) => sum + f.size, 0);
+        // const MAX_SIZE_BYTES = MAX_TOTAL_SIZE_MB * 1024 * 1024;
 
-        if (totalSize > MAX_SIZE_BYTES) {
-            alert(`Total file size exceeds ${MAX_TOTAL_SIZE_MB} MB.`);
-            button.disabled = false;
-            button.textContent = "Submit";
-            return;
-        }
+        // if (totalSize > MAX_SIZE_BYTES) {
+        //     alert(`Total file size exceeds ${MAX_TOTAL_SIZE_MB} MB.`);
+        //     button.disabled = false;
+        //     button.textContent = "Submit";
+        //     return;
+        // }
 
         // 1. Create FormData from the base form (gets ALL text inputs and hidden multiselects)
         const formData = new FormData(form);
 
-        // 2. CRITICAL FIX: Manually append the files from currentFiles 
-        if (fileInput) {
-            const FILE_FIELD_NAME = fileInput.name || "fileUpload";
+        // // 2. CRITICAL FIX: Manually append the files from currentFiles 
+        // if (fileInput) {
+        //     const FILE_FIELD_NAME = fileInput.name || "fileUpload";
 
-            for (let i = 0; i < files.length; i++) {
-                formData.append(FILE_FIELD_NAME, files[i]); 
-            }
-        }
+        //     for (let i = 0; i < files.length; i++) {
+        //         formData.append(FILE_FIELD_NAME, files[i]); 
+        //     }
+        // }
         
         // --- Submission Logic ---
         console.log("Attempting to send form data to webhook:", form.action);
