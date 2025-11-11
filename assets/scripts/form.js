@@ -3,12 +3,12 @@ window.addEventListener("load", () => {
     console.log("✅ DOM fully loaded — initializing dropdowns...");
 
     // === DYNAMIC DROPDOWN LOADER CALL ===
-    loadDropdownFromCSV('industrySelect', 'assets/data/industries.csv'); // <-- ACTIVATED
+    // This is confirmed to be working for Industry.
+    loadDropdownFromCSV('industrySelect', 'assets/data/industries.csv'); 
 
 
 // === CSV Loader Function with Active Filter ===
     // NOTE: This function is included to demonstrate dynamic loading capability. 
-    // It requires a CSV file at 'assets/data/industries.csv' to function correctly.
     async function loadDropdownFromCSV(selectId, csvPath) {
         const selectElement = document.getElementById(selectId);
         if (!selectElement) {
@@ -277,15 +277,21 @@ window.addEventListener("load", () => {
     renderFileList();
 
 
-    // === Multiselect Dropdown Logic ===
+    // === Multiselect Dropdown Logic (FIXED FOR BUTTON CLICK) ===
     const multiselects = document.querySelectorAll('.multiselect-dropdown');
     
     multiselects.forEach(dropdown => {
+        const dataName = dropdown.getAttribute('data-name');
         const button = dropdown.querySelector('.dropdown-btn');
         const list = dropdown.querySelector('.dropdown-list');
-        const checkboxes = list.querySelectorAll('input[type="checkbox"]');
-        const dataName = dropdown.getAttribute('data-name');
+        const checkboxes = list ? list.querySelectorAll('input[type="checkbox"]') : [];
         
+        // CRITICAL CHECK: Ensure we found the necessary elements
+        if (!button || !list) {
+            console.error(`Multiselect binding failed for dropdown with data-name="${dataName}". Missing button or list.`);
+            return; 
+        }
+
         // Create a hidden input to hold the comma-separated values for submission
         const hiddenInput = document.createElement('input');
         hiddenInput.type = 'hidden';
@@ -308,7 +314,15 @@ window.addEventListener("load", () => {
                 button.textContent = `Select ${dataName}`;
             } else if (selectedValues.length === 1) {
                 // If only one is selected, display its label (checkbox value)
-                button.textContent = selectedValues[0]; 
+                // Use the label element's text content, not the raw value
+                const selectedCheckbox = Array.from(checkboxes).find(cb => cb.checked);
+                if (selectedCheckbox) {
+                    // Find the associated label for better text display
+                    const labelElement = document.querySelector(`label[for="${selectedCheckbox.id}"]`);
+                    button.textContent = labelElement ? labelElement.textContent.trim() : selectedValues[0];
+                } else {
+                    button.textContent = selectedValues[0];
+                }
             } else {
                 button.textContent = `${selectedValues.length} selected`;
             }
@@ -331,6 +345,7 @@ window.addEventListener("load", () => {
 
         // Close dropdown when clicking outside
         document.addEventListener('click', (e) => {
+            // Check if the click occurred outside the entire dropdown container
             if (!dropdown.contains(e.target)) {
                 list.classList.remove('active');
                 button.classList.remove('active');
@@ -430,11 +445,27 @@ window.addEventListener("load", () => {
                 } else {
                     // Handle non-OK status (e.g., 400, 500)
                     console.error("❌ Submission failed (HTTP Status Error).", response.status, responseText);
-                    alert(`Submission failed. The server returned an error: ${response.status}`);
+                    // Use console.error instead of alert
+                    const message = `Submission failed. The server returned an error: ${response.status}. See console for details.`;
+                    const errorBox = document.getElementById('submissionErrorBox');
+                    if (errorBox) {
+                        errorBox.textContent = message;
+                        errorBox.style.display = 'block';
+                    } else {
+                        console.error(message);
+                    }
                 }
             } catch (error) {
                 console.error("❌ Error submitting form (Network/Fetch Failure):", error);
-                alert("Unable to connect to the server. Please check your network.");
+                // Use console.error instead of alert
+                const message = "Unable to connect to the server. Please check your network. See console for details.";
+                const errorBox = document.getElementById('submissionErrorBox');
+                if (errorBox) {
+                    errorBox.textContent = message;
+                    errorBox.style.display = 'block';
+                } else {
+                    console.error(message);
+                }
             } finally {
                 // Guarantees button re-enables after a short delay, especially on error
                 if (response === null || !response.ok) {
