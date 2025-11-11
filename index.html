@@ -126,10 +126,14 @@
                   pattern="^https?:\/\/.*$" title="Please include the full protocol (http:// or https://)"></label>
               <!-- Fixed Industry Dropdown to match hubspot-->
               <label><span>Industry/Sector *</span>
-                <select name="industry" required>
+                <select name="industry" id="industrySelect">
+                    <option value="" disabled selected>Loading options...</option>
+                </select>
+                
+                <!-- <select name="industry" required>
                   <option value="">Select Industry</option>
                   <option value="BUSINESS_SERVICES">Business Services</option>
-                  <option value="CONSUMER_SERVICES">Consumer</option>
+                  <option value="CONSUMER_SERVICES">Consumer Services</option>
                   <option value="DEFENSE_SPACE">Defense</option>
                   <option value="OIL_ENERGY">Energy</option>
                   <option value="FINANCIAL_SERVICES">Financial Services</option>
@@ -137,7 +141,8 @@
                   <option value="MECHANICAL_OR_INDUSTRIAL_ENGINEERING">Industrial/Trades</option>
                   <option value="INFORMATION_TECHNOLOGY_AND_SERVICES">Technology</option>
                   <option value="OTHER">Other</option>
-                </select>
+                </select> -->
+                
               </label>
 
               <label><span>Headquarters (City) *</span><input type="text" name="hqCity" placeholder="Fort Lauderdale"

@@ -2,6 +2,70 @@ window.addEventListener("load", () => {
     console.log("🔍 File uploader binding started");
     console.log("✅ DOM fully loaded — initializing dropdowns...");
 
+    // === DYNAMIC DROPDOWN LOADER CALL ===
+    loadDropdownFromCSV('industrySelect', 'assets/data/industries.csv');
+
+
+// === CSV Loader Function with Active Filter ===
+    async function loadDropdownFromCSV(selectId, csvPath) {
+        const selectElement = document.getElementById(selectId);
+        if (!selectElement) {
+            console.error(`Dropdown element with ID '${selectId}' not found.`);
+            return;
+        }
+
+        try {
+            const response = await fetch(csvPath);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const csvText = await response.text();
+
+            // Simple CSV Parser: splits by line, then by comma. Assumes first line is header (Label,Value,Active?).
+            const lines = csvText.trim().split('\n');
+            
+            // 1. Parse all data, capturing all three columns
+            const parsedData = lines.slice(1).map(line => {
+                const parts = line.split(',').map(part => part.trim());
+                return {
+                    label: parts[0],
+                    value: parts[1],
+                    active: parts[2] // Capture the third column (Active?)
+                };
+            });
+
+            // 2. FILTER STEP: Only keep items where 'active' is 'Y'
+            const filteredData = parsedData.filter(item => item.active && item.active.toUpperCase() === 'Y');
+
+            // 3. Clear the initial state
+            selectElement.innerHTML = '';
+
+            // 4. Add a default empty option
+            const defaultOption = document.createElement('option');
+            defaultOption.value = '';
+            defaultOption.textContent = 'Select an option...';
+            selectElement.appendChild(defaultOption);
+
+
+            // 5. Populate the dropdown with filtered data
+            filteredData.forEach(item => {
+                const option = document.createElement('option');
+                option.value = item.value;
+                option.textContent = item.label;
+                selectElement.appendChild(option);
+            });
+            console.log(`✅ Dropdown '${selectId}' successfully loaded with ${filteredData.length} active options.`);
+
+
+        } catch (error) {
+            console.error(`❌ Failed to load CSV data for ${selectId}:`, error);
+            selectElement.innerHTML = '<option value="" disabled selected>Error loading options</option>';
+        }
+    }
+    // === End CSV Loader ===
+
+
+
     // === File Upload Configuration ===
     const MAX_TOTAL_SIZE_MB = 20;
     const ALLOWED_TYPES = [
@@ -28,6 +92,7 @@ window.addEventListener("load", () => {
     // DataTransfer object (Must be declared outside function if used in form submission)
     let currentFiles = new DataTransfer();
     
+        
     // === CONDITIONAL FILE UPLOADER LOGIC ===
     if (fileInput) {
         
