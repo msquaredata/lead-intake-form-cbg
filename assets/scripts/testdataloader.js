@@ -43,7 +43,7 @@ window.addEventListener("load", () => {
             // Section 1: Contact
             roleSelect: "Advisor",
             // Section 2: Business
-            industrySelect: "BUSINESS_SERVICES", // Must match an existing <option> value
+            industrySelect: "ACCOUNTING", // Must match an existing <option> value
             hqStateSelect: "FL", // Florida
             // Section 3: Ownership
             ownershipSelect: "Founder/Family-Owned",
