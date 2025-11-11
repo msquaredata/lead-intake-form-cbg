@@ -2,7 +2,7 @@
 
 window.addEventListener("load", () => {
     
-    // Find the dedicated test button
+    // Find the dedicated test button (ID must match the button in index.html)
     const loadTestButton = document.getElementById("loadTestDataButton");
 
     // Exit immediately if the button isn't present (e.g., in a production environment)
@@ -50,20 +50,29 @@ window.addEventListener("load", () => {
              referralSelect.value = "REFERRAL";
         }
 
-        // --- 4. Multiselect Dropdown (Requires special handling) ---
+        // --- 4. Multiselect Dropdown (CRITICAL LOGIC) ---
         const multiselectName = "industry"; 
+        // Find the hidden input that stores the final submitted value
         const multiselectHiddenInput = document.querySelector(`input[name="${multiselectName}"]`);
         
         if (multiselectHiddenInput) {
-            const testValues = "TECH,HEALTHCARE"; // The values you want to select
+            // == CONFIGURE YOUR TEST VALUES HERE ==
+            // Must be comma-separated strings matching the checkbox 'value' attributes in index.html
+            const testValues = "TECH,FINANCE,OTHER"; 
+            
+            // 1. Set the value of the hidden input
             multiselectHiddenInput.value = testValues;
             
-            // CRITICAL: Manually check the checkboxes and trigger change events to update the UI button text
+            // 2. Find the visible checkbox list
             const dropdownList = multiselectHiddenInput.closest('.multiselect-dropdown')?.querySelector('.dropdown-list');
+            
+            // 3. Manually check the checkboxes and trigger change events to update the UI
             if (dropdownList) {
                 dropdownList.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+                    // Set the checked state if the checkbox value is in our test list
                     checkbox.checked = testValues.includes(checkbox.value);
-                    checkbox.dispatchEvent(new Event('change')); // Trigger change to update the button text
+                    // Trigger the 'change' event to force the form.js logic to update the dropdown button text
+                    checkbox.dispatchEvent(new Event('change')); 
                 });
             }
         }
