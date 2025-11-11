@@ -759,3 +759,97 @@ select[multiple]::-webkit-scrollbar-thumb:hover {
     align-items: center;
     gap: 8px;
 }
+
+/* Required field indicator in HTML */
+.required-star {
+  color: var(--primary);
+  font-weight: 700;
+  margin-left: 2px;
+}
+
+/* === Custom Validation Feedback === */
+
+/* Style for the input/select/textarea when it's missing (has the error class) */
+label.field-error input,
+label.field-error select,
+label.field-error textarea {
+    border-color: var(--primary) !important; /* Red border */
+    box-shadow: 0 0 0 1px var(--primary);
+}
+
+/* Style for the label text when the field is missing */
+label.field-error span {
+  color: var(--primary); /* Red text */
+}
+
+/* --- Tooltip Styling for Info Icon --- */
+.has-tooltip {
+    /* Required for positioning the tooltip relative to the label */
+    position: relative; 
+}
+
+.info-icon {
+    display: inline-block;
+    cursor: pointer;
+    margin-left: 4px; /* Space between "Website" and the icon */
+    color: var(--muted); /* Use a muted color for the icon */
+    font-size: 0.8em; /* Smaller than the text */
+    position: relative; 
+    line-height: 1; /* Aligns the 'ⓘ' nicely */
+    font-style: normal; /* Ensures the unicode character isn't italicized */
+}
+
+/* Tooltip container styles (using attribute for content) */
+.info-icon:hover {
+    color: var(--ink); /* Darken icon on hover */
+}
+
+.info-icon::after {
+    content: attr(data-tip); /* Get content from data-tip attribute in HTML */
+    position: absolute;
+    bottom: 100%; /* Position above the icon */
+    left: 50%;
+    transform: translateX(-50%);
+    
+    /* Styling */
+    min-width: 220px;
+    padding: 8px 12px;
+    background: var(--ink); /* Dark background */
+    color: var(--card); /* Light text */
+    font-size: 13px;
+    font-weight: 400;
+    border-radius: 6px;
+    white-space: normal; /* Allow text to wrap */
+    text-align: left;
+    z-index: 10;
+    pointer-events: none; 
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s, visibility 0.2s, transform 0.2s;
+}
+
+/* Optional: Add a small pointer triangle below the tooltip */
+.info-icon::before {
+    content: '';
+    position: absolute;
+    top: -5px; /* Position under the tooltip */
+    left: 50%;
+    transform: translateX(-50%);
+    border: 5px solid transparent;
+    border-top-color: var(--ink);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s, visibility 0.2s;
+}
+
+/* Show tooltip and pointer on hover */
+.info-icon:hover::after {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(-5px); /* Move up slightly */
+}
+
+.info-icon:hover::before {
+    opacity: 1;
+    visibility: visible;
+}

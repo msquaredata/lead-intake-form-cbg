@@ -101,8 +101,8 @@
             <div class="section-title"><span>2 · Business Profile</span></div>
             <div class="row cols-2">
               <label><span>Business Name *</span><input type="text" name="businessName" placeholder="Acme Services, Inc." required></label>
-              <label><span>Website</span><input type="url" name="website" placeholder="https://www.example.com" required pattern="^https?:\/\/.*$" title="Please include the full protocol (http:// or https://)"></label>
-
+              <label class="has-tooltip"><span>Website<span class="info-icon" data-tip="Must include 'http://' or 'https://' to ensure valid submission.">ⓘ
+              </span></span><input type="url" name="website" placeholder="https://example.com" required pattern="^https?:\/\/.*$" title="Please include the full protocol (http:// or https://)"></label>
               <!-- Fixed Industry Dropdown to match hubspot-->
            <label><span>Industry/Sector *</span>
   <select name="industry" required>
