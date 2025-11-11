@@ -1,9 +1,15 @@
 window.addEventListener("load", () => {
-    console.log("🔍 Form initialization started...");
+    console.log("🔍 File uploader binding started");
+    console.log("✅ DOM fully loaded — initializing dropdowns...");
 
     // ====================================
-    // === DYNAMIC DROPDOWN LOADER FUNCTION ===
+    // === DYNAMIC DROPDOWN LOADER CALL ===
+    // Assumes your CSV is at 'assets/data/options.csv' and the HTML target is 'referralSourceSelect'
+    // You MUST add the HTML element <select id="referralSourceSelect" name="referralSource">...</select>
+    loadDropdownFromCSV('referralSourceSelect', 'assets/data/options.csv');
     // ====================================
+    
+    // === CSV Loader Function with Active Filter ===
     async function loadDropdownFromCSV(selectId, csvPath) {
         const selectElement = document.getElementById(selectId);
         if (!selectElement) {
@@ -18,10 +24,10 @@ window.addEventListener("load", () => {
             }
             const csvText = await response.text();
 
-            // Simple CSV Parser: splits by line, then by comma. Assumes first line is header.
+            // Simple CSV Parser: splits by line, then by comma. Assumes first line is header (Label,Value,Active?).
             const lines = csvText.trim().split('\n');
             
-            // Parse and capture all three columns
+            // 1. Parse all data, capturing all three columns
             const parsedData = lines.slice(1).map(line => {
                 const parts = line.split(',').map(part => part.trim());
                 return {
@@ -31,35 +37,35 @@ window.addEventListener("load", () => {
                 };
             });
 
-            // FILTER: Only keep items where 'active' is 'Y'
+            // 2. FILTER STEP: Only keep items where 'active' is 'Y'
             const filteredData = parsedData.filter(item => item.active && item.active.toUpperCase() === 'Y');
 
-            // Clear the initial state
+            // 3. Clear the initial state
             selectElement.innerHTML = '';
 
-            // Add a default empty option
+            // 4. Add a default empty option
             const defaultOption = document.createElement('option');
             defaultOption.value = '';
             defaultOption.textContent = 'Select an option...';
             selectElement.appendChild(defaultOption);
 
-            // Populate the dropdown with filtered data
+
+            // 5. Populate the dropdown with filtered data
             filteredData.forEach(item => {
                 const option = document.createElement('option');
                 option.value = item.value;
                 option.textContent = item.label;
                 selectElement.appendChild(option);
             });
-            console.log(`✅ Dropdown '${selectId}' loaded with ${filteredData.length} active options.`);
+            console.log(`✅ Dropdown '${selectId}' successfully loaded with ${filteredData.length} active options.`);
+
 
         } catch (error) {
             console.error(`❌ Failed to load CSV data for ${selectId}:`, error);
             selectElement.innerHTML = '<option value="" disabled selected>Error loading options</option>';
         }
     }
-    
-    // === CSV Loader Call ===
-    loadDropdownFromCSV('referralSourceSelect', 'assets/data/options.csv');
+    // === End CSV Loader ===
 
 
     // === File Upload Configuration ===
@@ -105,6 +111,7 @@ window.addEventListener("load", () => {
             fileList.innerHTML = "";
 
             let totalSize = 0;
+            
             const filesArray = Array.from(files);
 
             filesArray.forEach(file => {
@@ -132,14 +139,16 @@ window.addEventListener("load", () => {
                 fileInfo.style.color = totalSizeMB > maxSizeBytes * 0.9 ? 'orange' : 'inherit';
             }
 
+
             const pct = Math.min((totalSizeMB / MAX_TOTAL_SIZE_MB) * 100, 100);
             progressFill.style.width = `${pct}%`;
 
-            // Error handling for size
+            // 💡 Only handle the size error here. Preserve the type warning if it exists.
             if (totalSize > maxSizeBytes) {
                 fileError.textContent = `Total size exceeds ${MAX_TOTAL_SIZE_MB} MB limit.`;
                 fileError.style.display = "block";
             } else if (fileError.textContent.includes(`Total size exceeds ${MAX_TOTAL_SIZE_MB} MB limit.`)) {
+                // If the current error is a size error and size is now okay, clear it.
                 fileError.textContent = "";
                 fileError.style.display = "none";
             }
@@ -158,6 +167,7 @@ window.addEventListener("load", () => {
 
                 fileInput.files = currentFiles.files;
 
+                // Explicitly clear the type warning on deletion 
                 if (fileError.textContent.includes("Unsupported file types")) {
                      fileError.textContent = "";
                      fileError.style.display = "none"; 
@@ -171,19 +181,23 @@ window.addEventListener("load", () => {
         function handleFiles(newFiles) {
             const incomingFilesArray = Array.from(newFiles);
             
+            // 1. Prevent clearing files on cancel
             if (incomingFilesArray.length === 0 && currentFiles.files.length > 0) {
                 return renderFiles(currentFiles.files);
             }
             
+            // 2. Implement file appending logic (merge new files with existing)
             let filesToProcess = Array.from(currentFiles.files);
             const existingFileSignatures = filesToProcess.map(f => f.name + f.size);
 
             incomingFilesArray.forEach(newFile => {
+                // Only append files that are not already in the list (based on name + size)
                 if (!existingFileSignatures.includes(newFile.name + newFile.size)) {
                     filesToProcess.push(newFile);
                 }
             });
             
+            // If no files at all (e.g., empty initial selection), reset
             if (filesToProcess.length === 0) {
                 if (fileList) fileList.innerHTML = "";
                 if (progressFill) progressFill.style.width = "0%";
@@ -199,22 +213,25 @@ window.addEventListener("load", () => {
                 return;
             }
 
-            // VALIDATION: Check for unsupported files in the merged list
+            // 3. VALIDATION: Check for unsupported files in the merged list
             const invalidFiles = filesToProcess.filter(f => !ALLOWED_TYPES.includes(f.type));
             
             if (invalidFiles.length > 0) {
+                // SET the type warning error text here
                 fileError.textContent = `🚫 Warning: Unsupported file types were removed. Files removed: ${invalidFiles.map(f => f.name).join(", ")}. Supported types are: ${SUPPORTED_EXTENSIONS}`;
                 fileError.style.display = "block";
                 
+                // Filter out only the invalid files but keep all previously and newly added VALID files
                 filesToProcess = filesToProcess.filter(f => ALLOWED_TYPES.includes(f.type));
             } else {
+                // Clear the type warning if a new, fully valid upload is performed.
                 if (fileError.textContent.includes("Unsupported file types")) {
                      fileError.textContent = "";
                      fileError.style.display = "none";
                 }
             }
 
-            // Update the internal file list and the actual input element
+            // 4. Update the internal file list and the actual input element
             currentFiles = new DataTransfer();
             filesToProcess.forEach(file => currentFiles.items.add(file));
             fileInput.files = currentFiles.files;
@@ -293,8 +310,9 @@ window.addEventListener("load", () => {
         
         const dataName = dropdown.dataset.name;
         
+        // Safety check to prevent errors if the data-name attribute is missing
         if (!dataName) {
-            console.error("Multiselect initialization failed: Missing 'data-name' attribute.");
+            console.error("Multiselect initialization failed: Missing 'data-name' attribute on a dropdown.");
             return; 
         }
         
@@ -306,7 +324,7 @@ window.addEventListener("load", () => {
         
         if(isRequired) {
              hiddenInput.setAttribute('required', 'required'); 
-             hiddenInput.classList.add('multiselect-hidden'); 
+             hiddenInput.classList.add('multiselect-hidden'); // Tag for custom validation
         }
         
         dropdown.appendChild(hiddenInput);
@@ -324,7 +342,7 @@ window.addEventListener("load", () => {
             button.textContent = newText;
             button.classList.toggle("has-selection", selected.length > 0);
             
-            // Clear/Apply error state on selection change for required fields
+            // 💡 ADDED: Clear/Apply error state on selection change for required fields
             if (isRequired) {
                  if (selected.length > 0) {
                      button.closest('label')?.classList.remove('field-error');
@@ -354,7 +372,7 @@ window.addEventListener("load", () => {
     console.log("✅ Dropdown initialization complete.");
     
     // ======================================
-    // === FORM VALIDATION & SUBMISSION LOGIC ===
+    // === NEW CUSTOM VALIDATION LOGIC START ===
     // ======================================
     
     const form = document.getElementById("leadForm");
@@ -362,11 +380,15 @@ window.addEventListener("load", () => {
     
     const requiredFields = form.querySelectorAll('[required]');
 
-    /** Finds the correct element to apply/clear the error class. */
+    /**
+     * Finds the correct element to apply/clear the error class (usually the parent <label>).
+     */
     const getTargetElement = (inputElement) => {
         if (inputElement.classList.contains('dropdown-btn')) {
+            // For a multiselect button, target its parent label
             return inputElement.closest('.multiselect-dropdown')?.closest('label');
         }
+        // For standard inputs, target the closest label
         return inputElement.closest('label');
     };
 
@@ -384,13 +406,17 @@ window.addEventListener("load", () => {
         }
     };
 
-    /** Checks if a field is valid using native HTML validation. */
+    /**
+     * Checks if a field is valid, honoring HTML required, pattern, and type rules.
+     */
     const isValid = (input) => {
+        // checkValidity() handles required, pattern, type="email", type="url", etc.
         return input.checkValidity();
     };
 
     // --- Real-time feedback: Clear error as user types ---
     requiredFields.forEach(field => {
+        // Skip multiselect hidden fields as their visual feedback is handled in the updateDropdown function
         if (field.type === 'hidden' && field.classList.contains('multiselect-hidden')) {
              return; 
         }
@@ -408,7 +434,7 @@ window.addEventListener("load", () => {
         });
     });
     
-    // === Form Submission Override ===
+    // === Form Submission Override (Replaces form.checkValidity()) ===
     form.addEventListener("submit", async e => {
         e.preventDefault();
         const button = form.querySelector("button[type='submit']");
@@ -418,8 +444,10 @@ window.addEventListener("load", () => {
         // 1. Reset all previous error states
         form.querySelectorAll('.field-error').forEach(el => el.classList.remove('field-error'));
 
-        // 2. Check all required fields
+        // 2. Check all required fields (Custom Validation) - Now uses checkValidity()
         requiredFields.forEach(field => {
+            
+            // Check if the field is part of a multiselect dropdown
             const isMultiselectHidden = field.classList.contains('multiselect-hidden');
             const elementToHighlight = isMultiselectHidden 
                 ? field.closest('.multiselect-dropdown')?.querySelector('.dropdown-btn') 
@@ -427,7 +455,7 @@ window.addEventListener("load", () => {
            
             if (!isValid(field)) {
                 if(elementToHighlight) applyError(elementToHighlight);
-                isFormValid = false; 
+                isFormValid = false; // Stop submission
             } else {
                 if(elementToHighlight) clearError(elementToHighlight);
             }
@@ -435,20 +463,23 @@ window.addEventListener("load", () => {
 
         if (!isFormValid) {
             console.log('Form validation failed. Missing required fields.');
+            // Scroll to the first error field for better UX
             const firstError = form.querySelector('.field-error');
             if (firstError) {
                 firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
             }
+            // Stop processing and re-enable button
             button.disabled = false;
             button.textContent = "Submit";
             return; 
         }
+        // --- Custom Validation Passed ---
 
-        // --- Validation Passed ---
+        // Proceed with submission (original code structure)
         button.disabled = true;
         button.textContent = "Submitting...";
 
-        // File size check (only if file input exists)
+        // Only use file logic if the fileInput element exists
         const files = fileInput ? (currentFiles.files || []) : [];
         let totalSize = [...files].reduce((sum, f) => sum + f.size, 0);
         const MAX_SIZE_BYTES = MAX_TOTAL_SIZE_MB * 1024 * 1024;
@@ -460,10 +491,10 @@ window.addEventListener("load", () => {
             return;
         }
 
-        // 1. Create FormData 
+        // 1. Create FormData from the base form (gets ALL text inputs and hidden multiselects)
         const formData = new FormData(form);
 
-        // 2. Manually append the files 
+        // 2. CRITICAL FIX: Manually append the files from currentFiles 
         if (fileInput) {
             const FILE_FIELD_NAME = fileInput.name || "fileUpload";
 
