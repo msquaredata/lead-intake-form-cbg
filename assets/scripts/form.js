@@ -334,14 +334,11 @@ window.addEventListener("load", () => {
     };
 
     /**
-     * Checks if a field is valid (i.e., not empty). Only called for [required] fields.
+     * Checks if a field is valid, honoring HTML required, pattern, and type rules.
      */
     const isValid = (input) => {
-        if (input.type === 'checkbox') {
-            return input.checked;
-        }
-        // For text, select, textarea, hidden inputs, etc., trim whitespace and check if not empty
-        return input.value.trim() !== '';
+        // checkValidity() handles required, pattern, type="email", type="url", etc.
+        return input.checkValidity();
     };
 
     // --- Real-time feedback: Clear error as user types ---
@@ -374,23 +371,20 @@ window.addEventListener("load", () => {
         // 1. Reset all previous error states
         form.querySelectorAll('.field-error').forEach(el => el.classList.remove('field-error'));
 
-        // 2. Check all required fields (Custom Validation)
+        // 2. Check all required fields (Custom Validation) - Now uses checkValidity()
         requiredFields.forEach(field => {
             
-            if (field.classList.contains('multiselect-hidden')) {
-                // For multiselects, check the hidden input value but highlight the visible button
-                 const dropdownButton = field.closest('.multiselect-dropdown')?.querySelector('.dropdown-btn');
-                 if (!isValid(field)) {
-                    if(dropdownButton) applyError(dropdownButton);
-                    isFormValid = false;
-                } else {
-                    if(dropdownButton) clearError(dropdownButton);
-                }
-            } else if (!isValid(field)) {
-                applyError(field);
-                isFormValid = false;
+            // Check if the field is part of a multiselect dropdown
+            const isMultiselectHidden = field.classList.contains('multiselect-hidden');
+            const elementToHighlight = isMultiselectHidden 
+                ? field.closest('.multiselect-dropdown')?.querySelector('.dropdown-btn') 
+                : field;
+           
+            if (!isValid(field)) {
+                if(elementToHighlight) applyError(elementToHighlight);
+                isFormValid = false; // Stop submission
             } else {
-                clearError(field);
+                if(elementToHighlight) clearError(elementToHighlight);
             }
         });
 
@@ -436,6 +430,7 @@ window.addEventListener("load", () => {
         }
         
         // --- Submission Logic ---
+        console.log("Attempting to send form data to webhook:", form.action); // <-- ADDED DEBUG LOG
         try {
             const response = await fetch(form.action, {
                 method: "POST",
