@@ -6,7 +6,7 @@ window.addEventListener("load", () => {
     // === DYNAMIC DROPDOWN LOADER CALL ===
     // Assumes your CSV is at 'assets/data/options.csv' and the HTML target is 'referralSourceSelect'
     // You MUST add the HTML element <select id="referralSourceSelect" name="referralSource">...</select>
-    loadDropdownFromCSV('referralSourceSelect', 'assets/data/options.csv');
+    loadDropdownFromCSV('industrySelect', 'assets/data/industries.csv');
     // ====================================
     
     // === CSV Loader Function with Active Filter ===
@@ -68,28 +68,28 @@ window.addEventListener("load", () => {
     // === End CSV Loader ===
 
 
-    // === File Upload Configuration ===
-    const MAX_TOTAL_SIZE_MB = 20;
-    const ALLOWED_TYPES = [
-        "application/pdf",
-        "application/msword",
-        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-        "application/vnd.ms-excel",
-        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-        "image/png",
-        "image/jpeg"
-    ];
-    // List of supported extensions for user guidance
-    const SUPPORTED_EXTENSIONS = ".pdf, .doc, .docx, .xls, .xlsx, .png, .jpg, .jpeg"; 
+    // === File Upload Configuration (Disabled for now)===
+    // const MAX_TOTAL_SIZE_MB = 20;
+    // const ALLOWED_TYPES = [
+    //     "application/pdf",
+    //     "application/msword",
+    //     "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    //     "application/vnd.ms-excel",
+    //     "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    //     "image/png",
+    //     "image/jpeg"
+    // ];
+    // // List of supported extensions for user guidance
+    // const SUPPORTED_EXTENSIONS = ".pdf, .doc, .docx, .xls, .xlsx, .png, .jpg, .jpeg"; 
 
-    // DOM references
-    const fileInput = document.getElementById("fileUpload");
-    const browseTrigger = document.getElementById("browseTrigger");
-    const fileDropArea = document.getElementById("fileDropArea");
-    const fileList = document.getElementById("fileList");
-    const fileError = document.getElementById("fileError");
-    const progressFill = document.getElementById("uploadProgressFill");
-    const fileInfo = document.getElementById("fileInfo"); 
+    // // DOM references
+    // const fileInput = document.getElementById("fileUpload");
+    // const browseTrigger = document.getElementById("browseTrigger");
+    // const fileDropArea = document.getElementById("fileDropArea");
+    // const fileList = document.getElementById("fileList");
+    // const fileError = document.getElementById("fileError");
+    // const progressFill = document.getElementById("uploadProgressFill");
+    // const fileInfo = document.getElementById("fileInfo"); 
 
     // DataTransfer object is used to create a mutable FileList, 
     // which acts as the source of truth for all currently selected files.
