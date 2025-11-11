@@ -3,7 +3,6 @@ window.addEventListener("load", () => {
     console.log("✅ DOM fully loaded — initializing dropdowns...");
 
     // === DYNAMIC DROPDOWN LOADER CALL ===
-    // This is confirmed to be working for Industry.
     loadDropdownFromCSV('industrySelect', 'assets/data/industries.csv'); 
 
 
@@ -277,7 +276,7 @@ window.addEventListener("load", () => {
     renderFileList();
 
 
-    // === Multiselect Dropdown Logic (FIXED FOR BUTTON CLICK) ===
+    // === Multiselect Dropdown Logic (Added Debug Logging) ===
     const multiselects = document.querySelectorAll('.multiselect-dropdown');
     
     multiselects.forEach(dropdown => {
@@ -311,10 +310,11 @@ window.addEventListener("load", () => {
             hiddenInput.value = selectedValues.join(',');
             
             if (selectedValues.length === 0) {
-                button.textContent = `Select ${dataName}`;
+                // Capitalize the first letter of the dataName for display
+                const displayName = dataName.charAt(0).toUpperCase() + dataName.slice(1).replace(/([a-z])([A-Z])/g, '$1 $2');
+                button.textContent = `Select ${displayName}`;
             } else if (selectedValues.length === 1) {
                 // If only one is selected, display its label (checkbox value)
-                // Use the label element's text content, not the raw value
                 const selectedCheckbox = Array.from(checkboxes).find(cb => cb.checked);
                 if (selectedCheckbox) {
                     // Find the associated label for better text display
@@ -334,8 +334,17 @@ window.addEventListener("load", () => {
         // Toggle dropdown list visibility
         button.addEventListener('click', (e) => {
             e.stopPropagation(); // Prevents click on button from immediately closing via document listener
+            
+            // --- DEBUG LOGGING ADDED HERE ---
+            console.log(`Dropdown Clicked: ${dataName}. Current state: ${list.classList.contains('active') ? 'Active' : 'Inactive'}`);
+            // --- END DEBUG LOGGING ---
+
             list.classList.toggle('active');
             button.classList.toggle('active');
+            
+             // --- DEBUG LOGGING ADDED HERE ---
+            console.log(`Dropdown Toggled. New state of list: ${list.classList.contains('active') ? 'Active' : 'Inactive'}`);
+            // --- END DEBUG LOGGING ---
         });
 
         // Update when a checkbox state changes
