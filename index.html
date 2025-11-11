@@ -107,7 +107,7 @@
                   required></label>
               <label class="has-tooltip"><span>Phone<span class="info-icon"
                     data-tip="Please use the format XXX-XXX-XXXX. A country code (+1 or 1) is optional.">ⓘ</span></span><input
-                  type="tel" name="phone" placeholder="+1-555-000-1234" required pattern="^(\+?1-)?\d{3}-\d{3}-\d{4}$"
+                  type="tel" name="phone" id="phoneInput" placeholder="+1-555-000-1234" required pattern="^(\+?1-)?\d{3}-\d{3}-\d{4}$"
                   title="Please enter a phone number in the format XXX-XXX-XXXX, optionally including the country code (e.g., +1-555-000-1234)."></label>
               <label class="full"><span>Company Represented (if not owner)</span><input type="text"
                   name="companyRepresented" id="companyRepresentedInput" placeholder="Acme Advisors, LLC"></label>
@@ -259,7 +259,7 @@
               </label>
               <label>
                 <span>EBITDA Margin *</span>
-                <select name="ebitdaMargin" required>
+                <select name="ebitdaMargin" id="ebitdaMarginSelect" required>
                   <option value="">Select Margin</option>
                   <option>&lt; 5%</option>
                   <option>5–10%</option>
