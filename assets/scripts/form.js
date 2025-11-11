@@ -1,64 +1,10 @@
 window.addEventListener("load", () => {
-    console.log("🔍 File uploader binding started");
-    console.log("✅ DOM fully loaded — initializing dropdowns...");
+    console.log("🔍 Form logic initialization started.");
 
-    // === DYNAMIC DROPDOWN LOADER CALL ===
-    loadDropdownFromCSV('industrySelect', 'assets/data/industries.csv'); 
+    // =================================================================
+    // 1. Configuration & Global References
+    // =================================================================
 
-
-// === CSV Loader Function with Active Filter ===
-    // NOTE: This function is included to demonstrate dynamic loading capability. 
-    async function loadDropdownFromCSV(selectId, csvPath) {
-        const selectElement = document.getElementById(selectId);
-        if (!selectElement) {
-            console.error(`Dropdown element with ID '${selectId}' not found.`);
-            return;
-        }
-
-        try {
-            const response = await fetch(csvPath);
-            if (!response.ok) {
-                // If the CSV file is missing (404), this warning is triggered, and we stop.
-                console.warn(`Dynamic load failed for ${csvPath}. Using static options from HTML if available. Status: ${response.status}`);
-                return; 
-            }
-            const csvText = await response.text();
-
-            // Simple CSV Parser: splits by line, then by comma. Assumes first line is header (Label,Value,Active?).
-            const lines = csvText.trim().split('\n');
-            
-            // 1. Parse all data, capturing all three columns
-            const parsedData = lines.slice(1).map(line => {
-                const parts = line.split(',').map(part => part.trim());
-                return {
-                    label: parts[0],
-                    value: parts[1],
-                    active: parts[2] // Capture the third column (Active?)
-                };
-            });
-
-            // 2. FILTER STEP: Only keep rows where the third column (active) is 'Y'
-            const activeData = parsedData.filter(item => item.active === 'Y');
-
-            // 3. Clear existing options and add a default 'Select' option
-            selectElement.innerHTML = '<option value="">Select Industry</option>';
-
-            // 4. Populate the dropdown with active options
-            activeData.forEach(item => {
-                const option = document.createElement('option');
-                option.value = item.value;
-                option.textContent = item.label;
-                selectElement.appendChild(option);
-            });
-
-            console.log(`Dropdown #${selectId} loaded successfully with ${activeData.length} active options from CSV.`);
-
-        } catch (error) {
-            console.error(`Error loading CSV for dropdown ${selectId}:`, error);
-        }
-    }
-    
-    // === File Upload Configuration ===
     const MAX_TOTAL_SIZE_MB = 20;
     const MAX_SINGLE_FILE_SIZE_MB = 10;
     const MAX_FILE_COUNT = 3;
@@ -71,7 +17,6 @@ window.addEventListener("load", () => {
         "image/png",
         "image/jpeg"
     ];
-    // List of supported extensions for user guidance
     const SUPPORTED_EXTENSIONS = ".pdf, .doc, .docx, .xls, .xlsx, .png, .jpg, .jpeg"; 
 
     // DOM references
@@ -83,12 +28,17 @@ window.addEventListener("load", () => {
     const progressFill = document.getElementById("uploadProgressFill");
     const fileInfo = document.getElementById("fileInfo"); 
     const form = document.getElementById("leadForm");
+    const loadTestButton = document.getElementById("loadTestDataButton");
+    const submissionErrorBox = document.getElementById('submissionErrorBox');
 
-    // DataTransfer object is used to create a mutable FileList, 
-    // which acts as the source of truth for all currently selected files.\
+    // Data source of truth for files
     let currentFiles = new DataTransfer();
 
-    // === Helper: format bytes ===
+
+    // =================================================================
+    // 2. File Handling Logic
+    // =================================================================
+
     const formatBytes = (bytes) => {
         if (bytes === 0) return '0 Bytes';
         const k = 1024;
@@ -98,7 +48,6 @@ window.addEventListener("load", () => {
         return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
     };
 
-    // === Helper: Update Total Size & Info UI ===
     const updateFileInfo = () => {
         const files = currentFiles.files;
         let totalSize = 0;
@@ -108,14 +57,12 @@ window.addEventListener("load", () => {
 
         const totalSizeMB = totalSize / (1024 * 1024);
         
-        // Update text
         fileInfo.textContent = `(${files.length}/${MAX_FILE_COUNT} files, ${formatBytes(totalSize)} / ${MAX_TOTAL_SIZE_MB} MB max)`;
         
-        // Update progress bar
         const progressPercentage = Math.min(100, (totalSizeMB / MAX_TOTAL_SIZE_MB) * 100);
         progressFill.style.width = `${progressPercentage}%`;
         
-        // Check for total size error
+        // Validation check
         if (totalSizeMB > MAX_TOTAL_SIZE_MB) {
             fileError.textContent = `Error: Total file size exceeds ${MAX_TOTAL_SIZE_MB} MB. Please remove files.`;
             fileError.classList.add('active');
@@ -127,10 +74,20 @@ window.addEventListener("load", () => {
         }
     };
 
-    // === Helper: Render File List ===
+    const removeFile = (indexToRemove) => {
+        const newDT = new DataTransfer();
+        Array.from(currentFiles.files).forEach((file, index) => {
+            if (index !== indexToRemove) {
+                newDT.items.add(file);
+            }
+        });
+        currentFiles = newDT;
+        renderFileList();
+    };
+
     const renderFileList = () => {
         const files = currentFiles.files;
-        fileList.innerHTML = ''; // Clear current list
+        fileList.innerHTML = ''; 
 
         if (files.length === 0) {
             fileList.innerHTML = '<li class="muted">No files attached. Max: 3 files, 20 MB total.</li>';
@@ -151,7 +108,6 @@ window.addEventListener("load", () => {
             fileList.appendChild(li);
         });
         
-        // Bind remove buttons after rendering
         fileList.querySelectorAll('.remove-file-btn').forEach(button => {
             button.addEventListener('click', (e) => {
                 const index = parseInt(e.currentTarget.dataset.index);
@@ -161,25 +117,9 @@ window.addEventListener("load", () => {
         
         updateFileInfo();
     };
-    
-    // === File Removal Logic ===
-    const removeFile = (indexToRemove) => {
-        const newDT = new DataTransfer();
-        const filesArray = Array.from(currentFiles.files);
-        
-        filesArray.forEach((file, index) => {
-            if (index !== indexToRemove) {
-                newDT.items.add(file);
-            }
-        });
 
-        currentFiles = newDT;
-        renderFileList();
-    };
-
-    // === File Validation and Addition Logic ===
     const addFiles = (filesToAdd) => {
-        fileError.textContent = ''; // Clear previous errors
+        fileError.textContent = ''; 
         fileError.classList.remove('active');
         
         let newFilesCount = 0;
@@ -189,29 +129,24 @@ window.addEventListener("load", () => {
         Array.from(filesToAdd).forEach(file => {
             const totalCount = currentFiles.files.length + newFilesCount;
             
-            // Check 1: Max file count
             if (totalCount >= MAX_FILE_COUNT) {
-                return; // Skip if max count reached
+                return;
             }
 
-            // Check 2: Single file size limit
             if ((file.size / (1024 * 1024)) > MAX_SINGLE_FILE_SIZE_MB) {
                 filesExceedingSize.push(file.name);
                 return;
             }
 
-            // Check 3: File type
             if (!ALLOWED_TYPES.includes(file.type)) {
                 invalidTypeCount++;
                 return;
             }
             
-            // Add valid file to DataTransfer object
             currentFiles.items.add(file);
             newFilesCount++;
         });
         
-        // Handle error messages
         if (filesExceedingSize.length > 0) {
             fileError.textContent = `Error: The following file(s) exceed the ${MAX_SINGLE_FILE_SIZE_MB} MB limit: ${filesExceedingSize.join(', ')}.`;
             fileError.classList.add('active');
@@ -219,19 +154,17 @@ window.addEventListener("load", () => {
             fileError.textContent = `Error: ${invalidTypeCount} file(s) were ignored due to unsupported file types. Supported: ${SUPPORTED_EXTENSIONS}`;
             fileError.classList.add('active');
         } else if (newFilesCount > 0 && (currentFiles.files.length > MAX_FILE_COUNT)) {
-             // This catch handles the edge case where the loop was allowed to run, but total count was reached
              fileError.textContent = `Warning: Only the first ${MAX_FILE_COUNT} files are kept.`;
              fileError.classList.add('active');
         }
         
-        // After adding, re-render and check total size constraint
         renderFileList();
         updateFileInfo();
     };
 
-    // === Drag and Drop Listeners ===
+
+    // --- File Drop and Input Listeners ---
     if (fileDropArea) {
-        // Prevent default behavior (prevent file from being opened in browser)
         ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
             fileDropArea.addEventListener(eventName, e => {
                 e.preventDefault();
@@ -239,44 +172,37 @@ window.addEventListener("load", () => {
             }, false);
         });
 
-        // Highlight drop area on drag enter/over
         ['dragenter', 'dragover'].forEach(eventName => {
             fileDropArea.addEventListener(eventName, () => fileDropArea.classList.add('highlight'), false);
         });
 
-        // Unhighlight drop area on drag leave/drop
         ['dragleave', 'drop'].forEach(eventName => {
             fileDropArea.addEventListener(eventName, () => fileDropArea.classList.remove('highlight'), false);
         });
 
-        // Handle file drop
         fileDropArea.addEventListener('drop', (e) => {
-            const dt = e.dataTransfer;
-            const files = dt.files;
-            addFiles(files);
+            addFiles(e.dataTransfer.files);
         }, false);
     }
     
-    // === Standard Input Listener ===
     if (fileInput) {
-        // Trigger file input when browse trigger is clicked
         if (browseTrigger) {
             browseTrigger.addEventListener('click', () => fileInput.click());
         }
         
-        // Listen for files selected via the file dialog
         fileInput.addEventListener('change', (e) => {
             addFiles(e.target.files);
-            // Must clear the file input value so selecting the same file triggers 'change' next time
-            fileInput.value = ''; 
+            fileInput.value = ''; // Clear native input value to allow selecting same files again
         });
     }
 
-    // Initial render
-    renderFileList();
+    renderFileList(); // Initial file list rendering
 
 
-    // === Multiselect Dropdown Logic (Added Debug Logging) ===
+    // =================================================================
+    // 3. Multiselect Dropdown Logic (Data Serialization)
+    // =================================================================
+
     const multiselects = document.querySelectorAll('.multiselect-dropdown');
     
     multiselects.forEach(dropdown => {
@@ -285,66 +211,65 @@ window.addEventListener("load", () => {
         const list = dropdown.querySelector('.dropdown-list');
         const checkboxes = list ? list.querySelectorAll('input[type="checkbox"]') : [];
         
-        // CRITICAL CHECK: Ensure we found the necessary elements
-        if (!button || !list) {
-            console.error(`Multiselect binding failed for dropdown with data-name="${dataName}". Missing button or list.`);
-            return; 
-        }
+        if (!button || !list) return; 
 
-        // Create a hidden input to hold the comma-separated values for submission
+        // CRITICAL LEARNING: Create a hidden input to hold the comma-separated values for submission
         const hiddenInput = document.createElement('input');
         hiddenInput.type = 'hidden';
-        hiddenInput.name = dataName; // Use the data-name attribute for the name
+        hiddenInput.name = dataName;
         hiddenInput.value = '';
         dropdown.appendChild(hiddenInput);
 
-        // Function to update the button text and the hidden input value
         const updateSelection = () => {
             const selectedValues = [];
+            const selectedLabels = [];
+            
             checkboxes.forEach(checkbox => {
                 if (checkbox.checked) {
                     selectedValues.push(checkbox.value);
+                    const label = checkbox.closest('label');
+                    if (label) {
+                        const labelText = Array.from(label.childNodes)
+                            .filter(node => node.nodeType === 3) 
+                            .map(node => node.textContent.trim())
+                            .join('');
+                        selectedLabels.push(labelText || checkbox.value);
+                    } else {
+                        selectedLabels.push(checkbox.value);
+                    }
                 }
             });
 
+            // Set the value of the hidden input for form submission
             hiddenInput.value = selectedValues.join(',');
             
             if (selectedValues.length === 0) {
-                // Capitalize the first letter of the dataName for display
                 const displayName = dataName.charAt(0).toUpperCase() + dataName.slice(1).replace(/([a-z])([A-Z])/g, '$1 $2');
                 button.textContent = `Select ${displayName}`;
             } else if (selectedValues.length === 1) {
-                // If only one is selected, display its label (checkbox value)
-                const selectedCheckbox = Array.from(checkboxes).find(cb => cb.checked);
-                if (selectedCheckbox) {
-                    // Find the associated label for better text display
-                    const labelElement = document.querySelector(`label[for="${selectedCheckbox.id}"]`);
-                    button.textContent = labelElement ? labelElement.textContent.trim() : selectedValues[0];
-                } else {
-                    button.textContent = selectedValues[0];
-                }
+                button.textContent = selectedLabels[0];
             } else {
                 button.textContent = `${selectedValues.length} selected`;
             }
+            
+            // Add arrow icon for visual cue
+            const arrowIcon = `<span style="margin-left: 10px; color: ${selectedValues.length > 0 ? 'inherit' : 'var(--color-light-text)'};">&#9660;</span>`;
+            button.innerHTML = `${button.textContent} ${arrowIcon}`;
         };
 
-        // Initialize and bind listeners
         updateSelection(); // Initial update
 
         // Toggle dropdown list visibility
         button.addEventListener('click', (e) => {
-            e.stopPropagation(); // Prevents click on button from immediately closing via document listener
-            
-            // --- DEBUG LOGGING ADDED HERE ---
-            console.log(`Dropdown Clicked: ${dataName}. Current state: ${list.classList.contains('active') ? 'Active' : 'Inactive'}`);
-            // --- END DEBUG LOGGING ---
-
+            e.stopPropagation(); 
+            document.querySelectorAll('.dropdown-list.active').forEach(openlist => {
+                if (openlist !== list) {
+                    openlist.classList.remove('active');
+                    openlist.previousElementSibling.classList.remove('active');
+                }
+            });
             list.classList.toggle('active');
             button.classList.toggle('active');
-            
-             // --- DEBUG LOGGING ADDED HERE ---
-            console.log(`Dropdown Toggled. New state of list: ${list.classList.contains('active') ? 'Active' : 'Inactive'}`);
-            // --- END DEBUG LOGGING ---
         });
 
         // Update when a checkbox state changes
@@ -354,7 +279,6 @@ window.addEventListener("load", () => {
 
         // Close dropdown when clicking outside
         document.addEventListener('click', (e) => {
-            // Check if the click occurred outside the entire dropdown container
             if (!dropdown.contains(e.target)) {
                 list.classList.remove('active');
                 button.classList.remove('active');
@@ -363,129 +287,206 @@ window.addEventListener("load", () => {
     });
 
 
-    // === Form Submission Handler ===
+    // =================================================================
+    // 4. Form Submission Handler
+    // =================================================================
+
     if (form) {
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
 
             const button = form.querySelector('button[type="submit"]');
-            
-            // Basic client-side validation check (HTML5 standard validity)
+            submissionErrorBox.style.display = 'none';
+            submissionErrorBox.textContent = '';
+
+
+            // 1. Client-Side Validation & File Check
             if (!form.checkValidity()) {
-                console.warn("Form validation failed. Browser should show warnings.");
-                // This triggers the browser's native error display
+                console.warn("Form validation failed. Please check required fields.");
                 button.textContent = "Check Fields!";
-                setTimeout(() => {
-                    button.textContent = "Submit";
-                }, 1500);
+                setTimeout(() => { button.textContent = "Submit"; }, 1500);
                 return;
             }
 
-            // Client-side file size check (Total size)
-            if (!updateFileInfo()) {
+            if (!updateFileInfo()) { // Checks total size constraint
                  button.textContent = "File Too Large!";
-                 setTimeout(() => {
-                    button.textContent = "Submit";
-                }, 1500);
+                 submissionErrorBox.textContent = "Total file size exceeds the limit. Please remove some files.";
+                 submissionErrorBox.style.display = 'block';
+                 setTimeout(() => { button.textContent = "Submit"; }, 1500);
                 return;
             }
             
-            // Disable button and show loading state
+            // Set Loading State
             button.disabled = true;
             button.textContent = "Submitting...";
             button.classList.remove("btn-success");
 
-
-            // 1. Create FormData from the base form (gets ALL text inputs and hidden multiselects)
+            // CRITICAL LEARNING: Create FormData from the base form (gets ALL text and hidden inputs)
             const formData = new FormData(form);
 
-            // 2. CRITICAL FIX: Manually append the files from currentFiles 
+            // CRITICAL LEARNING: Manually append the files from currentFiles (the source of truth)
+            const files = currentFiles.files;
             if (fileInput) {
-                const files = currentFiles.files;
-                const FILE_FIELD_NAME = fileInput.name || "fileUpload";
-
+                const FILE_FIELD_NAME = fileInput.name || "fileUpload"; 
                 for (let i = 0; i < files.length; i++) {
                     formData.append(FILE_FIELD_NAME, files[i]); 
                 }
             }
             
             // --- Submission Logic ---
-            console.log("Attempting to send form data to webhook:", form.action);
-            
-            // Ensure response is declared outside the try block for access in finally
             let response = null; 
             
             try {
+                console.log("Attempting to send form data to webhook:", form.action);
+
                 response = await fetch(form.action, {
                     method: "POST",
                     body: formData
                 });
 
-                // --- ROBUST RESPONSE HANDLING (CRITICAL FOR N8N) ---
-                // Try to read the response as text first. This prevents crashes if the body is empty or not JSON.
                 const responseText = await response.text();
                 let data = {};
 
-                // If text is present and looks like JSON, attempt to parse it
                 if (responseText.trim().length > 0 && responseText.trim().startsWith('{')) {
                     try {
                         data = JSON.parse(responseText);
                     } catch (e) {
-                        console.warn("Could not parse response as JSON. Assuming success based on status code.");
+                        console.warn("Could not parse response as JSON. Proceeding based on HTTP status.");
                     }
                 }
-                // --- END ROBUST RESPONSE HANDLING ---
 
-
-                // Check for a successful HTTP status code (200-299)
+                // Assuming the backend returns {ok: true, redirect: '...'} or 200 status code
                 if (response.ok) {
-                    console.log("✅ Form submission successful (HTTP OK). Preparing redirect.");
+                    console.log("✅ Form submission successful (HTTP OK).");
                     
-                    // Use a redirect URL if n8n returned it in JSON (data.redirect), otherwise use the default
-                    const redirectURL = data.redirect || "thank-you.html"; 
-                    
-                    // Show success, disable button again briefly, then redirect
                     button.textContent = "Success!";
                     button.classList.add("btn-success");
                     
-                    // Use a shorter delay for success feedback
-                    setTimeout(() => (window.location.href = redirectURL), 1000); 
+                    // Mocking successful submission response for this environment
+                    console.log(`Mocking successful submission. Data sent to ${form.action}`);
+                    setTimeout(() => { 
+                        button.disabled = false; 
+                        button.textContent = "Submit"; 
+                        // In production, you would redirect here if response contained a redirect URL
+                        // window.location.href = data.redirect || "thank-you.html"; 
+                    }, 2000);
 
                 } else {
-                    // Handle non-OK status (e.g., 400, 500)
                     console.error("❌ Submission failed (HTTP Status Error).", response.status, responseText);
-                    // Use console.error instead of alert
                     const message = `Submission failed. The server returned an error: ${response.status}. See console for details.`;
-                    const errorBox = document.getElementById('submissionErrorBox');
-                    if (errorBox) {
-                        errorBox.textContent = message;
-                        errorBox.style.display = 'block';
-                    } else {
-                        console.error(message);
-                    }
+                    submissionErrorBox.textContent = message;
+                    submissionErrorBox.style.display = 'block';
                 }
             } catch (error) {
                 console.error("❌ Error submitting form (Network/Fetch Failure):", error);
-                // Use console.error instead of alert
                 const message = "Unable to connect to the server. Please check your network. See console for details.";
-                const errorBox = document.getElementById('submissionErrorBox');
-                if (errorBox) {
-                    errorBox.textContent = message;
-                    errorBox.style.display = 'block';
-                } else {
-                    console.error(message);
-                }
+                submissionErrorBox.textContent = message;
+                submissionErrorBox.style.display = 'block';
             } finally {
-                // Guarantees button re-enables after a short delay, especially on error
-                if (response === null || !response.ok) {
-                     // Only re-enable if the fetch failed entirely or if the response was NOT successful
-                     setTimeout(() => {
-                        button.disabled = false;
+                 // Guarantees button re-enables after a short delay
+                 setTimeout(() => {
+                    button.disabled = false;
+                    if (button.textContent === "Submitting...") {
                         button.textContent = "Submit";
-                     }, 500);
-                }
+                    }
+                 }, 500);
             }
         });
     }
 
+
+    // =================================================================
+    // 5. Test Data Loader (For Debugging Only)
+    // =================================================================
+
+    if (loadTestButton) {
+        console.log("🧪 Test Data Loader Initialized.");
+        
+        function loadTestData() {
+            console.log("🚀 Loading test data into form fields...");
+
+            // --- 1. Standard Input Fields ---
+            const fields = {
+                firstNameInput: "Jane",
+                lastNameInput: "Tester (Auto-Fill)",
+                emailInput: "jane.tester@test-corp.io",
+                phoneInput: "555-867-5309", 
+                companyRepresentedInput: "Test Advisors, LLC",
+                businessNameInput: "Test Corp XYZ Inc.",
+                websiteInput: "https://www.test-corp-xyz.io",
+                hqCityInput: "Testville",
+                yearFoundedInput: 2005,
+            };
+
+            for (const id in fields) {
+                const field = document.getElementById(id);
+                if (field) {
+                    field.value = fields[id];
+                }
+            }
+
+            // --- 2. Standard Select Fields ---
+            const selects = {
+                roleSelect: "Advisor",
+                industrySelect: "BUSINESS_SERVICES", 
+                hqStateSelect: "FL", 
+                ownershipSelect: "Founder/Family-Owned",
+                transitionGoalSelect: "Exit",
+                transitionTimingSelect: "< 12 months",
+                revenueRangeTextSelect: "$10–25M",
+                ebitdaMarginSelect: "20%+",
+                leverageSelect: "Manageable",
+                referralSourceSelect: "Website"
+            };
+
+            for (const id in selects) {
+                const select = document.getElementById(id);
+                if (select) {
+                    select.value = selects[id];
+                }
+            }
+
+            // --- 3. Textarea Fields ---
+            const textareas = {
+                notableCustomersInput: "Multi-year contracts with major utility companies (50% recurring revenue).",
+                fitReasonInput: "Strong recurring revenue model, founder is ready for a clean exit, established team in place.",
+                otherDetailsInput: "Seller prefers an expedited close timeline. NDA is on file."
+            };
+
+            for (const id in textareas) {
+                const textarea = document.getElementById(id);
+                if (textarea) {
+                    textarea.value = textareas[id];
+                }
+            }
+
+            // --- 4. Checkbox Fields ---
+            const hasManagementTeamCheckbox = document.getElementById("hasManagementTeamCheckbox");
+            if (hasManagementTeamCheckbox) {
+                hasManagementTeamCheckbox.checked = true;
+            }
+
+            // --- 5. CRITICAL: Multiselect Dropdowns Loader ---
+            function setMultiselect(dataName, valuesArray) {
+                const multiselectDiv = document.querySelector(`.multiselect-dropdown[data-name="${dataName}"]`);
+                if (!multiselectDiv) return;
+
+                const dropdownList = multiselectDiv.querySelector('.dropdown-list');
+
+                dropdownList.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+                    checkbox.checked = valuesArray.includes(checkbox.value);
+                    // Trigger change event to update the button text in form_logic.js
+                    checkbox.dispatchEvent(new Event('change', { bubbles: true }));
+                });
+            }
+
+            setMultiselect("keyAssets", ["Goodwill/Brand", "Team", "Contracts"]);
+            setMultiselect("challenge", ["Succession Planning", "Operational Efficiency"]);
+
+
+            console.log("✅ All required fields populated with test data.");
+        }
+
+        loadTestButton.addEventListener('click', loadTestData);
+    }
 });
