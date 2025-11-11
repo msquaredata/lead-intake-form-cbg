@@ -3,9 +3,25 @@
     {
       "source": "/(.*)",
       "headers": [
-        { "key": "Access-Control-Allow-Origin", "value": "*" },
-        { "key": "X-Frame-Options", "value": "SAMEORIGIN" },
-        { "key": "Content-Security-Policy", "value": "default-src 'self' https: data:;" }
+        { 
+          "key": "Access-Control-Allow-Origin", 
+          // CRITICAL CHANGE: Added the n8n cloud domain to the allowed origins.
+          // This allows your Squarespace site (if it were to host your Vercel app in an iFrame, 
+          // or if you were calling Vercel APIs directly from Squarespace) AND 
+          // your n8n workflow to interact with your Vercel deployment.
+          "value": "http://www.charltonbleecker.com, https://msquaresolutions.app.n8n.cloud/" 
+        },
+        { 
+          "key": "X-Frame-Options", 
+          // Prevents the content from being embedded in a frame on other sites.
+          // Remove this line if you plan to embed your Vercel app/function into Squarespace.
+          "value": "SAMEORIGIN"
+        },
+        { 
+          "key": "Content-Security-Policy", 
+          // Standard security policy.
+          "value": "default-src 'self' https: data:;" 
+        }
       ]
     }
   ]
