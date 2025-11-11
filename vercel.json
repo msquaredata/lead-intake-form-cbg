@@ -5,7 +5,7 @@
       "headers": [
         { 
           "key": "Access-Control-Allow-Origin", 
-          "value": "http://www.charltonbleecker.com, https://msquaresolutions.app.n8n.cloud" 
+          "value": "http://www.charltonbleecker.com, https://msquaresolutions.app.n8n.cloud, https://alligator-jellyfish-7lt8.squarespace.com" 
         },
         { 
           "key": "X-Frame-Options", 
