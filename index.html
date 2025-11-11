@@ -378,6 +378,10 @@
           <div class="submitbar">
             <span class="muted">By submitting, you agree to our confidentiality & data use terms.</span>
             <div style="display:flex; gap:10px;">
+              <!-- NEW: Test Button added here -->
+              <button type="button" id="loadTestDataButton" class="btn" style="background-color: #555; color: white;">
+                Load Test Data
+              </button>
               <button type="submit" class="btn">Submit</button>
             </div>
           </div>
@@ -389,6 +393,8 @@
   </main>
 
   <script src="assets/scripts/form.js"></script>
+    <!-- CRITICAL: Link the new, separate test file. REMOVE this line for production -->
+  <script src="assets/scripts/testdataloader.js"></script> 
 </body>
 
 </html>
