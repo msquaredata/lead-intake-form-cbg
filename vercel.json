@@ -3,9 +3,24 @@
     {
       "source": "/(.*)",
       "headers": [
-        { "key": "Access-Control-Allow-Origin", "value": "*" },
-        { "key": "X-Frame-Options", "value": "SAMEORIGIN" },
-        { "key": "Content-Security-Policy", "value": "default-src 'self' https: data:;" }
+        { 
+          "key": "Access-Control-Allow-Origin", 
+          "value": "https://www.charltonbleecker.com" 
+        },
+        { 
+          "key": "X-Frame-Options", 
+          // IMPORTANT: Remove or change if you are embedding your Vercel app/function
+          // on Squarespace using an iFrame. SAMEORIGIN prevents embedding on other sites.
+          // We recommend REMOVING this line entirely if embedding is required.
+          "value": "SAMEORIGIN"
+        },
+        { 
+          "key": "Content-Security-Policy", 
+          // If embedding on Squarespace via iFrame, you may need to add 'frame-ancestors'.
+          // If you are only making API calls (no embedding), you can often leave this line as-is.
+          // Example for embedding: "value": "default-src 'self' https: data:; frame-ancestors 'self' https://www.your-squarespace-domain.com;"
+          "value": "default-src 'self' https: data:;" 
+        }
       ]
     }
   ]
