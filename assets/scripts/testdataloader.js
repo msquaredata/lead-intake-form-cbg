@@ -1,82 +1,119 @@
 // --- WARNING: This file is for testing only and should NOT be deployed to production. ---
 
 window.addEventListener("load", () => {
-    
-    // Find the dedicated test button (ID must match the button in index.html)
+
+    // Find the dedicated test button
     const loadTestButton = document.getElementById("loadTestDataButton");
 
     // Exit immediately if the button isn't present (e.g., in a production environment)
     if (!loadTestButton) {
-        return; 
+        return;
     }
-    
+
     console.log("🧪 Test Data Loader Initialized.");
 
     // === TEST DATA LOADER FUNCTION ===
     function loadTestData() {
         console.log("🚀 Loading test data into form fields...");
-        
-        // --- 1. Standard Input Fields (Use IDs defined in index.html) ---
-        const nameField = document.getElementById("nameInput");
-        const emailField = document.getElementById("emailInput");
-        const phoneField = document.getElementById("phoneInput");
-        const urlField = document.getElementById("urlInput");
-        
-        if (nameField) nameField.value = "Jane Tester (Auto-Fill)";
-        if (emailField) emailField.value = "jane.tester@test-corp.io";
-        if (phoneField) phoneField.value = "+15558675309";
-        if (urlField) urlField.value = "https://www.test-corp-xyz.io";
 
-        // --- 2. Textarea Fields (Use names defined in index.html) ---
-        // QuerySelector is used here to target by name attribute
-        const notableCustomers = document.querySelector('[name="notableCustomers"]');
-        const strongFit = document.querySelector('[name="strongFit"]');
-        const otherDetail = document.querySelector('[name="otherDetails"]'); 
-        
-        if (notableCustomers) {
-             notableCustomers.value = "Key metrics: $12M ARR, 25% YoY Growth, 95% Retention. Major customers include Test-A Corp and Demo Solutions.";
-        }
-        if (strongFit) {
-             strongFit.value = "The prospect is a perfect fit for the 'Digital Transformation' thesis. We believe an investment in operational tooling could increase margins by 15% within 18 months.";
-        }
-        if (otherDetail) {
-             otherDetail.value = "The current owner is looking for a structured exit within 6-9 months and is open to minority equity participation post-acquisition.";
-        }
-        
-        // --- 3. Single Select Dropdown (Use ID) ---
-        const referralSelect = document.getElementById("referralSourceSelect");
-        if (referralSelect) {
-             // Use a value that exists in the static list
-             referralSelect.value = "REFERRAL";
-        }
+        // --- 1. Standard Input Fields (Text, Email, URL, Number) ---
+        const fields = {
+            // Section 1: Contact
+            firstNameInput: "Jane",
+            lastNameInput: "Tester (Auto-Fill)",
+            emailInput: "jane.tester@test-corp.io",
+            phoneInput: "555-867-5309", // Matches the required pattern
+            companyRepresentedInput: "Test Advisors, LLC",
+            // Section 2: Business
+            businessNameInput: "Test Corp XYZ Inc.",
+            websiteInput: "https://www.test-corp-xyz.io",
+            hqCityInput: "Testville",
+            yearFoundedInput: 2005,
+        };
 
-        // --- 4. Multiselect Dropdown (CRITICAL LOGIC) ---
-        const multiselectName = "industry"; 
-        // Find the hidden input that stores the final submitted value
-        const multiselectHiddenInput = document.querySelector(`input[name="${multiselectName}"]`);
-        
-        if (multiselectHiddenInput) {
-            // == CONFIGURE YOUR TEST VALUES HERE ==
-            // Must be comma-separated strings matching the checkbox 'value' attributes in index.html
-            const testValues = "TECH,FINANCE,OTHER"; 
-            
-            // 1. Set the value of the hidden input
-            multiselectHiddenInput.value = testValues;
-            
-            // 2. Find the visible checkbox list
-            const dropdownList = multiselectHiddenInput.closest('.multiselect-dropdown')?.querySelector('.dropdown-list');
-            
-            // 3. Manually check the checkboxes and trigger change events to update the UI
-            if (dropdownList) {
-                dropdownList.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
-                    // Set the checked state if the checkbox value is in our test list
-                    checkbox.checked = testValues.includes(checkbox.value);
-                    // Trigger the 'change' event to force the form.js logic to update the dropdown button text
-                    checkbox.dispatchEvent(new Event('change')); 
-                });
+        for (const id in fields) {
+            const field = document.getElementById(id);
+            if (field) {
+                field.value = fields[id];
             }
         }
-        
+
+        // --- 2. Standard Select Fields ---
+        const selects = {
+            // Section 1: Contact
+            roleSelect: "Advisor",
+            // Section 2: Business
+            industrySelect: "BUSINESS_SERVICES", // Must match an existing <option> value
+            hqStateSelect: "FL", // Florida
+            // Section 3: Ownership
+            ownershipSelect: "Founder/Family-Owned",
+            transitionGoalSelect: "Exit",
+            transitionTimingSelect: "< 12 months",
+            // Section 4: Financial
+            revenueRangeTextSelect: "$10–25M",
+            ebitdaMarginSelect: "20%+",
+            leverageSelect: "Manageable",
+            // Section 6: Miscellaneous
+            referralSourceSelect: "Website"
+        };
+
+        for (const id in selects) {
+            const select = document.getElementById(id);
+            if (select) {
+                // Check if the option exists before setting the value
+                if (Array.from(select.options).some(opt => opt.value === selects[id] || opt.textContent === selects[id])) {
+                    select.value = selects[id];
+                } else {
+                    console.warn(`Test data failed: Option "${selects[id]}" not found in select #${id}`);
+                }
+            }
+        }
+
+        // --- 3. Textarea Fields ---
+        const textareas = {
+            notableCustomersInput: "Multi-year contracts with major utility companies (50% recurring revenue).",
+            fitReasonInput: "Strong recurring revenue model, founder is ready for a clean exit, established team in place.",
+            otherDetailsInput: "Seller prefers an expedited close timeline. NDA is on file."
+        };
+
+        for (const id in textareas) {
+            const textarea = document.getElementById(id);
+            if (textarea) {
+                textarea.value = textareas[id];
+            }
+        }
+
+
+        // --- 4. Checkbox Fields ---
+        const hasManagementTeamCheckbox = document.getElementById("hasManagementTeamCheckbox");
+        if (hasManagementTeamCheckbox) {
+            hasManagementTeamCheckbox.checked = true;
+        }
+
+        // --- 5. Multiselect Dropdowns (Requires setting checkboxes and triggering UI update) ---
+        // Helper function for multiselects
+        function setMultiselect(dataName, valuesArray) {
+            const multiselectDiv = document.querySelector(`.multiselect-dropdown[data-name="${dataName}"]`);
+            if (!multiselectDiv) return;
+
+            // Update individual checkboxes
+            const dropdownList = multiselectDiv.querySelector('.dropdown-list');
+            dropdownList.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+                const isSelected = valuesArray.includes(checkbox.value);
+                checkbox.checked = isSelected;
+
+                // Trigger a change event so the underlying form.js script updates the button text/hidden field
+                // Note: We dispatch 'change' and 'click' for maximum compatibility with the original form.js event listeners
+                checkbox.dispatchEvent(new Event('change', { bubbles: true }));
+                // If the field is managed by form.js, the 'change' event should be enough.
+            });
+        }
+
+        // Apply test values to multiselects
+        setMultiselect("keyassets", ["Goodwill/Brand", "Team", "Contracts"]);
+        setMultiselect("challenge", ["Succession Planning", "Operational Efficiency"]);
+
+
         console.log("✅ All required fields populated with test data.");
     }
     // === END TEST DATA LOADER FUNCTION ===
