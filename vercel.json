@@ -3,17 +3,18 @@
     {
       "source": "/(.*)",
       "headers": [
-        { 
-          "key": "Access-Control-Allow-Origin", 
-          "value": "http://www.charltonbleecker.com, https://msquaresolutions.app.n8n.cloud, alligator-jellyfish-7lt8.squarespace.com" 
-        },
-        { 
-          "key": "X-Frame-Options", 
-          "value": "SAMEORIGIN"
-        },
-        { 
-          "key": "Content-Security-Policy", 
-          "value": "default-src 'self' https: data:;" 
+        {
+          "key": "Content-Security-Policy",
+          "value": "frame-ancestors 'self' http://www.charltonbleecker.com https://msquaresolutions.app.n8n.cloud https://alligator-jellyfish-7lt8.squarespace.com;"
+        }
+      ]
+    },
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*" 
         }
       ]
     }
