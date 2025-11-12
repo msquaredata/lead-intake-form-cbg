@@ -279,7 +279,7 @@ a { color: inherit; }
   .formgrid { display: grid; grid-template-columns: 280px 1fr; }
 }
 
-form { padding: 24px 200px; }
+form { padding: 24px 48px; }
 
 /* spacing between sections */
 form > div { margin-bottom: 40px; }
