@@ -853,3 +853,42 @@ label.field-error span {
     opacity: 1;
     visibility: visible;
 }
+
+
+/* === Footer === */
+
+footer {
+  text-align: center;
+  padding: 30px 0;
+  border-top: 1px solid var(--border);
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+/* ================================================= */
+/* --- NEW CENTERING & COLUMN LAYOUT RULES BELOW --- */
+/* ================================================= */
+
+/* 1. Center the main content block (Title/Subtitle/Form) */
+.form-center-wrapper {
+    max-width: 900px; /* Limits the form's total width */
+    margin: 0 auto; /* Centers the limited-width block */
+    padding: 0 20px; /* Adds external padding on the sides for smaller screens */
+}
+
+/* 2. Define the two-column grid structure */
+.column-grid {
+    display: grid;
+    /* Mobile: Single column by default */
+    grid-template-columns: 1fr;
+    gap: 20px; /* Space between rows/columns on mobile */
+    margin-bottom: 20px; /* Add margin after the grid block */
+}
+
+/* 3. Switch to two columns and increase horizontal gap on tablet/desktop */
+@media (min-width: 768px) {
+    .column-grid {
+        grid-template-columns: 1fr 1fr; /* Two equal columns */
+        gap: 40px; /* Increased horizontal gap between columns */
+    }
+}
